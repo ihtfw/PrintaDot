@@ -1,6 +1,7 @@
 var port = null;
 
 connect();
+sendNativeMessage("123");
 
 function sendNativeMessage(message) {
     if (port) {
@@ -19,6 +20,7 @@ function printSample(sampleName, barcode) {
 
 function onNativeMessage(message) {
     const command = message?.message;
+
     if (!command) {
         console.log("No data received");
         return;

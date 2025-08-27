@@ -9,18 +9,13 @@ namespace PrintaDot.NativeMessaging
     public class Host
     {
         private bool SendConfirmationReceipt = true;
-
-        public string Hostname
-        {
-            get { return "com.printadot"; }
-        }
+        private readonly Manifest _manifest;
 
         protected void ProcessReceivedMessage(JObject data)
         {
             SendMessage(data);
         }
 
-        private readonly string ManifestPath;
 
         /// <summary>
         /// List of supported Chromium browsers.
@@ -36,11 +31,8 @@ namespace PrintaDot.NativeMessaging
             SupportedBrowsers = new List<ChromiumBrowser>(2);
 
             SendConfirmationReceipt = sendConfirmationReceipt;
-
-            ManifestPath 
-                = Path.Combine(
-                    Utils.AssemblyLoadDirectory() ?? "", 
-                    Hostname + "-manifest.json");
+            
+            _manifest = new Manifest();
         }
 
         /// <summary>
@@ -50,7 +42,7 @@ namespace PrintaDot.NativeMessaging
         {
             if (!IsRegistered())
             {
-                throw new NotRegisteredWithBrowserException(Hostname);
+                throw new NotRegisteredWithBrowserException(_manifest.HostName);
             }
                 
             JObject? data;
@@ -115,12 +107,9 @@ namespace PrintaDot.NativeMessaging
         /// <param name="description">Short application description to be included in the manifest.</param>
         /// <param name="allowedOrigins">List of extensions that should have access to the native messaging host.<br />Wildcards such as <code>chrome-extension://*/*</code> are not allowed.</param>
         /// <param name="overwrite">Determines if the manifest should be overwritten if it already exists.<br />Defaults to <see langword="false"/>.</param>
-        public void GenerateManifest(
-            string description,
-            string[] allowedOrigins,
-            bool overwrite = false)
+        public void GenerateManifest(bool overwrite = true)
         {
-            if (File.Exists(ManifestPath) && !overwrite)
+            if (File.Exists(_manifest.ManifestPath) && !overwrite)
             {
                 Log.LogMessage("Manifest exists already");
             }
@@ -128,14 +117,9 @@ namespace PrintaDot.NativeMessaging
             {
                 Log.LogMessage("Generating Manifest");
 
-                string manifest = JsonConvert.SerializeObject(
-                    new Manifest(
-                        Hostname, 
-                        description, 
-                        Utils.AssemblyExecuteablePath(), 
-                        allowedOrigins));
+                string manifest = JsonConvert.SerializeObject(new Manifest());
 
-                File.WriteAllText(ManifestPath, manifest);
+                File.WriteAllText(_manifest.ManifestPath, manifest);
 
                 Log.LogMessage("Manifest Generated");
             }
@@ -146,9 +130,9 @@ namespace PrintaDot.NativeMessaging
         /// </summary>
         public void RemoveManifest()
         {
-            if (File.Exists(ManifestPath))
+            if (File.Exists(_manifest.ManifestPath))
             {
-                File.Delete(ManifestPath);
+                File.Delete(_manifest.ManifestPath);
             }
         }
         #endregion
@@ -164,7 +148,7 @@ namespace PrintaDot.NativeMessaging
 
             foreach (ChromiumBrowser browser in SupportedBrowsers)
             {
-                result = result || browser.IsRegistered(Hostname, ManifestPath);
+                result = result || browser.IsRegistered(_manifest.HostName, _manifest.ManifestPath);
             }
 
             return result;
@@ -177,7 +161,7 @@ namespace PrintaDot.NativeMessaging
         {
             foreach (ChromiumBrowser browser in SupportedBrowsers)
             {
-                browser.Register(Hostname, ManifestPath);
+                browser.Register(_manifest.HostName, _manifest.ManifestPath);
             }
         }
 
@@ -188,7 +172,7 @@ namespace PrintaDot.NativeMessaging
         {
             foreach (ChromiumBrowser browser in SupportedBrowsers)
             {
-                browser.Unregister(Hostname);
+                browser.Unregister(_manifest.HostName);
             }
         }
         #endregion
