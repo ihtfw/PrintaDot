@@ -1,7 +1,6 @@
 var port = null;
 
 connect();
-sendNativeMessage("123");
 
 function sendNativeMessage(message) {
     if (port) {

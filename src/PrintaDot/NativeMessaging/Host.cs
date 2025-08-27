@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using PrintaDot.Printing;
 
 namespace PrintaDot.NativeMessaging
 {
@@ -8,19 +9,14 @@ namespace PrintaDot.NativeMessaging
     /// </summary>
     public class Host
     {
-        private bool SendConfirmationReceipt = true;
         private readonly Manifest _manifest;
-
-        protected void ProcessReceivedMessage(JObject data)
-        {
-            SendMessage(data);
-        }
-
+        private bool _sendConfirmationReceipt;
+        private readonly PrintService _printService;
 
         /// <summary>
-        /// List of supported Chromium browsers.
+        /// List of supported browsers.
         /// </summary>
-        public List<ChromiumBrowser> SupportedBrowsers { get; }
+        public List<Browser> SupportedBrowsers { get; }
 
         /// <summary>
         /// Creates the Host object
@@ -28,11 +24,12 @@ namespace PrintaDot.NativeMessaging
         /// <param name="sendConfirmationReceipt"><see langword="true" /> for the host to automatically send message confirmation receipt.</param>
         public Host(bool sendConfirmationReceipt = true)
         {
-            SupportedBrowsers = new List<ChromiumBrowser>(2);
+            SupportedBrowsers = new List<Browser>(2);
 
-            SendConfirmationReceipt = sendConfirmationReceipt;
-            
+            _sendConfirmationReceipt = sendConfirmationReceipt;
+
             _manifest = new Manifest();
+            _printService = new PrintService();
         }
 
         /// <summary>
@@ -44,20 +41,41 @@ namespace PrintaDot.NativeMessaging
             {
                 throw new NotRegisteredWithBrowserException(_manifest.HostName);
             }
-                
+
             JObject? data;
 
             while ((data = Read()) != null)
             {
+                var receivedData = data.ToObject<ReceivedData>();
+
+                if (receivedData != null)
+                {
+                    Print(receivedData);
+                }
+
                 Log.LogMessage(
                     "Data Received:" + JsonConvert.SerializeObject(data));
 
-                if (SendConfirmationReceipt)
+                if (_sendConfirmationReceipt)
                 {
                     SendMessage(new ResponseConfirmation(data).GetJObject()!);
                 }
 
-                ProcessReceivedMessage(data);
+                SendMessage(data);
+            }
+        }
+
+
+        private void Print(ReceivedData data)
+        {
+            try
+            {
+                _printService.PrintSample(data);
+                Log.LogMessage($"Print job completed: {data.SampleName} - {data.Barcode}");
+            }
+            catch (Exception ex)
+            {
+                Log.LogMessage($"Print error: {ex.Message}");
             }
         }
 
@@ -76,7 +94,7 @@ namespace PrintaDot.NativeMessaging
                 if (reader.Peek() >= 0)
                 {
                     reader.Read(buffer, 0, buffer.Length);
-                } 
+                }
 
             return JsonConvert.DeserializeObject<JObject>(new string(buffer));
         }
@@ -146,7 +164,7 @@ namespace PrintaDot.NativeMessaging
         {
             bool result = false;
 
-            foreach (ChromiumBrowser browser in SupportedBrowsers)
+            foreach (Browser browser in SupportedBrowsers)
             {
                 result = result || browser.IsRegistered(_manifest.HostName, _manifest.ManifestPath);
             }
@@ -159,7 +177,7 @@ namespace PrintaDot.NativeMessaging
         /// </summary>
         public void Register()
         {
-            foreach (ChromiumBrowser browser in SupportedBrowsers)
+            foreach (Browser browser in SupportedBrowsers)
             {
                 browser.Register(_manifest.HostName, _manifest.ManifestPath);
             }
@@ -170,7 +188,7 @@ namespace PrintaDot.NativeMessaging
         /// </summary>
         public void Unregister()
         {
-            foreach (ChromiumBrowser browser in SupportedBrowsers)
+            foreach (Browser browser in SupportedBrowsers)
             {
                 browser.Unregister(_manifest.HostName);
             }

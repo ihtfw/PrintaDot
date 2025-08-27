@@ -1,15 +1,15 @@
 ﻿namespace PrintaDot.NativeMessaging {
-    partial class ChromiumBrowser {
+    partial class BrowserCreator {
         /// <summary>
         /// <see cref="ChromiumBrowser"/> object for Google Chrome.
         /// </summary>
-        public static ChromiumBrowser GoogleChrome => new ChromiumBrowser(
+        public static Browser GoogleChrome => new Browser(
             "Google Chrome", "SOFTWARE\\Google\\Chrome\\");
         
         /// <summary>
         /// <see cref="ChromiumBrowser"/> object for Microsoft Edge.
         /// </summary>
-        public static ChromiumBrowser MicrosoftEdge => new ChromiumBrowser(
+        public static Browser MicrosoftEdge => new Browser(
             "Microsoft Edge", "SOFTWARE\\Microsoft\\Edge\\");
     }
 }

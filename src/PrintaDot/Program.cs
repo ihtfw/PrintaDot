@@ -11,8 +11,8 @@ class Program
         Log.Active = true;
 
         Host = new Host();
-        Host.SupportedBrowsers.Add(ChromiumBrowser.GoogleChrome);
-        Host.SupportedBrowsers.Add(ChromiumBrowser.MicrosoftEdge);
+        Host.SupportedBrowsers.Add(BrowserCreator.GoogleChrome);
+        Host.SupportedBrowsers.Add(BrowserCreator.MicrosoftEdge);
 
         Host.GenerateManifest();
         Host.Register();

@@ -5,7 +5,7 @@ namespace PrintaDot.NativeMessaging
     /// <summary>
     /// Represent any browser derived from Google's Chromium.
     /// </summary>
-    public partial class ChromiumBrowser
+    public class Browser
     {
         private readonly string regHostnameKeyLocation;
 
@@ -20,7 +20,7 @@ namespace PrintaDot.NativeMessaging
         /// <param name="browserName">The name of the browser application.</param>
         /// <param name="RegKeyBaseLocation">Base location for the browser 
         /// settings in the Windows Registry.</param>
-        public ChromiumBrowser(string browserName, string RegKeyBaseLocation)
+        public Browser(string browserName, string RegKeyBaseLocation)
         {
             BrowserName = browserName;
 
