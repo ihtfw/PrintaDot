@@ -1,20 +1,19 @@
 # PrintLink
 
-Установка и запуск
+Installation and Launch
 
-1 - Откройте файл PrintLink.sln в Visual Studio и выполните сборку проекта
+Open the Chrome browser and navigate to the menu:
+Extensions → Enable Developer Mode
 
-2 -Запустите полученный исполняемый файл и дождитесь надписи в консоли:
-"Host registry has done...."
+Click "Load unpacked extension", select the extension folder from the project, and click "OK".
 
-3 - Откройте браузер Chrome и перейдите в меню:
-Расширения → Включить режим разработчика
+Copy the extension identifier.
 
-4 - На вкладке расширений с включенным режимом разработчика нажмите кнопку:
-"Загрузить распакованное расширение"
-Выберите папку extension из проекта и нажмите "Ok"
+Open the PrintLink.sln file in Visual Studio, go to the Manifest.cs file, and paste the identifier into AllowedOrigins in the following format:
+chrome-extension://**Your Identifier**/
 
-5 - Включите расширение и закрепите его на панели браузера
+Build the project and run it. Once the manifest is generated, you can close it.
 
-6 - Для работы нажмите на закрепленное расширение,
-введите необходимые данные в появившемся окне и нажмите кнопку "Печать"
+Enable the extension and pin it to the browser toolbar.
+
+To use the extension, click on the pinned icon, enter the required data in the pop-up window, and press the "Print" button.
