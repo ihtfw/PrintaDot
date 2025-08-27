@@ -1,4 +1,4 @@
-# PrintLink
+# PrintaDot
 
 Installation and Launch
 
