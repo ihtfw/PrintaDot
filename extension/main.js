@@ -34,7 +34,7 @@ function onDisconnected() {
 }
 
 function connect() {
-    const hostName = "com.vectorbest.printlink";
+    const hostName = "com.printadot";
     try {
         port = chrome.runtime.connectNative(hostName);
         port.onMessage.addListener(onNativeMessage);
