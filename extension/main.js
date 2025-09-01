@@ -8,11 +8,20 @@ function sendNativeMessage(message) {
     }
 }
 
-function printSample(sampleName, barcode) {
+function print() {
     if (port) {
         port.postMessage({
-            sampleName: sampleName,
-            barcode: barcode
+            $type: "printRequestMessageV1",
+            type: "PrintRequest",
+            version: 1,
+            profile: "DefaultProfile",
+            items: [
+                {
+                    header: "Sample Product",
+                    barcode: "1234567890123",
+                    figures: "Additional information"
+                }
+            ]
         });
     }
 }

@@ -1,5 +1,6 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+﻿using PrintaDot.Common;
+using PrintaDot.NativeMessaging.CommunicationProtocol;
+using PrintaDot.NativeMessaging.CommunicationProtocol.V1;
 using PrintaDot.Printing;
 
 namespace PrintaDot.NativeMessaging
@@ -42,80 +43,38 @@ namespace PrintaDot.NativeMessaging
                 throw new NotRegisteredWithBrowserException(_manifest.HostName);
             }
 
-            JObject? data;
+            Message? message;
 
-            while ((data = Read()) != null)
+            while ((message = PrintaDotStreamHandler.Read()) != null)
             {
-                var receivedData = data.ToObject<ReceivedData>();
+                var exactMessage = message as PrintRequestMessageV1;
 
-                if (receivedData != null)
+                if (message != null)
                 {
-                    Print(receivedData);
+                    Print(exactMessage);
                 }
 
                 Log.LogMessage(
-                    "Data Received:" + JsonConvert.SerializeObject(data));
+                    "Data Received:" + message.ToJson());
 
                 if (_sendConfirmationReceipt)
                 {
-                    SendMessage(new ResponseConfirmation(data).GetJObject()!);
+                    PrintaDotStreamHandler.Write(exactMessage.ToJson());
                 }
-
-                SendMessage(data);
             }
         }
 
-
-        private void Print(ReceivedData data)
+        private void Print(PrintRequestMessageV1 message)
         {
             try
             {
-                _printService.PrintSample(data);
-                Log.LogMessage($"Print job completed: {data.SampleName} - {data.Barcode}");
+                _printService.PrintRequestMessageV1(message);
+                Log.LogMessage($"Print job completed: {message.Version} - {message.Type}");
             }
             catch (Exception ex)
             {
                 Log.LogMessage($"Print error: {ex.Message}");
             }
-        }
-
-        private JObject? Read()
-        {
-            Log.LogMessage("Waiting for Data");
-
-            Stream stdin = Console.OpenStandardInput();
-
-            byte[] lengthBytes = new byte[4];
-            stdin.Read(lengthBytes, 0, 4);
-
-            char[] buffer = new char[BitConverter.ToInt32(lengthBytes, 0)];
-
-            using (StreamReader reader = new StreamReader(stdin))
-                if (reader.Peek() >= 0)
-                {
-                    reader.Read(buffer, 0, buffer.Length);
-                }
-
-            return JsonConvert.DeserializeObject<JObject>(new string(buffer));
-        }
-
-        /// <summary>
-        /// Sends a message to Chrome, note that the message might not be able to reach Chrome if the stdIn / stdOut aren't properly configured (i.e. Process needs to be started by Chrome)
-        /// </summary>
-        /// <param name="data">A <see cref="JObject"/> containing the data to be sent.</param>
-        public void SendMessage(JObject data)
-        {
-            Log.LogMessage("Sending Message:" + JsonConvert.SerializeObject(data));
-
-            byte[] bytes = System.Text.Encoding.UTF8.GetBytes(data.ToString(Formatting.None));
-            Stream stdout = Console.OpenStandardOutput();
-
-            stdout.WriteByte((byte)((bytes.Length >> 0) & 0xFF));
-            stdout.WriteByte((byte)((bytes.Length >> 8) & 0xFF));
-            stdout.WriteByte((byte)((bytes.Length >> 16) & 0xFF));
-            stdout.WriteByte((byte)((bytes.Length >> 24) & 0xFF));
-            stdout.Write(bytes, 0, bytes.Length);
-            stdout.Flush();
         }
 
         #region Chromium Native Messaging Manifest
@@ -135,7 +94,7 @@ namespace PrintaDot.NativeMessaging
             {
                 Log.LogMessage("Generating Manifest");
 
-                string manifest = JsonConvert.SerializeObject(new Manifest());
+                string manifest = _manifest.ToJson();
 
                 File.WriteAllText(_manifest.ManifestPath, manifest);
 

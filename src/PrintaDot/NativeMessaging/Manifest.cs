@@ -1,23 +1,22 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace PrintaDot.NativeMessaging
 {
-    internal class Manifest
+    public class Manifest
     {
-        [JsonProperty("name")]
+        [JsonPropertyName("name")]
         public string HostName => "com.printadot";
 
-        [JsonProperty("description")]
+        [JsonPropertyName("description")]
         public string Description => "PrintaDot host application";
 
-        [JsonProperty("path")]
+        [JsonPropertyName("path")]
         public string ExecuteablePath => Utils.AssemblyExecuteablePath();
 
-        [JsonProperty("type")]
+        [JsonPropertyName("type")]
         public string Type => "stdio";
-
-        [JsonProperty("allowed_origins")]
-        public readonly string[] AllowedOrigins = ["chrome-extension://ncpdldoackcgjeocgpkjbfimpdjkolpg/"];
+        [JsonPropertyName("allowed_origins")]
+        public string[] AllowedOrigins { get; set; } = ["chrome-extension://ncpdldoackcgjeocgpkjbfimpdjkolpg/"];
 
         [JsonIgnore]
         public string ManifestPath => Path.Combine(Utils.AssemblyLoadDirectory() ?? "", HostName + "-manifest.json");
