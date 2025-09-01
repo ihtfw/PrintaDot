@@ -1,4 +1,4 @@
-﻿using PrintaDot.NativeMessaging.CommunicationProtocol.V1;
+﻿using PrintaDot.CommunicationProtocol.V1;
 using System.Drawing;
 using System.Drawing.Printing;
 
