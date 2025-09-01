@@ -4,6 +4,7 @@ using System.Text.Encodings.Web;
 using System.Text.Unicode;
 
 namespace PrintaDot.Common;
+
 public static class PrintaDotJsonSerializer
 {
     private static readonly JsonSerializerOptions DefaultOptions = new();
@@ -75,8 +76,6 @@ public static class PrintaDotJsonSerializer
     public static void ApplyDefaultJsonSerializerOptions(JsonSerializerOptions target)
     {
         target.Encoder = JavaScriptEncoder.Create(UnicodeRanges.All);
-        //target.NumberHandling = JsonNumberHandling.AllowNamedFloatingPointLiterals;
         target.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-        //target.Converters.Add(new JsonStringEnumConverter());
     }
 }

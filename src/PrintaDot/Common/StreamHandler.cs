@@ -1,10 +1,15 @@
-﻿using PrintaDot.NativeMessaging.CommunicationProtocol;
+﻿using PrintaDot.CommunicationProtocol;
 using System.Text;
 
 namespace PrintaDot.Common;
 
-public static class PrintaDotStreamHandler
+public static class StreamHandler
 {
+
+    /// <summary>
+    /// Reads and decodes the message according to the native messaging protocol and
+    /// deserializes it into a Message object.
+    /// </summary>
     public static Message Read()
     {
         Stream stdin = Console.OpenStandardInput();
@@ -25,9 +30,13 @@ public static class PrintaDotStreamHandler
         return jsonString.FromJson<Message>();
     }
 
-    public static void Write(string data)
+    /// <summary>
+    /// Writes message to the standard output stream.
+    /// Encodes the message according to the native messaging protocol
+    /// </summary>
+    public static void Write(Message message)
     {
-        byte[] bytes = Encoding.UTF8.GetBytes(data);
+        byte[] bytes = Encoding.UTF8.GetBytes(message.ToJson());
         Stream stdout = Console.OpenStandardOutput();
 
         stdout.WriteByte((byte)((bytes.Length >> 0) & 0xFF));

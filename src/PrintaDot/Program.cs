@@ -1,4 +1,5 @@
-﻿using PrintaDot.NativeMessaging;
+﻿using PrintaDot.Common;
+using PrintaDot.NativeMessaging;
 
 namespace PrintaDot;
 
@@ -11,11 +12,9 @@ class Program
         Log.Active = true;
 
         Host = new Host();
-        Host.SupportedBrowsers.Add(BrowserCreator.GoogleChrome);
-        Host.SupportedBrowsers.Add(BrowserCreator.MicrosoftEdge);
 
         Host.GenerateManifest();
-        Host.Register();
+        Host.RegisterAllSupportedBrowsers();
 
         if (args.Contains("--unregister"))
         {

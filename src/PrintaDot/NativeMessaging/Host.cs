@@ -1,157 +1,106 @@
 ﻿using PrintaDot.Common;
-using PrintaDot.NativeMessaging.CommunicationProtocol;
-using PrintaDot.NativeMessaging.CommunicationProtocol.V1;
+using PrintaDot.CommunicationProtocol;
+using PrintaDot.CommunicationProtocol.V1;
 using PrintaDot.Printing;
 
-namespace PrintaDot.NativeMessaging
+namespace PrintaDot.NativeMessaging;
+
+/// <summary>
+/// Class to communicate with browsers.
+/// </summary>
+public class Host
 {
+    private readonly Manifest _manifest;
+    private bool _sendConfirmationReceipt;
+    private readonly PrintService _printService;
+
     /// <summary>
-    /// Abstract class that should be extended to communicate with browsers
+    /// List of supported browsers.
     /// </summary>
-    public class Host
+    public List<Browser> SupportedBrowsers { get; }
+
+    /// <summary>
+    /// Creates the Host object
+    /// </summary>
+    /// <param name="sendConfirmationReceipt"><see langword="true" /> for the host to automatically send message confirmation receipt.</param>
+    public Host(bool sendConfirmationReceipt = true)
     {
-        private readonly Manifest _manifest;
-        private bool _sendConfirmationReceipt;
-        private readonly PrintService _printService;
+        SupportedBrowsers = new List<Browser>(2);
 
-        /// <summary>
-        /// List of supported browsers.
-        /// </summary>
-        public List<Browser> SupportedBrowsers { get; }
+        _sendConfirmationReceipt = sendConfirmationReceipt;
 
-        /// <summary>
-        /// Creates the Host object
-        /// </summary>
-        /// <param name="sendConfirmationReceipt"><see langword="true" /> for the host to automatically send message confirmation receipt.</param>
-        public Host(bool sendConfirmationReceipt = true)
+        _manifest = new Manifest();
+        _printService = new PrintService();
+    }
+
+    /// <summary>
+    /// Starts listening for input.
+    /// </summary>
+    public void Listen()
+    {
+        if (!SupportedBrowsers.IsAnyRegistered(_manifest.HostName, _manifest.ManifestPath))
         {
-            SupportedBrowsers = new List<Browser>(2);
-
-            _sendConfirmationReceipt = sendConfirmationReceipt;
-
-            _manifest = new Manifest();
-            _printService = new PrintService();
+            throw new NotRegisteredWithBrowserException(_manifest.HostName);
         }
 
-        /// <summary>
-        /// Starts listening for input.
-        /// </summary>
-        public void Listen()
+        Message? message;
+
+        while ((message = StreamHandler.Read()) != null)
         {
-            if (!IsRegistered())
+            var exactMessage = message as PrintRequestMessageV1;
+
+            if (message != null)
             {
-                throw new NotRegisteredWithBrowserException(_manifest.HostName);
+                Print(exactMessage);
             }
 
-            Message? message;
+            Log.LogMessage("Data Received:" + message.ToJson());
 
-            while ((message = PrintaDotStreamHandler.Read()) != null)
+            if (_sendConfirmationReceipt)
             {
-                var exactMessage = message as PrintRequestMessageV1;
-
-                if (message != null)
-                {
-                    Print(exactMessage);
-                }
-
-                Log.LogMessage(
-                    "Data Received:" + message.ToJson());
-
-                if (_sendConfirmationReceipt)
-                {
-                    PrintaDotStreamHandler.Write(exactMessage.ToJson());
-                }
+                StreamHandler.Write(exactMessage.ToJson());
             }
         }
+    }
 
-        private void Print(PrintRequestMessageV1 message)
+    private void Print(PrintRequestMessageV1 message)
+    {
+        try
         {
-            try
-            {
-                _printService.PrintRequestMessageV1(message);
-                Log.LogMessage($"Print job completed: {message.Version} - {message.Type}");
-            }
-            catch (Exception ex)
-            {
-                Log.LogMessage($"Print error: {ex.Message}");
-            }
+            _printService.PrintRequestMessageV1(message);
+            Log.LogMessage($"Print job completed: {message.Version} - {message.Type}");
         }
-
-        #region Chromium Native Messaging Manifest
-        /// <summary>
-        /// Generates the manifest and saves it to the correct location.
-        /// </summary>
-        /// <param name="description">Short application description to be included in the manifest.</param>
-        /// <param name="allowedOrigins">List of extensions that should have access to the native messaging host.<br />Wildcards such as <code>chrome-extension://*/*</code> are not allowed.</param>
-        /// <param name="overwrite">Determines if the manifest should be overwritten if it already exists.<br />Defaults to <see langword="false"/>.</param>
-        public void GenerateManifest(bool overwrite = true)
+        catch (Exception ex)
         {
-            if (File.Exists(_manifest.ManifestPath) && !overwrite)
-            {
-                Log.LogMessage("Manifest exists already");
-            }
-            else
-            {
-                Log.LogMessage("Generating Manifest");
-
-                string manifest = _manifest.ToJson();
-
-                File.WriteAllText(_manifest.ManifestPath, manifest);
-
-                Log.LogMessage("Manifest Generated");
-            }
+            Log.LogMessage($"Print error: {ex.Message}");
         }
+    }
 
-        /// <summary>
-        /// Removes the manifest from application folder
-        /// </summary>
-        public void RemoveManifest()
-        {
-            if (File.Exists(_manifest.ManifestPath))
-            {
-                File.Delete(_manifest.ManifestPath);
-            }
-        }
-        #endregion
+    /// <summary>
+    /// Generates the manifest and saves it to the correct location.
+    /// </summary>
+    /// <param name="overwrite">Determines if the manifest should be overwritten if it already exists.<br />Defaults to <see langword="false"/>.</param>
+    public void GenerateManifest(bool overwrite = true)
+    {
+        _manifest.GenerateManifest(overwrite);
+    }
 
-        #region Browser Registration
-        /// <summary>
-        /// Checks if the host is registered with all required browsers.
-        /// </summary>
-        /// <returns><see langword="true"/> if the required information is present in the registry.</returns>
-        public bool IsRegistered()
-        {
-            bool result = false;
+    /// <summary>
+    /// Register all supported Browsers (Chrome and Explorer in this version of application).
+    /// </summary>
+    public void RegisterAllSupportedBrowsers()
+    {
+        SupportedBrowsers.Add(BrowserCreator.GoogleChrome);
+        SupportedBrowsers.Add(BrowserCreator.MicrosoftEdge);
 
-            foreach (Browser browser in SupportedBrowsers)
-            {
-                result = result || browser.IsRegistered(_manifest.HostName, _manifest.ManifestPath);
-            }
+        SupportedBrowsers.Register(_manifest.HostName, _manifest.ManifestPath);
+    }
 
-            return result;
-        }
-
-        /// <summary>
-        /// Register the application to open with all required browsers.
-        /// </summary>
-        public void Register()
-        {
-            foreach (Browser browser in SupportedBrowsers)
-            {
-                browser.Register(_manifest.HostName, _manifest.ManifestPath);
-            }
-        }
-
-        /// <summary>
-        /// De-register the application to open with all required browsers.
-        /// </summary>
-        public void Unregister()
-        {
-            foreach (Browser browser in SupportedBrowsers)
-            {
-                browser.Unregister(_manifest.HostName);
-            }
-        }
-        #endregion
+    /// <summary>
+    /// Unregister from all supported Browsers (Chrome and Explorer in this version of application).
+    /// </summary>
+    public void Unregister()
+    {
+        SupportedBrowsers.Unregister(_manifest.HostName);
     }
 }
