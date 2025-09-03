@@ -25,8 +25,7 @@ namespace PrintaDot.NativeMessaging
         {
             BrowserName = browserName;
 
-            regHostnameKeyLocation
-                = RegKeyBaseLocation + "\\NativeMessagingHosts\\";
+            regHostnameKeyLocation = RegKeyBaseLocation + "\\NativeMessagingHosts\\";
         }
 
         /// <summary>
@@ -41,20 +40,16 @@ namespace PrintaDot.NativeMessaging
             {
                 string targetKeyPath = regHostnameKeyLocation + Hostname;
 
-                RegistryKey? regKey 
-                    = Registry.CurrentUser.OpenSubKey(targetKeyPath, true);
+                RegistryKey? regKey = Registry.CurrentUser.OpenSubKey(targetKeyPath, true);
 
-                if (regKey != null
-                    && regKey?.GetValue("")?.ToString() == ManifestPath)
+                if (regKey != null && regKey?.GetValue("")?.ToString() == ManifestPath)
                 {
                     return true;
                 }
             }
             else
             {
-                throw new NotImplementedException(
-                    "Registration verification not implemented on this " +
-                    "platform.");
+                throw new NotImplementedException("Registration verification not implemented on this " + "platform.");
             }
 
             return false;
@@ -71,8 +66,7 @@ namespace PrintaDot.NativeMessaging
             {
                 string targetKeyPath = regHostnameKeyLocation + Hostname;
 
-                RegistryKey? regKey
-                    = Registry.CurrentUser.OpenSubKey(targetKeyPath, true);
+                RegistryKey? regKey = Registry.CurrentUser.OpenSubKey(targetKeyPath, true);
 
                 if (regKey == null)
                 {
@@ -83,14 +77,11 @@ namespace PrintaDot.NativeMessaging
 
                 regKey.Close();
 
-                Log.LogMessage(
-                    "Registered host (" + Hostname + ") with browser "
-                    + BrowserName);
+                Log.LogMessage("Registered host (" + Hostname + ") with browser " + BrowserName);
             }
             else
             {
-                throw new NotImplementedException(
-                    "Registration not implemented on this platform.");
+                throw new NotImplementedException("Registration not implemented on this platform.");
             }
         }
 
@@ -104,8 +95,7 @@ namespace PrintaDot.NativeMessaging
             {
                 string targetKeyPath = regHostnameKeyLocation + Hostname;
 
-                RegistryKey? regKey 
-                    = Registry.CurrentUser.OpenSubKey(targetKeyPath, true);
+                RegistryKey? regKey = Registry.CurrentUser.OpenSubKey(targetKeyPath, true);
 
                 if (regKey != null)
                 {
@@ -114,14 +104,11 @@ namespace PrintaDot.NativeMessaging
 
                 regKey?.Close();
 
-                Log.LogMessage(
-                    "Unregistered host (" + Hostname + ") with browser "
-                    + BrowserName);
+                Log.LogMessage("Unregistered host (" + Hostname + ") with browser " + BrowserName);
             }
             else
             {
-                throw new NotImplementedException(
-                   "Registration removal not implemented on this platform.");
+                throw new NotImplementedException("Registration removal not implemented on this platform.");
             }
         }
 

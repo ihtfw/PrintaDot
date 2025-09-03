@@ -36,6 +36,8 @@ public static class StreamHandler
     /// </summary>
     public static void Write(Message message)
     {
+        Log.LogMessage("Sending... " + message.ToJson());
+
         byte[] bytes = Encoding.UTF8.GetBytes(message.ToJson());
         Stream stdout = Console.OpenStandardOutput();
 
@@ -46,5 +48,7 @@ public static class StreamHandler
         stdout.Write(bytes, 0, bytes.Length);
 
         stdout.Flush();
+
+        Log.LogMessage("Message has been send");
     }
 }

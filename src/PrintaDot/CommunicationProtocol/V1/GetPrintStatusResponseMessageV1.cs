@@ -1,6 +1,9 @@
-﻿namespace PrintaDot.NativeMessaging.CommunicationProtocol.V1;
+﻿using System.Text.Json.Serialization;
 
-public class GetPrintStatusResponseMessageV1
+namespace PrintaDot.CommunicationProtocol.V1;
+
+[JsonDerivedType(typeof(GetPrintStatusResponseMessageV1), typeDiscriminator: "getPrintStatusResponseMessageV1")]
+public class GetPrintStatusResponseMessageV1 : Message
 {
     public required Guid Guid { get; set; }
     public required PrintStatus PrintStatus { get; set; }

@@ -47,32 +47,32 @@ public class Host
 
         while ((message = StreamHandler.Read()) != null)
         {
-            var exactMessage = message as PrintRequestMessageV1;
-
-            if (message != null)
+            if (message is not null)
             {
-                Print(exactMessage);
+                DefineMessageType(message);
             }
 
             Log.LogMessage("Data Received:" + message.ToJson());
 
             if (_sendConfirmationReceipt)
             {
-                StreamHandler.Write(exactMessage.ToJson());
+                StreamHandler.Write(message);
             }
         }
     }
-
-    private void Print(PrintRequestMessageV1 message)
+    
+    private void DefineMessageType(Message message)
     {
-        try
-        {
-            _printService.PrintRequestMessageV1(message);
-            Log.LogMessage($"Print job completed: {message.Version} - {message.Type}");
-        }
-        catch (Exception ex)
-        {
-            Log.LogMessage($"Print error: {ex.Message}");
+        switch (message)
+        { 
+            case PrintRequestMessageV1:
+                _printService.PrintRequestMessageV1(message as PrintRequestMessageV1);
+                break;
+            case GetPrintStatusRequestMessageV1:
+                break;
+            default:
+                break;
+
         }
     }
 

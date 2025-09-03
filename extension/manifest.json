@@ -12,7 +12,17 @@
   "icons": {
     "128": "printer.png"
   },
-  "permissions": [
-    "nativeMessaging"
+ "permissions": [
+    "nativeMessaging",
+    "activeTab"
+  ],
+  "host_permissions": [
+    "http://localhost:8081/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["http://localhost:8081/*"],
+      "js": ["content-script.js"]
+    }
   ]
 }

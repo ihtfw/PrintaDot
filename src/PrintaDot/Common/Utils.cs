@@ -12,8 +12,7 @@ public static class Utils
 
         if (codeBase == null)
         {
-            throw new InvalidOperationException(
-                "Invalid assembly directory.");
+            throw new InvalidOperationException("Invalid assembly directory.");
         }
 
         UriBuilder uri = new UriBuilder(codeBase);
@@ -30,30 +29,11 @@ public static class Utils
 
         if (codeBase == null)
         {
-            throw new InvalidOperationException(
-                "Invalid executable path.");
+            throw new InvalidOperationException("Invalid executable path.");
         }
 
         UriBuilder uri = new UriBuilder(codeBase);
 
         return Uri.UnescapeDataString(uri.Path);
-    }
-
-    public static void LogMessage(string msg)
-    {
-        LogMessage([msg]);
-    }
-
-    public static void LogMessage(string[] msgs)
-    {
-        try
-        {
-            File.AppendAllLines(MessageLogLocation, msgs);
-        }
-        catch (IOException)
-        {
-            Console.WriteLine("Could Not Log To File");
-            //Supress Exception
-        }
     }
 }

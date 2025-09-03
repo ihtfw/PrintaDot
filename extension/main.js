@@ -2,17 +2,17 @@ var port = null;
 
 connect();
 
-function sendNativeMessage(message) {
-    if (port) {
-        port.postMessage({"text": message});
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    if (request.type === "printRequest") {
+        port.postMessage(request);
     }
-}
+});
 
 function print() {
     if (port) {
         port.postMessage({
             $type: "printRequestMessageV1",
-            type: "PrintRequest",
+            type: "printRequest",
             version: 1,
             profile: "DefaultProfile",
             items: [
@@ -27,7 +27,7 @@ function print() {
 }
 
 function onNativeMessage(message) {
-    const command = message?.message;
+    const command = message?.type;
 
     if (!command) {
         console.log("No data received");
@@ -35,7 +35,7 @@ function onNativeMessage(message) {
     }
     
     const commandParams = command.split(" ");
-    console.log("Extension message received:", commandParams[0]);
+    console.log(message);
 }
 
 function onDisconnected() {

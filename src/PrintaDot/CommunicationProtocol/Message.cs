@@ -1,10 +1,11 @@
-﻿using PrintaDot.NativeMessaging.CommunicationProtocol.V1;
+﻿using PrintaDot.CommunicationProtocol.V1;
 using System.Text.Json.Serialization;
 
-namespace PrintaDot.NativeMessaging.CommunicationProtocol;
+namespace PrintaDot.CommunicationProtocol;
 
-[JsonPolymorphic(UnknownDerivedTypeHandling = JsonUnknownDerivedTypeHandling.FallBackToNearestAncestor)]
 [JsonDerivedType(typeof(PrintRequestMessageV1), typeDiscriminator: "printRequestMessageV1")]
+[JsonDerivedType(typeof(GetPrintStatusResponseMessageV1), typeDiscriminator: "getPrintStatusResponseMessageV1")]
+[JsonDerivedType(typeof(GetPrintStatusRequestMessageV1), typeDiscriminator: "getPrintStatusRequestMessageV1")]
 public class Message
 {
     public required string Type { get; set; }

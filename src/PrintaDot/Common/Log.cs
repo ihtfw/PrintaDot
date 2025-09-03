@@ -24,9 +24,7 @@ public static class Log
 
         try
         {
-            File.AppendAllText(
-                MessageLogLocation,
-                msg + Environment.NewLine);
+            File.AppendAllText(MessageLogLocation, msg + Environment.NewLine);
         }
         catch (IOException)
         {
