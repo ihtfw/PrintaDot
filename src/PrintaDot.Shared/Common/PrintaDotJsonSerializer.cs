@@ -3,7 +3,7 @@ using System.Text.Json;
 using System.Text.Encodings.Web;
 using System.Text.Unicode;
 
-namespace PrintaDot.Common;
+namespace PrintaDot.Shared.Common;
 
 public static class PrintaDotJsonSerializer
 {
@@ -16,7 +16,7 @@ public static class PrintaDotJsonSerializer
 
     public static T FromJson<T>(this string self, bool safe = false)
     {
-        return (T)FromJson(self, typeof(T), safe);
+        return (T)self.FromJson(typeof(T), safe);
     }
 
     public static object FromJson(this string self, Type type, bool safe = false)

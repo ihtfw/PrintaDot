@@ -1,9 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.12.35707.178 d17.12
+VisualStudioVersion = 17.12.35707.178
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrintaDot", "PrintaDot\PrintaDot.csproj", "{8650C91B-68CB-46ED-AA5E-FB760604BF38}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrintaDot.Shared", "PrintaDot.Shared\PrintaDot.Shared.csproj", "{F43F7236-D085-4C7D-BA7B-FBBF14BDB3B6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrintaDot.Blazor", "PrintaDot.Blazor\PrintaDot.Blazor.csproj", "{AB1E2317-7413-4F18-9FB9-1D8EE5D0DA76}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,8 +19,19 @@ Global
 		{8650C91B-68CB-46ED-AA5E-FB760604BF38}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8650C91B-68CB-46ED-AA5E-FB760604BF38}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8650C91B-68CB-46ED-AA5E-FB760604BF38}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F43F7236-D085-4C7D-BA7B-FBBF14BDB3B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F43F7236-D085-4C7D-BA7B-FBBF14BDB3B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F43F7236-D085-4C7D-BA7B-FBBF14BDB3B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F43F7236-D085-4C7D-BA7B-FBBF14BDB3B6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AB1E2317-7413-4F18-9FB9-1D8EE5D0DA76}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB1E2317-7413-4F18-9FB9-1D8EE5D0DA76}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AB1E2317-7413-4F18-9FB9-1D8EE5D0DA76}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AB1E2317-7413-4F18-9FB9-1D8EE5D0DA76}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E86E801C-7D03-406B-A84A-E51AE533493F}
 	EndGlobalSection
 EndGlobal

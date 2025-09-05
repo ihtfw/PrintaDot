@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace PrintaDot.Common;
+namespace PrintaDot.Shared.Common;
 
 public static class Utils
 {

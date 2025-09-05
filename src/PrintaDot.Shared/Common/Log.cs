@@ -1,4 +1,4 @@
-﻿namespace PrintaDot.Common;
+﻿namespace PrintaDot.Shared.Common;
 
 /// <summary>
 /// Controls the logging behavior of the application

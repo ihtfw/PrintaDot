@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace PrintaDot.CommunicationProtocol.V1;
+namespace PrintaDot.Shared.CommunicationProtocol.V1;
 
 [JsonDerivedType(typeof(PrintRequestMessageV1), typeDiscriminator: "printRequestMessageV1")]
 public class PrintRequestMessageV1 : Message

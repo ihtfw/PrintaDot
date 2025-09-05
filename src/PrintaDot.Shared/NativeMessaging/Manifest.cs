@@ -1,7 +1,7 @@
-﻿using PrintaDot.Common;
+﻿using PrintaDot.Shared.Common;
 using System.Text.Json.Serialization;
 
-namespace PrintaDot.NativeMessaging;
+namespace PrintaDot.Shared.NativeMessaging;
 
 public class Manifest
 {

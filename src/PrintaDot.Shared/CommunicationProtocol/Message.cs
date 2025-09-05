@@ -1,7 +1,7 @@
-﻿using PrintaDot.CommunicationProtocol.V1;
+﻿using PrintaDot.Shared.CommunicationProtocol.V1;
 using System.Text.Json.Serialization;
 
-namespace PrintaDot.CommunicationProtocol;
+namespace PrintaDot.Shared.CommunicationProtocol;
 
 [JsonDerivedType(typeof(PrintRequestMessageV1), typeDiscriminator: "printRequestMessageV1")]
 [JsonDerivedType(typeof(GetPrintStatusResponseMessageV1), typeDiscriminator: "getPrintStatusResponseMessageV1")]

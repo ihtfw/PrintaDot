@@ -1,7 +1,7 @@
 ﻿using Microsoft.Win32;
-using PrintaDot.Common;
+using PrintaDot.Shared.Common;
 
-namespace PrintaDot.NativeMessaging
+namespace PrintaDot.Shared.NativeMessaging
 {
     /// <summary>
     /// Represent any browser derived from Google's Chromium.

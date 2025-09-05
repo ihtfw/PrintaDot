@@ -1,8 +1,8 @@
-﻿using PrintaDot.CommunicationProtocol.V1;
+﻿using PrintaDot.Shared.CommunicationProtocol.V1;
 using System.Drawing;
 using System.Drawing.Printing;
 
-namespace PrintaDot.Printing;
+namespace PrintaDot.Shared.Printing;
 
 public class PrintService
 {

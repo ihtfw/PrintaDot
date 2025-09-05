@@ -1,5 +1,5 @@
-﻿using PrintaDot.Common;
-using PrintaDot.NativeMessaging;
+﻿using PrintaDot.Shared.Common;
+using PrintaDot.Shared.NativeMessaging;
 
 namespace PrintaDot;
 

@@ -1,4 +1,4 @@
-﻿namespace PrintaDot.Common;
+﻿namespace PrintaDot.Shared.Common;
 
 /// <summary>
 /// Exception raised when trying to interact with chrome while the 

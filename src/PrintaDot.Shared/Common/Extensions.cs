@@ -1,6 +1,6 @@
-﻿using PrintaDot.NativeMessaging;
+﻿using PrintaDot.Shared.NativeMessaging;
 
-namespace PrintaDot.Common;
+namespace PrintaDot.Shared.Common;
 
 public static class Extensions
 {

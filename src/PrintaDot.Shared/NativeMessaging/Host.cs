@@ -1,9 +1,9 @@
-﻿using PrintaDot.Common;
-using PrintaDot.CommunicationProtocol;
-using PrintaDot.CommunicationProtocol.V1;
-using PrintaDot.Printing;
+﻿using PrintaDot.Shared.Common;
+using PrintaDot.Shared.CommunicationProtocol;
+using PrintaDot.Shared.CommunicationProtocol.V1;
+using PrintaDot.Shared.Printing;
 
-namespace PrintaDot.NativeMessaging;
+namespace PrintaDot.Shared.NativeMessaging;
 
 /// <summary>
 /// Class to communicate with browsers.

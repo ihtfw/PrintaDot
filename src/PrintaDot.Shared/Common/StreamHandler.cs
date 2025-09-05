@@ -1,7 +1,7 @@
-﻿using PrintaDot.CommunicationProtocol;
+﻿using PrintaDot.Shared.CommunicationProtocol;
 using System.Text;
 
-namespace PrintaDot.Common;
+namespace PrintaDot.Shared.Common;
 
 public static class StreamHandler
 {
@@ -41,10 +41,10 @@ public static class StreamHandler
         byte[] bytes = Encoding.UTF8.GetBytes(message.ToJson());
         Stream stdout = Console.OpenStandardOutput();
 
-        stdout.WriteByte((byte)((bytes.Length >> 0) & 0xFF));
-        stdout.WriteByte((byte)((bytes.Length >> 8) & 0xFF));
-        stdout.WriteByte((byte)((bytes.Length >> 16) & 0xFF));
-        stdout.WriteByte((byte)((bytes.Length >> 24) & 0xFF));
+        stdout.WriteByte((byte)(bytes.Length >> 0 & 0xFF));
+        stdout.WriteByte((byte)(bytes.Length >> 8 & 0xFF));
+        stdout.WriteByte((byte)(bytes.Length >> 16 & 0xFF));
+        stdout.WriteByte((byte)(bytes.Length >> 24 & 0xFF));
         stdout.Write(bytes, 0, bytes.Length);
 
         stdout.Flush();
