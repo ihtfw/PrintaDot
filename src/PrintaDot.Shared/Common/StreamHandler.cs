@@ -3,6 +3,9 @@ using System.Text;
 
 namespace PrintaDot.Shared.Common;
 
+/// <summary>
+/// Handle main stream of communication between browser and native application.
+/// </summary>
 public static class StreamHandler
 {
 
@@ -27,7 +30,9 @@ public static class StreamHandler
 
         var jsonString = new string(buffer);
 
-        return jsonString.FromJson<Message>();
+        Log.LogMessage(jsonString);
+
+        return jsonString.FromJsonToMessage();
     }
 
     /// <summary>

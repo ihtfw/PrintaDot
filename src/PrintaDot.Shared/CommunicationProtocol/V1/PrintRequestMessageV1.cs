@@ -1,8 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿namespace PrintaDot.Shared.CommunicationProtocol.V1;
 
-namespace PrintaDot.Shared.CommunicationProtocol.V1;
-
-[JsonDerivedType(typeof(PrintRequestMessageV1), typeDiscriminator: "printRequestMessageV1")]
 public class PrintRequestMessageV1 : Message
 {
     public string? Profile { get; set; }

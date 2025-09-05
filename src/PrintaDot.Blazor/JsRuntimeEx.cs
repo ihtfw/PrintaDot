@@ -6,7 +6,6 @@ namespace PrintaDot.Blazor;
 
 public static class JsRuntimeEx
 {
-
     public static async ValueTask<bool> Print(this IJSRuntime jsRuntime, PrintRequestMessageV1 message, Action<Exception>? errorCallback = null)
     {
         try

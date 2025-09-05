@@ -49,8 +49,9 @@ public class Host
         {
             if (message is not null)
             {
-                DefineMessageType(message);
+                ProcessMessageByType(message);
             }
+            
 
             Log.LogMessage("Data Received:" + message.ToJson());
 
@@ -60,19 +61,24 @@ public class Host
             }
         }
     }
-    
-    private void DefineMessageType(Message message)
+
+    /// <summary>
+    /// Processes the message based on its specific type and routes it to the appropriate handler.
+    /// </summary>
+    /// <param name="message">The message to process and route.</param>
+    private void ProcessMessageByType(Message message)
     {
         switch (message)
-        { 
+        {
             case PrintRequestMessageV1:
                 _printService.PrintRequestMessageV1(message as PrintRequestMessageV1);
                 break;
             case GetPrintStatusRequestMessageV1:
+                // TODO: Add handling for GetPrintStatusRequestMessageV1
                 break;
             default:
+                // TODO: Add logging or handling for unknown message types
                 break;
-
         }
     }
 

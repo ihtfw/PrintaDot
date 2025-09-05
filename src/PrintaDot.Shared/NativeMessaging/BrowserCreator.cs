@@ -1,6 +1,6 @@
 ﻿namespace PrintaDot.Shared.NativeMessaging;
 
-partial class BrowserCreator
+public static class BrowserCreator
 {
     /// <summary>
     /// <see cref="ChromiumBrowser"/> object for Google Chrome.

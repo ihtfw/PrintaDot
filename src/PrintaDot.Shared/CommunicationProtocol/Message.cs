@@ -1,11 +1,8 @@
-﻿using PrintaDot.Shared.CommunicationProtocol.V1;
-using System.Text.Json.Serialization;
+﻿namespace PrintaDot.Shared.CommunicationProtocol;
 
-namespace PrintaDot.Shared.CommunicationProtocol;
-
-[JsonDerivedType(typeof(PrintRequestMessageV1), typeDiscriminator: "printRequestMessageV1")]
-[JsonDerivedType(typeof(GetPrintStatusResponseMessageV1), typeDiscriminator: "getPrintStatusResponseMessageV1")]
-[JsonDerivedType(typeof(GetPrintStatusRequestMessageV1), typeDiscriminator: "getPrintStatusRequestMessageV1")]
+/// <summary>
+/// Represents base class for messages.
+/// </summary>
 public class Message
 {
     public required string Type { get; set; }

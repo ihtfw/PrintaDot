@@ -1,6 +1,8 @@
-﻿using System.Text.Json.Serialization;
-using System.Text.Json;
+﻿using PrintaDot.Shared.CommunicationProtocol;
+using PrintaDot.Shared.CommunicationProtocol.V1;
 using System.Text.Encodings.Web;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Text.Unicode;
 
 namespace PrintaDot.Shared.Common;
@@ -13,6 +15,8 @@ public static class PrintaDotJsonSerializer
     {
         ApplyDefaultJsonSerializerOptions(DefaultOptions);
     }
+
+
 
     public static T FromJson<T>(this string self, bool safe = false)
     {
@@ -72,10 +76,97 @@ public static class PrintaDotJsonSerializer
         return JsonSerializer.Serialize(value, typeof(TBase), options);
     }
 
+    public static Message? FromJsonToMessage(this string self)
+    {
+        try
+        {
+            Log.LogMessage("started deserialization");
+            using var document = JsonDocument.Parse(self);
+            var root = document.RootElement;
+
+            if (!root.TryGetProperty("type", out var typeProperty) ||
+                !root.TryGetProperty("version", out var versionProperty))
+            {
+                return null;
+            }
+
+            Log.LogMessage("types added");
+
+            var type = typeProperty.GetString();
+            var version = versionProperty.GetInt32();
+
+            if (string.IsNullOrEmpty(type))
+                return null;
+
+            return DeserializeWithFallback(self, type, version);
+        }
+        catch (JsonException)
+        {
+            return null;
+        }
+    }
+
+    private static Message? DeserializeWithFallback(string json, string messageType, int requestedVersion)
+    {
+        if (!MessageTypes.SupportedMessageVersions.TryGetValue(messageType, out var supportedVersions) ||
+            supportedVersions.Count == 0)
+        {
+            return null;
+        }
+
+        var sortedVersions = supportedVersions.OrderByDescending(v => v).ToList();
+
+        foreach (var targetVersion in sortedVersions)
+        {
+            if (targetVersion > requestedVersion)
+                continue;
+
+            try
+            {
+                var message = DeserializeToVersion(json, messageType, targetVersion);
+                if (message != null)
+                {
+                    message.Version = targetVersion;
+                    return message;
+                }
+            }
+            catch (JsonException)
+            {
+                continue;
+            }
+        }
+
+        return null;
+    }
+
+    private static Message? DeserializeToVersion(string json, string messageType, int targetVersion)
+    {
+        return messageType switch
+        {
+            MessageTypes.PrintRequestMessage => targetVersion switch
+            {
+                0 => json.FromJson<Message>(),
+                1 => json.FromJson<PrintRequestMessageV1>(),
+                _ => null
+            },
+            MessageTypes.GetPrintStatusRequestMessage => targetVersion switch
+            {
+                1 => json.FromJson<GetPrintStatusRequestMessageV1>(),
+                _ => null
+            },
+            MessageTypes.GetPrintStatusResponseMessage => targetVersion switch
+            {
+                1 => json.FromJson<GetPrintStatusResponseMessageV1>(),
+                _ => null
+            },
+            _ => null
+        };
+    }
 
     public static void ApplyDefaultJsonSerializerOptions(JsonSerializerOptions target)
     {
         target.Encoder = JavaScriptEncoder.Create(UnicodeRanges.All);
         target.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+        target.UnmappedMemberHandling = JsonUnmappedMemberHandling.Skip;
     }
 }

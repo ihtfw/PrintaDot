@@ -3,6 +3,9 @@ using System.Text.Json.Serialization;
 
 namespace PrintaDot.Shared.NativeMessaging;
 
+/// <summary>
+/// This class is needed for generation of manifest for native application.
+/// </summary>
 public class Manifest
 {
     [JsonPropertyName("name")]
@@ -17,7 +20,7 @@ public class Manifest
     [JsonPropertyName("type")]
     public string Type => "stdio";
     [JsonPropertyName("allowed_origins")]
-    public string[] AllowedOrigins { get; set; } = ["chrome-extension://ncpdldoackcgjeocgpkjbfimpdjkolpg/"];
+    public string[] AllowedOrigins { get; set; } = ["chrome-extension://liboolcldjbcokagdcbmgkgcoipbglli/"];
 
     [JsonIgnore]
     public string ManifestPath => Path.Combine(Utils.AssemblyLoadDirectory() ?? "", HostName + "-manifest.json");
