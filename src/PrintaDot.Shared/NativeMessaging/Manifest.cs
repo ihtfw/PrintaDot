@@ -20,7 +20,7 @@ public class Manifest
     [JsonPropertyName("type")]
     public string Type => "stdio";
     [JsonPropertyName("allowed_origins")]
-    public string[] AllowedOrigins { get; set; } = ["chrome-extension://liboolcldjbcokagdcbmgkgcoipbglli/"];
+    public string[] AllowedOrigins { get; set; } = ["chrome-extension://ncpdldoackcgjeocgpkjbfimpdjkolpg/"];
 
     [JsonIgnore]
     public string ManifestPath => Path.Combine(Utils.AssemblyLoadDirectory() ?? "", HostName + "-manifest.json");

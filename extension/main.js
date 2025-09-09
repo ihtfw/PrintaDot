@@ -8,18 +8,16 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     }
 });
 
-function print() {
+function print(header, barcode) {
     if (port) {
         port.postMessage({
-            $type: "printRequestMessageV1",
             type: "printRequest",
             version: 1,
             profile: "DefaultProfile",
             items: [
                 {
-                    header: "Sample Product",
-                    barcode: "1234567890123",
-                    figures: "Additional information"
+                    header: header,
+                    barcode: barcode
                 }
             ]
         });
