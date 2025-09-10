@@ -1,4 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
+    localizeHtmlPage();
+
     const printBtn = document.getElementById('printBtn');
     const settingsBtn = document.getElementById('settingsBtn');
     const closeBtn = document.getElementById('closeBtn');
@@ -33,7 +35,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const header = headerInput.value.trim();
         const barcode = barcodeInput.value.trim();
 
-        if (!header && !barcode) {
+        if (!header || !barcode) {
             alert('Please fill all fields');
             headerInput.focus();
             return;

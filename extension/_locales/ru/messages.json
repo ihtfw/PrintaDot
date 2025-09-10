@@ -1,0 +1,46 @@
+{
+  "appName": {
+    "message": "ПРИНТАДОТ",
+    "description": "Название расширения"
+  },
+  "appDescription": {
+    "message": "Печать этикеток с заголовками и штрих-кодами",
+    "description": "Описание расширения"
+  },
+  "headerLabel": {
+    "message": "Заголовок:",
+    "description": "Подпись для поля заголовка"
+  },
+  "headerPlaceholder": {
+    "message": "Введите заголовок",
+    "description": "Плейсхолдер для поля заголовка"
+  },
+  "barcodeLabel": {
+    "message": "Штрих-код:",
+    "description": "Подпись для поля штрих-кода"
+  },
+  "barcodePlaceholder": {
+    "message": "Введите штрих-код",
+    "description": "Плейсхолдер для поля штрих-кода"
+  },
+  "printButton": {
+    "message": "Печать",
+    "description": "Текст кнопки печати"
+  },
+  "settingsButton": {
+    "message": "Настройки",
+    "description": "Текст кнопки настроек"
+  },
+  "closeTitle": {
+    "message": "Закрыть",
+    "description": "Заголовок кнопки закрытия"
+  },
+  "settingsTitle": {
+    "message": "Настройки",
+    "description": "Заголовок кнопки настроек"
+  },
+  "emptyFieldError": {
+    "message": "Пожалуйста, заполните хотя бы одно поле",
+    "description": "Ошибка при пустых полях"
+  }
+}

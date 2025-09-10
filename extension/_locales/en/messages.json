@@ -1,0 +1,46 @@
+{
+  "appName": {
+    "message": "PrintaDot",
+    "description": "The name of the extension"
+  },
+  "appDescription": {
+    "message": "Print labels with headers and barcodes",
+    "description": "The description of the extension"
+  },
+  "headerLabel": {
+    "message": "Header:",
+    "description": "Label for header input"
+  },
+  "headerPlaceholder": {
+    "message": "Enter header",
+    "description": "Placeholder for header input"
+  },
+  "barcodeLabel": {
+    "message": "Barcode:",
+    "description": "Label for barcode input"
+  },
+  "barcodePlaceholder": {
+    "message": "Enter barcode",
+    "description": "Placeholder for barcode input"
+  },
+  "printButton": {
+    "message": "Print",
+    "description": "Text for print button"
+  },
+  "settingsButton": {
+    "message": "Settings",
+    "description": "Text for settings button"
+  },
+  "closeTitle": {
+    "message": "Close",
+    "description": "Title for close button"
+  },
+  "settingsTitle": {
+    "message": "Settings",
+    "description": "Title for settings button"
+  },
+  "emptyFieldError": {
+    "message": "Please fill in at least one field",
+    "description": "Error message when both fields are empty"
+  }
+}
