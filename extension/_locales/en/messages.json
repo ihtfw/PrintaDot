@@ -7,6 +7,7 @@
     "message": "Print labels with headers and barcodes",
     "description": "The description of the extension"
   },
+  
   "headerLabel": {
     "message": "Header:",
     "description": "Label for header input"
@@ -42,5 +43,196 @@
   "emptyFieldError": {
     "message": "Please fill in at least one field",
     "description": "Error message when both fields are empty"
+  },
+  
+  "settingsTitleText": {
+    "message": "PrintaDot - Settings",
+    "description": "Title of settings page"
+  },
+  "saveSettingsButton": {
+    "message": "Save Settings",
+    "description": "Save settings button text"
+  },
+  "resetSettingsButton": {
+    "message": "Reset to Default",
+    "description": "Reset settings button text"
+  },
+  "newPresetButton": {
+    "message": "New Preset",
+    "description": "New preset button text"
+  },
+  "deletePresetButton": {
+    "message": "Delete Preset",
+    "description": "Delete preset button text"
+  },
+  "presetNamePlaceholder": {
+    "message": "New preset name",
+    "description": "Placeholder for preset name input"
+  },
+  
+  "mainSettingsGroup": {
+    "message": "Main Settings",
+    "description": "Main settings group title"
+  },
+  "printerSettingsGroup": {
+    "message": "Printer",
+    "description": "Printer settings group title"
+  },
+  "textSettingsGroup": {
+    "message": "Text",
+    "description": "Text settings group title"
+  },
+  "barcodeTypeGroup": {
+    "message": "Barcode Type",
+    "description": "Barcode type group title"
+  },
+  "numbersSettingsGroup": {
+    "message": "Numbers",
+    "description": "Numbers settings group title"
+  },
+  "barcodeSettingsGroup": {
+    "message": "Barcode",
+    "description": "Barcode settings group title"
+  },
+  
+  "paperHeightLabel": {
+    "message": "Paper Height",
+    "description": "Paper height label"
+  },
+  "paperWidthLabel": {
+    "message": "Paper Width",
+    "description": "Paper width label"
+  },
+  "labelHeightLabel": {
+    "message": "Label Height",
+    "description": "Label height label"
+  },
+  "labelWidthLabel": {
+    "message": "Label Width",
+    "description": "Label width label"
+  },
+  "marginXLabel": {
+    "message": "Margin X",
+    "description": "Margin X label"
+  },
+  "marginYLabel": {
+    "message": "Margin Y",
+    "description": "Margin Y label"
+  },
+  "offsetXLabel": {
+    "message": "Offset X",
+    "description": "Offset X label"
+  },
+  "offsetYLabel": {
+    "message": "Offset Y",
+    "description": "Offset Y label"
+  },
+  "labelsPerRowLabel": {
+    "message": "Labels per Row",
+    "description": "Labels per row label"
+  },
+  "labelsPerColumnLabel": {
+    "message": "Labels per Column",
+    "description": "Labels per column label"
+  },
+  
+  "printerNameLabel": {
+    "message": "Printer Name",
+    "description": "Printer name label"
+  },
+  "defaultPrinterOption": {
+    "message": "Default Printer",
+    "description": "Default printer option"
+  },
+  "customPrinterOption": {
+    "message": "Custom printer...",
+    "description": "Custom printer option"
+  },
+  
+  "alignmentLabel": {
+    "message": "Alignment",
+    "description": "Alignment label"
+  },
+  "alignmentLeft": {
+    "message": "Left",
+    "description": "Left alignment option"
+  },
+  "alignmentCenter": {
+    "message": "Center",
+    "description": "Center alignment option"
+  },
+  "alignmentRight": {
+    "message": "Right",
+    "description": "Right alignment option"
+  },
+  "alignmentStretched": {
+    "message": "Stretched",
+    "description": "Stretched alignment option"
+  },
+  "maxLengthLabel": {
+    "message": "Max Length",
+    "description": "Max length label"
+  },
+  "trimLengthLabel": {
+    "message": "Trim After",
+    "description": "Trim length label"
+  },
+  "fontSizeLabel": {
+    "message": "Font Size",
+    "description": "Font size label"
+  },
+  "angleLabel": {
+    "message": "Angle",
+    "description": "Angle label"
+  },
+  
+  "dataMatrixLabel": {
+    "message": "DataMatrix",
+    "description": "DataMatrix checkbox label"
+  },
+  
+  "saveSuccessMessage": {
+    "message": "Settings saved successfully!",
+    "description": "Settings saved successfully message"
+  },
+  "resetSuccessMessage": {
+    "message": "Settings reset to default values!",
+    "description": "Settings reset successfully message"
+  },
+  "presetCreatedMessage": {
+    "message": "Preset \"$1\" created successfully!",
+    "description": "Preset created message"
+  },
+  "presetSavedMessage": {
+    "message": "Preset \"$1\" saved successfully!",
+    "description": "Preset saved message"
+  },
+  "presetDeletedMessage": {
+    "message": "Preset \"$1\" deleted successfully!",
+    "description": "Preset deleted message"
+  },
+  "presetExistsMessage": {
+    "message": "Preset \"$1\" already exists. Overwrite?",
+    "description": "Preset already exists message"
+  },
+  "deletePresetConfirm": {
+    "message": "Are you sure you want to delete preset \"$1\"?",
+    "description": "Delete preset confirmation"
+  },
+  "resetConfirm": {
+    "message": "Are you sure you want to reset settings to default values?",
+    "description": "Reset settings confirmation"
+  },
+  "noPresetNameMessage": {
+    "message": "Please enter a preset name",
+    "description": "No preset name message"
+  },
+  "cantDeleteDefault": {
+    "message": "Cannot delete default preset",
+    "description": "Cannot delete default preset message"
+  },
+  "cantOverwriteDefault": {
+    "message": "Cannot overwrite default preset. Create a new preset instead.",
+    "description": "Cannot overwrite default preset message"
   }
 }

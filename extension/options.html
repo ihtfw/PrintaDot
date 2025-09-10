@@ -1,15 +1,178 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="utf-8">
-    <title>Settings</title>
+    <title>__MSG_settingsTitleText__</title>
+    <link rel="stylesheet" href="options.css">
 </head>
+
 <body>
-    <div>
-        Settings will be here
+    <div class="container">
+        <h1>__MSG_settingsTitleText__</h1>
+
+        <div class="presets-section">
+            <div class="presets-controls">
+                <select id="presetSelect">
+                    <option value="default">Default Preset</option>
+                </select>
+                <input type="text" id="presetName" placeholder="__MSG_presetNamePlaceholder__"
+                    class="preset-name-input">
+                <button id="newPresetBtn" class="small-btn">__MSG_newPresetButton__</button>
+                <button id="deletePresetBtn" class="small-btn">__MSG_deletePresetButton__</button>
+            </div>
+        </div>
+
+        <div class="settings-grid">
+            <div class="settings-group">
+                <div class="group-header">
+                    <span>__MSG_mainSettingsGroup__</span>
+                    <button class="group-toggle">▼</button>
+                </div>
+                <div class="group-content">
+                    <div class="setting-row"><span class="setting-label">__MSG_paperHeightLabel__</span>
+                        <div class="setting-input"><input type="number" id="paperHeight" min="1"></div>
+                    </div>
+                    <div class="setting-row"><span class="setting-label">__MSG_paperWidthLabel__</span>
+                        <div class="setting-input"><input type="number" id="paperWidth" min="1"></div>
+                    </div>
+                    <div class="setting-row"><span class="setting-label">__MSG_labelHeightLabel__</span>
+                        <div class="setting-input"><input type="number" id="labelHeight" min="1"></div>
+                    </div>
+                    <div class="setting-row"><span class="setting-label">__MSG_labelWidthLabel__</span>
+                        <div class="setting-input"><input type="number" id="labelWidth" min="1"></div>
+                    </div>
+                    <div class="setting-row"><span class="setting-label">__MSG_marginXLabel__</span>
+                        <div class="setting-input"><input type="number" id="marginX" min="0"></div>
+                    </div>
+                    <div class="setting-row"><span class="setting-label">__MSG_marginYLabel__</span>
+                        <div class="setting-input"><input type="number" id="marginY" min="0"></div>
+                    </div>
+                    <div class="setting-row"><span class="setting-label">__MSG_offsetXLabel__</span>
+                        <div class="setting-input"><input type="number" id="offsetX" min="0"></div>
+                    </div>
+                    <div class="setting-row"><span class="setting-label">__MSG_offsetYLabel__</span>
+                        <div class="setting-input"><input type="number" id="offsetY" min="0"></div>
+                    </div>
+                    <div class="setting-row"><span class="setting-label">__MSG_labelsPerRowLabel__</span>
+                        <div class="setting-input"><input type="number" id="labelsPerRow" min="1"></div>
+                    </div>
+                    <div class="setting-row"><span class="setting-label">__MSG_labelsPerColumnLabel__</span>
+                        <div class="setting-input"><input type="number" id="labelsPerColumn" min="1"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-group">
+                <div class="group-header">
+                    <span>__MSG_textSettingsGroup__</span>
+                    <button class="group-toggle">▼</button>
+                </div>
+                <div class="group-content">
+                    <div class="setting-row"><span class="setting-label">__MSG_alignmentLabel__</span>
+                        <div class="setting-input"><select id="textAlignment">
+                                <option value="left">__MSG_alignmentLeft__</option>
+                                <option value="center">__MSG_alignmentCenter__</option>
+                                <option value="right">__MSG_alignmentRight__</option>
+                                <option value="stretched">__MSG_alignmentStretched__</option>
+                            </select></div>
+                    </div>
+                    <div class="setting-row"><span class="setting-label">__MSG_maxLengthLabel__</span>
+                        <div class="setting-input"><input type="number" id="textMaxLength" min="1"></div>
+                    </div>
+                    <div class="setting-row"><span class="setting-label">__MSG_trimLengthLabel__</span>
+                        <div class="setting-input"><input type="number" id="textTrimLength" min="1"></div>
+                    </div>
+                    <div class="setting-row"><span class="setting-label">__MSG_fontSizeLabel__</span>
+                        <div class="setting-input"><input type="number" id="textFontSize" min="1"></div>
+                    </div>
+                    <div class="setting-row"><span class="setting-label">__MSG_angleLabel__</span>
+                        <div class="setting-input"><input type="number" id="textAngle" min="0" max="360"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-group">
+                <div class="group-header">
+                    <span>__MSG_printerSettingsGroup__</span>
+                    <button class="group-toggle">▼</button>
+                </div>
+                <div class="group-content">
+                    <div class="setting-row"><span class="setting-label">__MSG_printerNameLabel__</span>
+                        <div class="setting-input"><select id="printerName"></select></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-group">
+                <div class="group-header">
+                    <span>__MSG_barcodeTypeGroup__</span>
+                    <button class="group-toggle">▼</button>
+                </div>
+                <div class="group-content">
+                    <div class="setting-row"><span class="setting-label">__MSG_dataMatrixLabel__</span>
+                        <div class="setting-input">
+                            <div class="checkbox-container"><input type="checkbox" id="useDataMatrix"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-group">
+                <div class="group-header">
+                    <span>__MSG_numbersSettingsGroup__</span>
+                    <button class="group-toggle">▼</button>
+                </div>
+                <div class="group-content">
+                    <div class="setting-row"><span class="setting-label">__MSG_alignmentLabel__</span>
+                        <div class="setting-input"><select id="numbersAlignment">
+                                <option value="left">__MSG_alignmentLeft__</option>
+                                <option value="center">__MSG_alignmentCenter__</option>
+                                <option value="right">__MSG_alignmentRight__</option>
+                                <option value="stretched">__MSG_alignmentStretched__</option>
+                            </select></div>
+                    </div>
+                    <div class="setting-row"><span class="setting-label">__MSG_fontSizeLabel__</span>
+                        <div class="setting-input"><input type="number" id="numbersFontSize" min="1"></div>
+                    </div>
+                    <div class="setting-row"><span class="setting-label">__MSG_angleLabel__</span>
+                        <div class="setting-input"><input type="number" id="numbersAngle" min="0" max="360"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-group">
+                <div class="group-header">
+                    <span>__MSG_barcodeSettingsGroup__</span>
+                    <button class="group-toggle">▼</button>
+                </div>
+                <div class="group-content">
+                    <div class="setting-row"><span class="setting-label">__MSG_alignmentLabel__</span>
+                        <div class="setting-input"><select id="barcodeAlignment">
+                                <option value="left">__MSG_alignmentLeft__</option>
+                                <option value="center">__MSG_alignmentCenter__</option>
+                                <option value="right">__MSG_alignmentRight__</option>
+                                <option value="stretched">__MSG_alignmentStretched__</option>
+                            </select></div>
+                    </div>
+                    <div class="setting-row"><span class="setting-label">__MSG_fontSizeLabel__</span>
+                        <div class="setting-input"><input type="number" id="barcodeFontSize" min="1"></div>
+                    </div>
+                    <div class="setting-row"><span class="setting-label">__MSG_angleLabel__</span>
+                        <div class="setting-input"><input type="number" id="barcodeAngle" min="0" max="360"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="button-group">
+            <button id="saveBtn">__MSG_saveSettingsButton__</button>
+            <button id="resetBtn">__MSG_resetSettingsButton__</button>
+        </div>
     </div>
 
     <script src="options.js"></script>
     <script src="main.js"></script>
 </body>
+
 </html>

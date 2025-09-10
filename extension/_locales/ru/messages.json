@@ -42,5 +42,195 @@
   "emptyFieldError": {
     "message": "Пожалуйста, заполните хотя бы одно поле",
     "description": "Ошибка при пустых полях"
+  },
+   "mainSettingsGroup": {
+    "message": "Основные",
+    "description": "Main settings group title"
+  },
+  "printerSettingsGroup": {
+    "message": "Принтер",
+    "description": "Printer settings group title"
+  },
+  "textSettingsGroup": {
+    "message": "Текст",
+    "description": "Text settings group title"
+  },
+  "barcodeTypeGroup": {
+    "message": "Тип штрих-кода",
+    "description": "Barcode type group title"
+  },
+  "numbersSettingsGroup": {
+    "message": "Цифры",
+    "description": "Numbers settings group title"
+  },
+  "barcodeSettingsGroup": {
+    "message": "Штрих-код",
+    "description": "Barcode settings group title"
+  },
+
+    "settingsTitleText": {
+    "message": "ПринтаДот - Настройки печати",
+    "description": "Title of settings page"
+  },
+  "saveSettingsButton": {
+    "message": "Сохранить",
+    "description": "Save settings button text"
+  },
+  "resetSettingsButton": {
+    "message": "Сбросить",
+    "description": "Reset settings button text"
+  },
+  "newPresetButton": {
+    "message": "Новый профиль",
+    "description": "New preset button text"
+  },
+  "deletePresetButton": {
+    "message": "Удалить профиль",
+    "description": "Delete preset button text"
+  },
+  "presetNamePlaceholder": {
+    "message": "Название нового профиля",
+    "description": "Placeholder for preset name input"
+  },
+  
+  "paperHeightLabel": {
+    "message": "Высота листа",
+    "description": "Paper height label"
+  },
+  "paperWidthLabel": {
+    "message": "Ширина листа",
+    "description": "Paper width label"
+  },
+  "labelHeightLabel": {
+    "message": "Высота наклейки",
+    "description": "Label height label"
+  },
+  "labelWidthLabel": {
+    "message": "Ширина наклейки",
+    "description": "Label width label"
+  },
+  "marginXLabel": {
+    "message": "Отступ по X",
+    "description": "Margin X label"
+  },
+  "marginYLabel": {
+    "message": "Отступ по Y",
+    "description": "Margin Y label"
+  },
+  "offsetXLabel": {
+    "message": "Сдвиг по X",
+    "description": "Offset X label"
+  },
+  "offsetYLabel": {
+    "message": "Сдвиг по Y",
+    "description": "Offset Y label"
+  },
+  "labelsPerRowLabel": {
+    "message": "Наклеек по ширине",
+    "description": "Labels per row label"
+  },
+  "labelsPerColumnLabel": {
+    "message": "Наклеек по высоте",
+    "description": "Labels per column label"
+  },
+  
+  "printerNameLabel": {
+    "message": "Имя принтера",
+    "description": "Printer name label"
+  },
+  "defaultPrinterOption": {
+    "message": "Принтер по умолчанию",
+    "description": "Default printer option"
+  },
+  "customPrinterOption": {
+    "message": "Другой принтер...",
+    "description": "Custom printer option"
+  },
+  
+  "alignmentLabel": {
+    "message": "Выравнивание",
+    "description": "Alignment label"
+  },
+  "alignmentLeft": {
+    "message": "Слева",
+    "description": "Left alignment option"
+  },
+  "alignmentCenter": {
+    "message": "По центру",
+    "description": "Center alignment option"
+  },
+  "alignmentRight": {
+    "message": "Справа",
+    "description": "Right alignment option"
+  },
+  "alignmentStretched": {
+    "message": "Растянуть",
+    "description": "Stretched alignment option"
+  },
+  "maxLengthLabel": {
+    "message": "Длина строки",
+    "description": "Max length label"
+  },
+  "trimLengthLabel": {
+    "message": "Обрезать после",
+    "description": "Trim length label"
+  },
+  "fontSizeLabel": {
+    "message": "Размер шрифта",
+    "description": "Font size label"
+  },
+  "angleLabel": {
+    "message": "Угол",
+    "description": "Angle label"
+  },
+  
+  "dataMatrixLabel": {
+    "message": "DataMatrix",
+    "description": "DataMatrix checkbox label"
+  },
+  
+  "saveSuccessMessage": {
+    "message": "Настройки успешно сохранены!",
+    "description": "Settings saved successfully message"
+  },
+  "resetSuccessMessage": {
+    "message": "Настройки сброшены к значениям по умолчанию!",
+    "description": "Settings reset successfully message"
+  },
+  "presetCreatedMessage": {
+    "message": "Пресет \"$1\" успешно создан!",
+    "description": "Preset created message"
+  },
+  "presetSavedMessage": {
+    "message": "Пресет \"$1\" успешно сохранен!",
+    "description": "Preset saved message"
+  },
+  "presetDeletedMessage": {
+    "message": "Пресет \"$1\" успешно удален!",
+    "description": "Preset deleted message"
+  },
+  "presetExistsMessage": {
+    "message": "Пресет \"$1\" уже существует. Перезаписать?",
+    "description": "Preset already exists message"
+  },
+  "deletePresetConfirm": {
+    "message": "Вы уверены, что хотите удалить пресет \"$1\"?",
+    "description": "Delete preset confirmation"
+  },
+  "resetConfirm": {
+    "message": "Вы уверены, что хотите сбросить настройки к значениям по умолчанию?",
+    "description": "Reset settings confirmation"
+  },
+  "noPresetNameMessage": {
+    "message": "Пожалуйста, введите название пресета",
+    "description": "No preset name message"
+  },
+  "cantDeleteDefault": {
+    "message": "Нельзя удалить пресет по умолчанию",
+    "description": "Cannot delete default preset message"
+  },
+  "cantOverwriteDefault": {
+    "message": "Нельзя перезаписать пресет по умолчанию. Создайте новый пресет.",
+    "description": "Cannot overwrite default preset message"
   }
 }
