@@ -16,8 +16,6 @@ public static class PrintaDotJsonSerializer
         ApplyDefaultJsonSerializerOptions(DefaultOptions);
     }
 
-
-
     public static T FromJson<T>(this string self, bool safe = false)
     {
         return (T)self.FromJson(typeof(T), safe);
@@ -143,20 +141,25 @@ public static class PrintaDotJsonSerializer
     {
         return messageType switch
         {
-            MessageTypes.PrintRequestMessage => targetVersion switch
+            MessageTypes.PrintRequestMessageType => targetVersion switch
             {
                 0 => json.FromJson<Message>(),
                 1 => json.FromJson<PrintRequestMessageV1>(),
                 _ => null
             },
-            MessageTypes.GetPrintStatusRequestMessage => targetVersion switch
+            MessageTypes.GetPrintStatusRequestMessageType => targetVersion switch
             {
                 1 => json.FromJson<GetPrintStatusRequestMessageV1>(),
                 _ => null
             },
-            MessageTypes.GetPrintStatusResponseMessage => targetVersion switch
+            MessageTypes.GetPrintStatusResponseMessageType => targetVersion switch
             {
                 1 => json.FromJson<GetPrintStatusResponseMessageV1>(),
+                _ => null
+            },
+            MessageTypes.ProfileType => targetVersion switch
+            {
+                1 => json.FromJson<ProfileMessageV1>(),
                 _ => null
             },
             _ => null

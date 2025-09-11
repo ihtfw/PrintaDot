@@ -13,6 +13,7 @@ public class Host
     private readonly Manifest _manifest;
     private bool _sendConfirmationReceipt;
     private readonly PrintService _printService;
+    private readonly List<ProfileMessageV1> _profiles;
 
     /// <summary>
     /// List of supported browsers.
@@ -31,6 +32,8 @@ public class Host
 
         _manifest = new Manifest();
         _printService = new PrintService();
+
+        _profiles = new List<ProfileMessageV1>();
     }
 
     /// <summary>
@@ -63,18 +66,47 @@ public class Host
     }
 
     /// <summary>
-    /// Processes the message based on its specific type and routes it to the appropriate handler.
+    /// Processes the message based on its version.
     /// </summary>
     /// <param name="message">The message to process and route.</param>
     private void ProcessMessageByType(Message message)
     {
+        switch (message.Version)
+        {
+            case 1:
+                ProcessMessageV1(message);
+                break;
+        }
+    }
+
+    /// <summary>
+    /// Processes V1 messages.
+    /// </summary>
+    /// <param name="message">The message to process and route.</param>
+    public void ProcessMessageV1(Message message)
+    {
         switch (message)
         {
             case PrintRequestMessageV1:
-                _printService.PrintRequestMessageV1(message as PrintRequestMessageV1);
+                _printService.PrintRequestMessageV1((message as PrintRequestMessageV1)!);
                 break;
             case GetPrintStatusRequestMessageV1:
                 // TODO: Add handling for GetPrintStatusRequestMessageV1
+                break;
+            case ProfileMessageV1:
+                var profileMessage = message as ProfileMessageV1;
+
+                var profile = _profiles.FirstOrDefault(p => p.ProfileName == profileMessage!.ProfileName);
+
+                if (profile is not null)
+                {
+                    int index = _profiles.IndexOf(profile);
+                    _profiles[index] = profileMessage!;
+                }
+                else
+                {
+                    _profiles.Add((message as ProfileMessageV1)!);
+                }
                 break;
             default:
                 // TODO: Add logging or handling for unknown message types

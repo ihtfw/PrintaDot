@@ -4,10 +4,12 @@ public static class MessageTypes
 {
     public static readonly Dictionary<string, List<int>> SupportedMessageVersions = new()
     {
-        [PrintRequestMessage] = [1]
+        [PrintRequestMessageType] = [1]
     };
 
-    public const string PrintRequestMessage = "printRequest";
-    public const string GetPrintStatusRequestMessage = "getPrintStatusRequest";
-    public const string GetPrintStatusResponseMessage = "getPrintStatusResponse";
+    //TODO переделать под enum
+    public const string PrintRequestMessageType = "printRequest";
+    public const string GetPrintStatusRequestMessageType = "getPrintStatusRequest";
+    public const string GetPrintStatusResponseMessageType = "getPrintStatusResponse";
+    public const string ProfileType = "profile";
 }
