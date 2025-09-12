@@ -16,6 +16,28 @@ body {
     gap: 6px;
 }
 
+.error-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: #ffebee;
+    color: #c62828;
+    padding: 10px;
+    border-top: 2px solid #c62828;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    display: none;
+    z-index: 1000;
+}
+
+.error-close {
+    float: right;
+    cursor: pointer;
+    font-weight: bold;
+    margin-left: 10px;
+}
+
 .app-header {
     text-align: center;
     margin-bottom: 20px;
@@ -163,6 +185,7 @@ input[type="text"]:focus,
         opacity: 0;
         transform: translateY(-10px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);

@@ -1,3 +1,26 @@
+function showError(message) {
+    const errorContainer = document.getElementById('errorContainer');
+    const errorMessage = document.getElementById('errorMessage');
+    
+    errorMessage.textContent = message;
+    errorContainer.style.display = 'block';
+    
+    setTimeout(() => {
+        hideError();
+    }, 10000);
+}
+
+function hideError() {
+    const errorContainer = document.getElementById('errorContainer');
+    errorContainer.style.display = 'none';
+}
+
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    if (request.type === "nativeError" && request.message) {
+        showError(request.message);
+    }
+});
+
 document.addEventListener('DOMContentLoaded', function () {
     localizeHtmlPage();
 
@@ -41,12 +64,17 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
-        try {
-            print(header, barcode);
-        } catch (error) {
-            console.error('Print error:', error);
-            alert('Print Error');
-        }
+        chrome.runtime.sendMessage({
+            type: "printRequest",
+            version: 1,
+            profile: "DefaultProfile",
+            items: [
+                {
+                    header: header,
+                    barcode: barcode
+                }
+            ]
+        });
     }
 
     headerInput.focus();

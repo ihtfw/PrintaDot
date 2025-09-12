@@ -53,6 +53,9 @@ public class Host
             if (message is not null)
             {
                 ProcessMessageByType(message);
+
+                var exception = ExceptionMessageV1.Create("test ex after print");
+                StreamHandler.Write(exception);
             }
             
 
