@@ -12,4 +12,5 @@ public static class MessageTypes
     public const string GetPrintStatusRequestMessageType = "getPrintStatusRequest";
     public const string GetPrintStatusResponseMessageType = "getPrintStatusResponse";
     public const string ProfileType = "profile";
+    public const string ExceptionType = "exception";
 }

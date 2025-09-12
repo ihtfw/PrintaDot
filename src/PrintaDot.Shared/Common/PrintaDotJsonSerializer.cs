@@ -162,7 +162,7 @@ public static class PrintaDotJsonSerializer
                 1 => json.FromJson<ProfileMessageV1>(),
                 _ => null
             },
-            _ => null
+            _ => ExceptionMessageV1.Create("Exception during deserialization: Provided messsage type doesnt exist"),
         };
     }
 
@@ -171,5 +171,6 @@ public static class PrintaDotJsonSerializer
         target.Encoder = JavaScriptEncoder.Create(UnicodeRanges.All);
         target.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
         target.UnmappedMemberHandling = JsonUnmappedMemberHandling.Skip;
+        target.Converters.Add(new JsonStringEnumConverter());
     }
 }

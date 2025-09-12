@@ -1,4 +1,5 @@
-﻿using PrintaDot.Shared.CommunicationProtocol.V1;
+﻿using PrintaDot.Shared.Common;
+using PrintaDot.Shared.CommunicationProtocol.V1;
 using System.Drawing;
 using System.Drawing.Printing;
 

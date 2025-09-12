@@ -87,6 +87,12 @@ public class Host
     {
         switch (message)
         {
+            case ExceptionMessageV1:
+                var exceptionMessage = message as ExceptionMessageV1;
+                Log.LogMessage(exceptionMessage!.MessageText);
+
+                StreamHandler.Write(exceptionMessage);
+                break;
             case PrintRequestMessageV1:
                 _printService.PrintRequestMessageV1((message as PrintRequestMessageV1)!);
                 break;
@@ -109,7 +115,10 @@ public class Host
                 }
                 break;
             default:
-                // TODO: Add logging or handling for unknown message types
+                Log.LogMessage("Unknown error");
+
+                var exception = ExceptionMessageV1.Create("Unknown error");
+                StreamHandler.Write(exception);
                 break;
         }
     }
