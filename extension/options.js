@@ -1,82 +1,3 @@
-class Profile {
-    constructor(id = 0, settings = {}) {
-        this.id = id;
-        
-        // Main settings
-        this.paperHeight = settings.paperHeight || 297;
-        this.paperWidth = settings.paperWidth || 210;
-        this.labelHeight = settings.labelHeight || 50;
-        this.labelWidth = settings.labelWidth || 80;
-        this.marginX = settings.marginX || 2;
-        this.marginY = settings.marginY || 2;
-        this.offsetX = settings.offsetX || 0;
-        this.offsetY = settings.offsetY || 0;
-        this.labelsPerRow = settings.labelsPerRow || 2;
-        this.labelsPerColumn = settings.labelsPerColumn || 5;
-
-        // Text settings
-        this.textAlignment = settings.textAlignment || 'center';
-        this.textMaxLength = settings.textMaxLength || 20;
-        this.textTrimLength = settings.textTrimLength || 18;
-        this.textFontSize = settings.textFontSize || 12;
-        this.textAngle = settings.textAngle || 0;
-
-        // Barcode type
-        this.useDataMatrix = settings.useDataMatrix || false;
-
-        // Number settings
-        this.numbersAlignment = settings.numbersAlignment || 'center';
-        this.numbersFontSize = settings.numbersFontSize || 10;
-        this.numbersAngle = settings.numbersAngle || 0;
-
-        // Barcode settings
-        this.barcodeAlignment = settings.barcodeAlignment || 'center';
-        this.barcodeFontSize = settings.barcodeFontSize || 8;
-        this.barcodeAngle = settings.barcodeAngle || 0;
-    }
-
-    // Convert to plain object for storage
-    toObject() {
-        return {
-            id: this.id,
-            paperHeight: this.paperHeight,
-            paperWidth: this.paperWidth,
-            labelHeight: this.labelHeight,
-            labelWidth: this.labelWidth,
-            marginX: this.marginX,
-            marginY: this.marginY,
-            offsetX: this.offsetX,
-            offsetY: this.offsetY,
-            labelsPerRow: this.labelsPerRow,
-            labelsPerColumn: this.labelsPerColumn,
-            textAlignment: this.textAlignment,
-            textMaxLength: this.textMaxLength,
-            textTrimLength: this.textTrimLength,
-            textFontSize: this.textFontSize,
-            textAngle: this.textAngle,
-            useDataMatrix: this.useDataMatrix,
-            numbersAlignment: this.numbersAlignment,
-            numbersFontSize: this.numbersFontSize,
-            numbersAngle: this.numbersAngle,
-            barcodeAlignment: this.barcodeAlignment,
-            barcodeFontSize: this.barcodeFontSize,
-            barcodeAngle: this.barcodeAngle
-        };
-    }
-
-    // Create from plain object
-    static fromObject(obj) {
-        return new Profile(obj.id, obj);
-    }
-
-    // Get default settings (id = 0)
-    static getDefaultProfile() {
-        return new Profile(0);
-    }
-}
-
-let nextProfileId = 1;
-
 document.addEventListener('DOMContentLoaded', function () {
     localizeHtmlPage();
     initializeOptionsPage();
@@ -113,13 +34,29 @@ function initCollapsibleGroups() {
     });
 }
 
+async function calculateNextProfileId(profiles) {
+    if (!profiles || Object.keys(profiles).length === 0) {
+        return 2;
+    }
+    
+    let maxId = 1;
+    
+    Object.values(profiles).forEach(profile => {
+        if (profile.id > maxId) {
+            maxId = profile.id;
+        }
+    });
+    
+    return maxId + 1;
+}
+
 async function loadProfiles() {
-    const result = await chrome.storage.local.get(['profiles', 'nextProfileId']);
+    const result = await chrome.storage.local.get(['profiles']);
     const profiles = result.profiles || {
         'default': Profile.getDefaultProfile().toObject()
     };
     
-    nextProfileId = result.nextProfileId || 1;
+    nextProfileId = await calculateNextProfileId(profiles);
 
     const select = document.getElementById('profileSelect');
     select.innerHTML = '';
@@ -132,20 +69,19 @@ async function loadProfiles() {
         select.appendChild(option);
     });
 
-    await chrome.storage.local.set({ profiles, nextProfileId });
+    await chrome.storage.local.set({ profiles });
 }
 
 async function loadProfile() {
-    const result = await chrome.storage.local.get(['currentProfile', 'currentProfile']);
-    const currentProfile = result.currentProfile || 'default';
+    const result = await chrome.storage.local.get(['currentProfileName', 'profiles']);
+    const currentProfileName = result.currentProfileName || 'default';
+    const profiles = result.profiles || { 'default': Profile.getDefaultProfile().toObject() };
 
-    document.getElementById('profileSelect').value = currentProfile;
+    document.getElementById('profileSelect').value = currentProfileName;
 
-    if (result.currentProfile) {
-        const settings = Profile.fromObject(result.currentProfile);
+    if (profiles[currentProfileName]) {
+        const settings = Profile.fromObject(profiles[currentProfileName]);
         applyProfile(settings);
-    } else {
-        await loadSelectedProfile();
     }
 }
 
@@ -159,9 +95,21 @@ async function loadSelectedProfile() {
         applyProfile(settings);
 
         await chrome.storage.local.set({ 
-            currentProfile: profileName,
-            currentProfile: profiles[profileName]
+            currentProfileName: profileName
         });
+
+        await sendProfileToBackground(settings);
+    }
+}
+
+async function sendProfileToBackground(profile) {
+    try {
+        await chrome.runtime.sendMessage({
+            type: "profileUpdated",
+            profile: profile.toObject()
+        });
+    } catch (error) {
+        console.error("Failed to send profile to background:", error);
     }
 }
 
@@ -238,14 +186,6 @@ function getCurrentProfile() {
     });
 }
 
-function getDefaultProfile() {
-    return Profile.getDefaultProfile().toObject();
-}
-
-async function saveCurrentProfile() {
-    await saveCurrentProfile();
-}
-
 async function createNewProfile() {
     const profileName = document.getElementById('profileName').value.trim();
     if (!profileName) {
@@ -253,9 +193,8 @@ async function createNewProfile() {
         return;
     }
 
-    const result = await chrome.storage.local.get(['profiles', 'nextProfileId']);
+    const result = await chrome.storage.local.get(['profiles']);
     const profiles = result.profiles || {};
-    nextProfileId = result.nextProfileId || 1;
 
     if (profiles[profileName]) {
         if (!confirm(`Profile "${profileName}" already exists. Overwrite?`)) {
@@ -264,15 +203,19 @@ async function createNewProfile() {
     }
 
     const currentProfile = getCurrentProfile();
-    currentProfile.id = nextProfileId++;
+    
+    const nextId = await calculateNextProfileId(profiles);
+    currentProfile.id = nextId;
     
     profiles[profileName] = currentProfile.toObject();
     
-    await chrome.storage.local.set({ profiles, nextProfileId });
+    await chrome.storage.local.set({ profiles });
     await loadProfiles();
 
     document.getElementById('profileSelect').value = profileName;
     document.getElementById('profileName').value = '';
+
+    await chrome.storage.local.set({ currentProfileName: profileName });
 
     alert(`Profile "${profileName}" created successfully with ID: ${currentProfile.id}!`);
 }
@@ -291,6 +234,9 @@ async function saveCurrentProfile() {
     profiles[profileName] = currentProfile.toObject();
     
     await chrome.storage.local.set({ profiles });
+    
+    await sendProfileToBackground(currentProfile);
+    
     alert(`Profile "${profileName}" saved successfully!`);
 }
 
@@ -313,6 +259,9 @@ async function deleteCurrentProfile() {
 
     await loadProfiles();
     document.getElementById('profileSelect').value = 'default';
+    
+    await chrome.storage.local.set({ currentProfileName: 'default' });
+    
     await loadSelectedProfile();
 
     alert(`Profile "${profileName}" deleted successfully!`);
@@ -322,8 +271,13 @@ async function resetToDefault() {
     if (confirm('Are you sure you want to reset to default settings?')) {
         const defaultProfile = Profile.getDefaultProfile();
         applyProfile(defaultProfile);
-        await saveCurrentProfile();
-        alert('Profile reset to default!');
+        
+        const currentProfileName = document.getElementById('profileSelect').value;
+        if (currentProfileName !== 'default') {
+            await saveCurrentProfile();
+        }
+        
+        alert('Settings reset to default!');
     }
 }
 

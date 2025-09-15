@@ -1,6 +1,8 @@
 var port = null;
 
-connect();
+initializeStorage().then(() => {
+    connect();
+});
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {    
     if (request.type === "printRequest" || request.type === "profile") {
@@ -14,6 +16,29 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         }
     }
 });
+
+async function initializeStorage() {
+    try {
+        const result = await chrome.storage.local.get(['profiles']);
+        
+        if (!result.profiles || Object.keys(result.profiles).length === 0) {
+            const defaultProfile = Profile.getDefaultProfile();
+            
+            const profiles = {
+                'default': defaultProfile.toObject()
+            };
+            
+            await chrome.storage.local.set({
+                profiles: profiles,
+                currentProfileName: 'default'
+            });
+            
+            console.log("Default profile created in storage using Profile.getDefaultProfile()");
+        }
+    } catch (error) {
+        console.error("Failed to initialize storage:", error);
+    }
+}
 
 function onNativeMessage(message) {
     if (!message?.type) return;
@@ -70,6 +95,6 @@ async function sendProfilesToNativeHost() {
         port.postMessage({
             version: 1,
             type: "profiles",
-            profiles: null
+            profiles: profiles
         });
 }
