@@ -1,9 +1,12 @@
 ﻿using PrintaDot.Shared.Common;
+using System.Text.Json.Serialization;
 
 namespace PrintaDot.Shared.CommunicationProtocol.V1;
 
 public class ProfileMessageV1 : Message
 {
+    [JsonRequired]
+    public required int Id { get; set; }
     public required string ProfileName { get; set; }
 
     // Main settings

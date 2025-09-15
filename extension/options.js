@@ -1,6 +1,6 @@
 class Profile {
     constructor(id = 0, settings = {}) {
-        this.id = id; // Уникальный ID профиля настроек
+        this.id = id;
         
         // Main settings
         this.paperHeight = settings.paperHeight || 297;
@@ -75,7 +75,6 @@ class Profile {
     }
 }
 
-// Глобальная переменная для хранения следующего ID профиля
 let nextProfileId = 1;
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -120,7 +119,6 @@ async function loadProfiles() {
         'default': Profile.getDefaultProfile().toObject()
     };
     
-    // Восстанавливаем следующий ID или устанавливаем по умолчанию
     nextProfileId = result.nextProfileId || 1;
 
     const select = document.getElementById('profileSelect');
@@ -130,7 +128,7 @@ async function loadProfiles() {
         const option = document.createElement('option');
         option.value = profileName;
         option.textContent = profileName;
-        option.dataset.id = profiles[profileName].id; // Сохраняем ID в data-атрибуте
+        option.dataset.id = profiles[profileName].id;
         select.appendChild(option);
     });
 
@@ -265,9 +263,8 @@ async function createNewProfile() {
         }
     }
 
-    // Создаем новый профиль с уникальным ID
     const currentProfile = getCurrentProfile();
-    currentProfile.id = nextProfileId++; // Присваиваем новый ID и увеличиваем счетчик
+    currentProfile.id = nextProfileId++;
     
     profiles[profileName] = currentProfile.toObject();
     
@@ -290,7 +287,6 @@ async function saveCurrentProfile() {
     const result = await chrome.storage.local.get(['profiles']);
     const profiles = result.profiles || {};
 
-    // Сохраняем настройки с сохранением текущего ID
     const currentProfile = getCurrentProfile();
     profiles[profileName] = currentProfile.toObject();
     

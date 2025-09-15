@@ -8,7 +8,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             port.postMessage(request);
         } else {
             chrome.runtime.sendMessage({
-                type: "nativeError",
+                type: "exception",
                 message: "Не подключено к native app"
             }).catch(() => {});
         }
@@ -18,13 +18,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 function onNativeMessage(message) {
     if (!message?.type) return;
     
-    if (message.type === "exception") {
-        chrome.runtime.sendMessage({
-            type: "nativeError", 
-            message: message.messageText
-        }).catch(() => {}); 
-    }
-    
+    chrome.runtime.sendMessage(message).catch(() => {}); 
+
     console.log("Native message:", message);
 }
 

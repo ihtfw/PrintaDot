@@ -16,8 +16,8 @@ function hideError() {
 }
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    if (request.type === "nativeError" && request.message) {
-        showError(request.message);
+    if (request.type === "exception" && request.messageText) {
+        showError(request.messageText);
     }
 });
 
