@@ -78,7 +78,6 @@ public static class PrintaDotJsonSerializer
     {
         try
         {
-            Log.LogMessage("started deserialization");
             using var document = JsonDocument.Parse(self);
             var root = document.RootElement;
 
@@ -88,11 +87,9 @@ public static class PrintaDotJsonSerializer
                 return null;
             }
 
-            Log.LogMessage("types added");
-
             var type = typeProperty.GetString();
             var version = versionProperty.GetInt32();
-
+            
             if (string.IsNullOrEmpty(type))
                 return null;
 
@@ -106,12 +103,13 @@ public static class PrintaDotJsonSerializer
 
     private static Message? DeserializeWithFallback(string json, string messageType, int requestedVersion)
     {
+        Log.LogMessage($"{requestedVersion} {messageType}");
         if (!MessageTypes.SupportedMessageVersions.TryGetValue(messageType, out var supportedVersions) ||
             supportedVersions.Count == 0)
         {
             return null;
         }
-
+        Log.LogMessage("type recived");
         var sortedVersions = supportedVersions.OrderByDescending(v => v).ToList();
 
         foreach (var targetVersion in sortedVersions)
@@ -160,6 +158,11 @@ public static class PrintaDotJsonSerializer
             MessageTypes.ProfileType => targetVersion switch
             {
                 1 => json.FromJson<ProfileMessageV1>(),
+                _ => null
+            },
+            MessageTypes.ProfilesType => targetVersion switch
+            {
+                1 => json.FromJson<ProfilesMessageV1>(),
                 _ => null
             },
             _ => ExceptionMessageV1.Create("Exception during deserialization: Provided messsage type doesnt exist"),

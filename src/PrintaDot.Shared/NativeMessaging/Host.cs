@@ -13,7 +13,7 @@ public class Host
     private readonly Manifest _manifest;
     private bool _sendConfirmationReceipt;
     private readonly PrintService _printService;
-    private readonly List<ProfileMessageV1> _profiles;
+    private List<ProfileMessageV1> _profiles;
 
     /// <summary>
     /// List of supported browsers.
@@ -117,10 +117,18 @@ public class Host
                     _profiles.Add((message as ProfileMessageV1)!);
                 }
                 break;
-            default:
-                Log.LogMessage("Unknown error");
+            case ProfilesMessageV1:
+                var profilesMessage = message as ProfilesMessageV1;
 
-                var exception = ExceptionMessageV1.Create("Unknown error");
+                if (profilesMessage.Profiles is not null)
+                {
+                    _profiles = profilesMessage.Profiles;
+                }
+                break;
+            default:
+                Log.LogMessage("Current type of messages is not supported");
+
+                var exception = ExceptionMessageV1.Create("Current type of messages is not supported");
                 StreamHandler.Write(exception);
                 break;
         }

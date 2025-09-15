@@ -5,7 +5,7 @@ namespace PrintaDot.Shared.CommunicationProtocol.V1;
 
 public class ProfileMessageV1 : Message
 {
-    [JsonRequired]
+    //[JsonRequired]
     public required int Id { get; set; }
     public required string ProfileName { get; set; }
 
