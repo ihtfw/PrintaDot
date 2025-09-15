@@ -22,7 +22,7 @@ h1 {
     font-size: 24px;
 }
 
-.presets-section {
+.profiles-section {
     margin-bottom: 20px;
     padding: 15px;
     background: #f8f9fa;
@@ -30,7 +30,7 @@ h1 {
     border: 1px solid #e9ecef;
 }
 
-.presets-controls {
+.profiles-controls {
     display: flex;
     gap: 10px;
     margin-bottom: 15px;
@@ -38,13 +38,13 @@ h1 {
     flex-wrap: wrap;
 }
 
-.presets-controls select,
-.presets-controls input {
+.profiles-controls select,
+.profiles-controls input {
     flex: 1;
     min-width: 120px;
 }
 
-.presets-controls button {
+.profiles-controls button {
     padding: 6px 12px;
     font-size: 12px;
 }
@@ -171,21 +171,21 @@ button {
     background-color: #5a6268;
 }
 
-#newPresetBtn {
+#newProfileBtn {
     background-color: #28a745;
     color: white;
 }
 
-#newPresetBtn:hover {
+#newProfileBtn:hover {
     background-color: #218838;
 }
 
-#deletePresetBtn {
+#deleteProfileBtn {
     background-color: #dc3545;
     color: white;
 }
 
-#deletePresetBtn:hover {
+#deleteProfileBtn:hover {
     background-color: #c82333;
 }
 
@@ -198,6 +198,6 @@ button {
     display: none;
 }
 
-.preset-name-input {
+.profile-name-input {
     min-width: 150px;
 }

@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 async function initializeOptionsPage() {
-    await loadPresets();
+    await loadProfiles();
     await loadSettings();
 
     loadPrinters();
@@ -19,10 +19,10 @@ function initEventHandlers() {
     document.getElementById('saveBtn').addEventListener('click', saveCurrentSettings);
     document.getElementById('resetBtn').addEventListener('click', resetToDefault);
 
-    document.getElementById('newPresetBtn').addEventListener('click', createNewPreset);
-    document.getElementById('deletePresetBtn').addEventListener('click', deleteCurrentPreset);
+    document.getElementById('newProfileBtn').addEventListener('click', createNewProfile);
+    document.getElementById('deleteProfileBtn').addEventListener('click', deleteCurrentProfile);
 
-    document.getElementById('presetSelect').addEventListener('change', loadSelectedPreset);
+    document.getElementById('profileSelect').addEventListener('change', loadSelectedProfile);
 }
 
 function initCollapsibleGroups() {
@@ -35,48 +35,48 @@ function initCollapsibleGroups() {
     });
 }
 
-async function loadPresets() {
-    const result = await chrome.storage.local.get(['presets']);
-    const presets = result.presets || {
+async function loadProfiles() {
+    const result = await chrome.storage.local.get(['profiles']);
+    const profiles = result.profiles || {
         'default': getDefaultSettings()
     };
 
-    const select = document.getElementById('presetSelect');
+    const select = document.getElementById('profileSelect');
     select.innerHTML = '';
 
-    Object.keys(presets).forEach(presetName => {
+    Object.keys(profiles).forEach(profileName => {
         const option = document.createElement('option');
-        option.value = presetName;
-        option.textContent = presetName;
+        option.value = profileName;
+        option.textContent = profileName;
         select.appendChild(option);
     });
 
-    await chrome.storage.local.set({ presets });
+    await chrome.storage.local.set({ profiles });
 }
 
 async function loadSettings() {
-    const result = await chrome.storage.local.get(['currentPreset', 'currentSettings']);
-    const currentPreset = result.currentPreset || 'default';
+    const result = await chrome.storage.local.get(['currentProfile', 'currentSettings']);
+    const currentProfile = result.currentProfile || 'default';
 
-    document.getElementById('presetSelect').value = currentPreset;
+    document.getElementById('profileSelect').value = currentProfile;
 
     if (result.currentSettings) {
         applySettings(result.currentSettings);
     } else {
 
-        await loadSelectedPreset();
+        await loadSelectedProfile();
     }
 }
 
-async function loadSelectedPreset() {
-    const presetName = document.getElementById('presetSelect').value;
-    const result = await chrome.storage.local.get(['presets']);
-    const presets = result.presets || {};
+async function loadSelectedProfile() {
+    const profileName = document.getElementById('profileSelect').value;
+    const result = await chrome.storage.local.get(['profiles']);
+    const profiles = result.profiles || {};
 
-    if (presets[presetName]) {
-        applySettings(presets[presetName]);
+    if (profiles[profileName]) {
+        applySettings(profiles[profileName]);
 
-        await chrome.storage.local.set({ currentPreset: presetName });
+        await chrome.storage.local.set({ currentProfile: profileName });
     }
 }
 
@@ -178,74 +178,74 @@ function getDefaultSettings() {
 }
 
 async function saveCurrentSettings() {
-    await saveCurrentPreset();
+    await saveCurrentProfile();
 }
 
-async function createNewPreset() {
-    const presetName = document.getElementById('presetName').value.trim();
-    if (!presetName) {
-        alert('Please enter a preset name');
+async function createNewProfile() {
+    const profileName = document.getElementById('profileName').value.trim();
+    if (!profileName) {
+        alert('Please enter a profile name');
         return;
     }
 
-    const result = await chrome.storage.local.get(['presets']);
-    const presets = result.presets || {};
+    const result = await chrome.storage.local.get(['profiles']);
+    const profiles = result.profiles || {};
 
-    if (presets[presetName]) {
-        if (!confirm(`Preset "${presetName}" already exists. Overwrite?`)) {
+    if (profiles[profileName]) {
+        if (!confirm(`Profile "${profileName}" already exists. Overwrite?`)) {
             return;
         }
     }
 
-    presets[presetName] = getCurrentSettings();
-    await chrome.storage.local.set({ presets });
+    profiles[profileName] = getCurrentSettings();
+    await chrome.storage.local.set({ profiles });
 
-    await loadPresets();
+    await loadProfiles();
 
-    document.getElementById('presetSelect').value = presetName;
-    document.getElementById('presetName').value = '';
+    document.getElementById('profileSelect').value = profileName;
+    document.getElementById('profileName').value = '';
 
-    alert(`Preset "${presetName}" created successfully!`);
+    alert(`Profile "${profileName}" created successfully!`);
 }
 
-async function saveCurrentPreset() {
-    const presetName = document.getElementById('presetSelect').value;
-    if (presetName === 'default') {
-        alert('Cannot overwrite default preset. Create a new preset instead.');
+async function saveCurrentProfile() {
+    const profileName = document.getElementById('profileSelect').value;
+    if (profileName === 'default') {
+        alert('Cannot overwrite default profile. Create a new profile instead.');
         return;
     }
 
-    const result = await chrome.storage.local.get(['presets']);
-    const presets = result.presets || {};
+    const result = await chrome.storage.local.get(['profiles']);
+    const profiles = result.profiles || {};
 
-    presets[presetName] = getCurrentSettings();
-    await chrome.storage.local.set({ presets });
+    profiles[profileName] = getCurrentSettings();
+    await chrome.storage.local.set({ profiles });
 
-    alert(`Preset "${presetName}" saved successfully!`);
+    alert(`Profile "${profileName}" saved successfully!`);
 }
 
-async function deleteCurrentPreset() {
-    const presetName = document.getElementById('presetSelect').value;
-    if (presetName === 'default') {
-        alert('Cannot delete default preset');
+async function deleteCurrentProfile() {
+    const profileName = document.getElementById('profileSelect').value;
+    if (profileName === 'default') {
+        alert('Cannot delete default profile');
         return;
     }
 
-    if (!confirm(`Are you sure you want to delete preset "${presetName}"?`)) {
+    if (!confirm(`Are you sure you want to delete profile "${profileName}"?`)) {
         return;
     }
 
-    const result = await chrome.storage.local.get(['presets']);
-    const presets = result.presets || {};
+    const result = await chrome.storage.local.get(['profiles']);
+    const profiles = result.profiles || {};
 
-    delete presets[presetName];
-    await chrome.storage.local.set({ presets });
+    delete profiles[profileName];
+    await chrome.storage.local.set({ profiles });
 
-    await loadPresets();
-    document.getElementById('presetSelect').value = 'default';
-    await loadSelectedPreset();
+    await loadProfiles();
+    document.getElementById('profileSelect').value = 'default';
+    await loadSelectedProfile();
 
-    alert(`Preset "${presetName}" deleted successfully!`);
+    alert(`Profile "${profileName}" deleted successfully!`);
 }
 
 async function resetToDefault() {

@@ -57,17 +57,17 @@
     "message": "Reset to Default",
     "description": "Reset settings button text"
   },
-  "newPresetButton": {
-    "message": "New Preset",
-    "description": "New preset button text"
+  "newProfileButton": {
+    "message": "New Profile",
+    "description": "New profile button text"
   },
-  "deletePresetButton": {
-    "message": "Delete Preset",
-    "description": "Delete preset button text"
+  "deleteProfileButton": {
+    "message": "Delete Profile",
+    "description": "Delete profile button text"
   },
-  "presetNamePlaceholder": {
-    "message": "New preset name",
-    "description": "Placeholder for preset name input"
+  "profileNamePlaceholder": {
+    "message": "New profile name",
+    "description": "Placeholder for profile name input"
   },
   
   "mainSettingsGroup": {
@@ -199,40 +199,40 @@
     "message": "Settings reset to default values!",
     "description": "Settings reset successfully message"
   },
-  "presetCreatedMessage": {
-    "message": "Preset \"$1\" created successfully!",
-    "description": "Preset created message"
+  "profileCreatedMessage": {
+    "message": "Profile \"$1\" created successfully!",
+    "description": "Profile created message"
   },
-  "presetSavedMessage": {
-    "message": "Preset \"$1\" saved successfully!",
-    "description": "Preset saved message"
+  "profileSavedMessage": {
+    "message": "Profile \"$1\" saved successfully!",
+    "description": "Profile saved message"
   },
-  "presetDeletedMessage": {
-    "message": "Preset \"$1\" deleted successfully!",
-    "description": "Preset deleted message"
+  "profileDeletedMessage": {
+    "message": "Profile \"$1\" deleted successfully!",
+    "description": "Profile deleted message"
   },
-  "presetExistsMessage": {
-    "message": "Preset \"$1\" already exists. Overwrite?",
-    "description": "Preset already exists message"
+  "profileExistsMessage": {
+    "message": "Profile \"$1\" already exists. Overwrite?",
+    "description": "Profile already exists message"
   },
-  "deletePresetConfirm": {
-    "message": "Are you sure you want to delete preset \"$1\"?",
-    "description": "Delete preset confirmation"
+  "deleteProfileConfirm": {
+    "message": "Are you sure you want to delete profile \"$1\"?",
+    "description": "Delete profile confirmation"
   },
   "resetConfirm": {
     "message": "Are you sure you want to reset settings to default values?",
     "description": "Reset settings confirmation"
   },
-  "noPresetNameMessage": {
-    "message": "Please enter a preset name",
-    "description": "No preset name message"
+  "noProfileNameMessage": {
+    "message": "Please enter a profile name",
+    "description": "No profile name message"
   },
   "cantDeleteDefault": {
-    "message": "Cannot delete default preset",
-    "description": "Cannot delete default preset message"
+    "message": "Cannot delete default profile",
+    "description": "Cannot delete default profile message"
   },
   "cantOverwriteDefault": {
-    "message": "Cannot overwrite default preset. Create a new preset instead.",
-    "description": "Cannot overwrite default preset message"
+    "message": "Cannot overwrite default profile. Create a new profile instead.",
+    "description": "Cannot overwrite default profile message"
   }
 }

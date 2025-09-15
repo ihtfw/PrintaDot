@@ -67,7 +67,6 @@
     "message": "Штрих-код",
     "description": "Barcode settings group title"
   },
-
     "settingsTitleText": {
     "message": "ПринтаДот - Настройки печати",
     "description": "Title of settings page"
@@ -80,17 +79,17 @@
     "message": "Сбросить",
     "description": "Reset settings button text"
   },
-  "newPresetButton": {
+  "newProfileButton": {
     "message": "Новый профиль",
-    "description": "New preset button text"
+    "description": "New profile button text"
   },
-  "deletePresetButton": {
+  "deleteProfileButton": {
     "message": "Удалить профиль",
-    "description": "Delete preset button text"
+    "description": "Delete profile button text"
   },
-  "presetNamePlaceholder": {
+  "profileNamePlaceholder": {
     "message": "Название нового профиля",
-    "description": "Placeholder for preset name input"
+    "description": "Placeholder for profile name input"
   },
   
   "paperHeightLabel": {
@@ -197,40 +196,40 @@
     "message": "Настройки сброшены к значениям по умолчанию!",
     "description": "Settings reset successfully message"
   },
-  "presetCreatedMessage": {
+  "profileCreatedMessage": {
     "message": "Пресет \"$1\" успешно создан!",
-    "description": "Preset created message"
+    "description": "Profile created message"
   },
-  "presetSavedMessage": {
+  "profileSavedMessage": {
     "message": "Пресет \"$1\" успешно сохранен!",
-    "description": "Preset saved message"
+    "description": "Profile saved message"
   },
-  "presetDeletedMessage": {
+  "profileDeletedMessage": {
     "message": "Пресет \"$1\" успешно удален!",
-    "description": "Preset deleted message"
+    "description": "Profile deleted message"
   },
-  "presetExistsMessage": {
+  "profileExistsMessage": {
     "message": "Пресет \"$1\" уже существует. Перезаписать?",
-    "description": "Preset already exists message"
+    "description": "Profile already exists message"
   },
-  "deletePresetConfirm": {
+  "deleteProfileConfirm": {
     "message": "Вы уверены, что хотите удалить пресет \"$1\"?",
-    "description": "Delete preset confirmation"
+    "description": "Delete profile confirmation"
   },
   "resetConfirm": {
     "message": "Вы уверены, что хотите сбросить настройки к значениям по умолчанию?",
     "description": "Reset settings confirmation"
   },
-  "noPresetNameMessage": {
+  "noProfileNameMessage": {
     "message": "Пожалуйста, введите название пресета",
-    "description": "No preset name message"
+    "description": "No profile name message"
   },
   "cantDeleteDefault": {
     "message": "Нельзя удалить пресет по умолчанию",
-    "description": "Cannot delete default preset message"
+    "description": "Cannot delete default profile message"
   },
   "cantOverwriteDefault": {
     "message": "Нельзя перезаписать пресет по умолчанию. Создайте новый пресет.",
-    "description": "Cannot overwrite default preset message"
+    "description": "Cannot overwrite default profile message"
   }
 }
