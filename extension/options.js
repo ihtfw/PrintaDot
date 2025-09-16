@@ -100,10 +100,7 @@ async function loadSelectedProfile() {
 
 async function sendProfileToBackground(profile) {
     try {
-        await chrome.runtime.sendMessage({
-            type: "profileUpdated",
-            profile: profile.toStorageObject()
-        });
+        await chrome.runtime.sendMessage(profile.toStorageObject());
     } catch (error) {
         console.error("Failed to send profile to background:", error);
     }
@@ -214,6 +211,9 @@ async function createNewProfile() {
     profiles[profileName] = currentProfile.toStorageObject();
 
     await chrome.storage.local.set({ profiles });
+
+    await sendProfileToBackground(currentProfile);
+
     await loadProfiles();
 
     document.getElementById('profileSelect').value = profileName;
@@ -320,6 +320,7 @@ function handlePrint() {
     const header = document.getElementById('headerInput').value.trim();
     const barcode = document.getElementById('barcodeInput').value.trim();
     const profile = document.getElementById('profileSelect').value;
+
     if (!header || !barcode) {
         alert('Please fill all fields');
         headerInput.focus();

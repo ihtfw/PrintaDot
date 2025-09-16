@@ -6,6 +6,7 @@ public static class MessageTypes
     {
         [PrintRequestMessageType] = [1],
         [ProfilesType] = [1],
+        [ProfileType] = [1]
     };
 
     //TODO переделать под enum

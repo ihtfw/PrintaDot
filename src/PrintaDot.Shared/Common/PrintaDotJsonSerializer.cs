@@ -122,6 +122,8 @@ public static class PrintaDotJsonSerializer
                 var message = DeserializeToVersion(json, messageType, targetVersion);
                 if (message != null)
                 {
+                    Log.LogMessage("Message deserialized");
+
                     message.Version = targetVersion;
                     return message;
                 }
