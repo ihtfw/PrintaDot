@@ -12,6 +12,7 @@ async function initializeOptionsPage() {
 }
 
 function initEventHandlers() {
+    document.getElementById('printBtn').addEventListener('click', handlePrint);
     document.getElementById('saveBtn').addEventListener('click', saveCurrentProfile);
     document.getElementById('resetBtn').addEventListener('click', resetToDefault);
     document.getElementById('newProfileBtn').addEventListener('click', createNewProfile);
@@ -313,4 +314,27 @@ async function clearAllProfiles() {
 
     await loadProfiles();
     await loadSelectedProfile();
+}
+
+function handlePrint() {
+    const header = document.getElementById('headerInput').value.trim();
+    const barcode = document.getElementById('barcodeInput').value.trim();
+    const profile = document.getElementById('profileSelect').value;
+    if (!header || !barcode) {
+        alert('Please fill all fields');
+        headerInput.focus();
+        return;
+    }
+
+    chrome.runtime.sendMessage({
+        type: "printRequest",
+        version: 1,
+        profile: profile,
+        items: [
+            {
+                header: header,
+                barcode: barcode
+            }
+        ]
+    });
 }
