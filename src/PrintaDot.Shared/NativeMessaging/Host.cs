@@ -13,7 +13,6 @@ public class Host
     private readonly Manifest _manifest;
     private bool _sendConfirmationReceipt;
     private readonly PrintService _printService;
-    private List<ProfileMessageV1> _profiles;
 
     /// <summary>
     /// List of supported browsers.
@@ -32,8 +31,6 @@ public class Host
 
         _manifest = new Manifest();
         _printService = new PrintService();
-
-        _profiles = new List<ProfileMessageV1>();
     }
 
     /// <summary>
@@ -105,16 +102,16 @@ public class Host
             case ProfileMessageV1:
                 var profileMessage = message as ProfileMessageV1;
 
-                var profile = _profiles.FirstOrDefault(p => p.ProfileName == profileMessage!.ProfileName);
+                var profile = _printService.Profiles.FirstOrDefault(p => p.ProfileName == profileMessage!.ProfileName);
 
                 if (profile is not null)
                 {
-                    int index = _profiles.IndexOf(profile);
-                    _profiles[index] = profileMessage!;
+                    int index = _printService.Profiles.IndexOf(profile);
+                    _printService.Profiles[index] = profileMessage!;
                 }
                 else
                 {
-                    _profiles.Add((message as ProfileMessageV1)!);
+                    _printService.Profiles.Add((message as ProfileMessageV1)!);
                 }
                 break;
             case ProfilesMessageV1:
@@ -122,7 +119,7 @@ public class Host
 
                 if (profilesMessage.Profiles is not null)
                 {
-                    _profiles = profilesMessage.Profiles;
+                    _printService.Profiles = profilesMessage.Profiles;
                 }
                 break;
             default:

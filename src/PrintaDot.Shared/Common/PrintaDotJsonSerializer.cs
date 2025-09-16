@@ -126,8 +126,10 @@ public static class PrintaDotJsonSerializer
                     return message;
                 }
             }
-            catch (JsonException)
+            catch (Exception ex)
             {
+                Log.LogMessage($"{ex.Message}");
+
                 continue;
             }
         }

@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', function () {
         chrome.runtime.sendMessage({
             type: "printRequest",
             version: 1,
-            profile: "DefaultProfile",
+            profile: "default",
             items: [
                 {
                     header: header,

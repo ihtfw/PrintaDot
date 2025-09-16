@@ -7,8 +7,16 @@ namespace PrintaDot.Shared.Printing;
 
 public class PrintService
 {
+    public List<ProfileMessageV1> Profiles { get; set; } = null!;
+    public PrintService()
+    {
+        Profiles = new List<ProfileMessageV1>();
+    }
+
     public void PrintRequestMessageV1(PrintRequestMessageV1 message)
     {
+        var profile = Profiles.FirstOrDefault(p => p.ProfileName == message.Profile);
+
         using var printDocument = new PrintDocument();
         printDocument.PrinterSettings.PrinterName = new PrinterSettings().PrinterName;
 
@@ -21,9 +29,9 @@ public class PrintService
 
             if (message.Items.Any())
             {
-                e.Graphics?.DrawString(message.Items[0].Header, font, Brushes.Black, 100, 190);
-                e.Graphics?.DrawString(message.Items[0].Barcode, font, Brushes.Black, 100, 220);
-                e.Graphics?.DrawString(message.Items[0].Figures, font, Brushes.Black, 100, 250);
+                e.Graphics?.DrawString(profile.ProfileName, font, Brushes.Black, 100, 190);
+                e.Graphics?.DrawString(profile.Id.ToString(), font, Brushes.Black, 100, 220);
+                e.Graphics?.DrawString(profile.Type, font, Brushes.Black, 100, 250);
             }
         };
 

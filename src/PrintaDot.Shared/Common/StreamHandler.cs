@@ -13,7 +13,7 @@ public static class StreamHandler
     /// Reads and decodes the message according to the native messaging protocol and
     /// deserializes it into a Message object.
     /// </summary>
-    public static Message Read()
+    public static Message? Read()
     {
         Stream stdin = Console.OpenStandardInput();
 

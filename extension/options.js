@@ -6,22 +6,18 @@ document.addEventListener('DOMContentLoaded', function () {
 async function initializeOptionsPage() {
     await loadProfiles();
     await loadProfile();
-
     loadPrinters();
-
     initEventHandlers();
-
     initCollapsibleGroups();
 }
 
 function initEventHandlers() {
     document.getElementById('saveBtn').addEventListener('click', saveCurrentProfile);
     document.getElementById('resetBtn').addEventListener('click', resetToDefault);
-
     document.getElementById('newProfileBtn').addEventListener('click', createNewProfile);
     document.getElementById('deleteProfileBtn').addEventListener('click', deleteCurrentProfile);
-
     document.getElementById('profileSelect').addEventListener('change', loadSelectedProfile);
+    document.getElementById('clearAllProfilesBtn').addEventListener('click', clearAllProfiles);
 }
 
 function initCollapsibleGroups() {
@@ -38,25 +34,22 @@ async function calculateNextProfileId(profiles) {
     if (!profiles || Object.keys(profiles).length === 0) {
         return 2;
     }
-    
+
     let maxId = 1;
-    
     Object.values(profiles).forEach(profile => {
         if (profile.id > maxId) {
             maxId = profile.id;
         }
     });
-    
+
     return maxId + 1;
 }
 
 async function loadProfiles() {
     const result = await chrome.storage.local.get(['profiles']);
     const profiles = result.profiles || {
-        'default': Profile.getDefaultProfile().toObject()
+        'default': Profile.getDefaultProfile().toStorageObject()
     };
-    
-    nextProfileId = await calculateNextProfileId(profiles);
 
     const select = document.getElementById('profileSelect');
     select.innerHTML = '';
@@ -75,13 +68,15 @@ async function loadProfiles() {
 async function loadProfile() {
     const result = await chrome.storage.local.get(['currentProfileName', 'profiles']);
     const currentProfileName = result.currentProfileName || 'default';
-    const profiles = result.profiles || { 'default': Profile.getDefaultProfile().toObject() };
+    const profiles = result.profiles || {
+        'default': Profile.getDefaultProfile().toStorageObject()
+    };
 
     document.getElementById('profileSelect').value = currentProfileName;
 
     if (profiles[currentProfileName]) {
-        const settings = Profile.fromObject(profiles[currentProfileName]);
-        applyProfile(settings);
+        const profile = Profile.fromStorageObject(profiles[currentProfileName]);
+        applyProfile(profile);
     }
 }
 
@@ -91,14 +86,14 @@ async function loadSelectedProfile() {
     const profiles = result.profiles || {};
 
     if (profiles[profileName]) {
-        const settings = Profile.fromObject(profiles[profileName]);
-        applyProfile(settings);
+        const profile = Profile.fromStorageObject(profiles[profileName]);
+        applyProfile(profile);
 
-        await chrome.storage.local.set({ 
+        await chrome.storage.local.set({
             currentProfileName: profileName
         });
 
-        await sendProfileToBackground(settings);
+        await sendProfileToBackground(profile);
     }
 }
 
@@ -106,84 +101,89 @@ async function sendProfileToBackground(profile) {
     try {
         await chrome.runtime.sendMessage({
             type: "profileUpdated",
-            profile: profile.toObject()
+            profile: profile.toStorageObject()
         });
     } catch (error) {
         console.error("Failed to send profile to background:", error);
     }
 }
 
-function applyProfile(settings) {
+function applyProfile(profile) {
     // Main settings
-    document.getElementById('paperHeight').value = settings.paperHeight;
-    document.getElementById('paperWidth').value = settings.paperWidth;
-    document.getElementById('labelHeight').value = settings.labelHeight;
-    document.getElementById('labelWidth').value = settings.labelWidth;
-    document.getElementById('marginX').value = settings.marginX;
-    document.getElementById('marginY').value = settings.marginY;
-    document.getElementById('offsetX').value = settings.offsetX;
-    document.getElementById('offsetY').value = settings.offsetY;
-    document.getElementById('labelsPerRow').value = settings.labelsPerRow;
-    document.getElementById('labelsPerColumn').value = settings.labelsPerColumn;
+    document.getElementById('paperHeight').value = profile.paperHeight;
+    document.getElementById('paperWidth').value = profile.paperWidth;
+    document.getElementById('labelHeight').value = profile.labelHeight;
+    document.getElementById('labelWidth').value = profile.labelWidth;
+    document.getElementById('marginX').value = profile.marginX;
+    document.getElementById('marginY').value = profile.marginY;
+    document.getElementById('offsetX').value = profile.offsetX;
+    document.getElementById('offsetY').value = profile.offsetY;
+    document.getElementById('labelsPerRow').value = profile.labelsPerRow;
+    document.getElementById('labelsPerColumn').value = profile.labelsPerColumn;
 
     // Text settings
-    document.getElementById('textAlignment').value = settings.textAlignment;
-    document.getElementById('textMaxLength').value = settings.textMaxLength;
-    document.getElementById('textTrimLength').value = settings.textTrimLength;
-    document.getElementById('textFontSize').value = settings.textFontSize;
-    document.getElementById('textAngle').value = settings.textAngle;
+    document.getElementById('textAlignment').value = profile.textAlignment;
+    document.getElementById('textMaxLength').value = profile.textMaxLength;
+    document.getElementById('textTrimLength').value = profile.textTrimLength;
+    document.getElementById('textFontSize').value = profile.textFontSize;
+    document.getElementById('textAngle').value = profile.textAngle;
 
     // Barcode type
-    document.getElementById('useDataMatrix').checked = settings.useDataMatrix;
+    document.getElementById('useDataMatrix').checked = profile.useDataMatrix;
 
     // Number settings
-    document.getElementById('numbersAlignment').value = settings.numbersAlignment;
-    document.getElementById('numbersFontSize').value = settings.numbersFontSize;
-    document.getElementById('numbersAngle').value = settings.numbersAngle;
+    document.getElementById('numbersAlignment').value = profile.numbersAlignment;
+    document.getElementById('numbersFontSize').value = profile.numbersFontSize;
+    document.getElementById('numbersAngle').value = profile.numbersAngle;
 
     // Barcode settings
-    document.getElementById('barcodeAlignment').value = settings.barcodeAlignment;
-    document.getElementById('barcodeFontSize').value = settings.barcodeFontSize;
-    document.getElementById('barcodeAngle').value = settings.barcodeAngle;
+    document.getElementById('barcodeAlignment').value = profile.barcodeAlignment;
+    document.getElementById('barcodeFontSize').value = profile.barcodeFontSize;
+    document.getElementById('barcodeAngle').value = profile.barcodeAngle;
 }
 
-function getCurrentProfile() {
+function getCurrentProfileFromForm() {
     const profileSelect = document.getElementById('profileSelect');
+    const currentProfileName = profileSelect.value;
     const currentId = parseInt(profileSelect.options[profileSelect.selectedIndex].dataset.id) || 0;
-    
-    return new Profile(currentId, {
-        // Main settings
-        paperHeight: parseInt(document.getElementById('paperHeight').value),
-        paperWidth: parseInt(document.getElementById('paperWidth').value),
-        labelHeight: parseInt(document.getElementById('labelHeight').value),
-        labelWidth: parseInt(document.getElementById('labelWidth').value),
-        marginX: parseInt(document.getElementById('marginX').value),
-        marginY: parseInt(document.getElementById('marginY').value),
-        offsetX: parseInt(document.getElementById('offsetX').value),
-        offsetY: parseInt(document.getElementById('offsetY').value),
-        labelsPerRow: parseInt(document.getElementById('labelsPerRow').value),
-        labelsPerColumn: parseInt(document.getElementById('labelsPerColumn').value),
 
-        // Text settings
-        textAlignment: document.getElementById('textAlignment').value,
-        textMaxLength: parseInt(document.getElementById('textMaxLength').value),
-        textTrimLength: parseInt(document.getElementById('textTrimLength').value),
-        textFontSize: parseInt(document.getElementById('textFontSize').value),
-        textAngle: parseInt(document.getElementById('textAngle').value),
+    return new Profile(
+        currentId,
+        currentProfileName,
+        {
+            // Main settings
+            paperHeight: parseInt(document.getElementById('paperHeight').value),
+            paperWidth: parseInt(document.getElementById('paperWidth').value),
+            labelHeight: parseInt(document.getElementById('labelHeight').value),
+            labelWidth: parseInt(document.getElementById('labelWidth').value),
+            marginX: parseInt(document.getElementById('marginX').value),
+            marginY: parseInt(document.getElementById('marginY').value),
+            offsetX: parseInt(document.getElementById('offsetX').value),
+            offsetY: parseInt(document.getElementById('offsetY').value),
+            labelsPerRow: parseInt(document.getElementById('labelsPerRow').value),
+            labelsPerColumn: parseInt(document.getElementById('labelsPerColumn').value),
 
-        // Barcode type
-        useDataMatrix: document.getElementById('useDataMatrix').checked,
+            // Text settings
+            textAlignment: document.getElementById('textAlignment').value,
+            textMaxLength: parseInt(document.getElementById('textMaxLength').value),
+            textTrimLength: parseInt(document.getElementById('textTrimLength').value),
+            textFontSize: parseInt(document.getElementById('textFontSize').value),
+            textAngle: parseInt(document.getElementById('textAngle').value),
 
-        // Number settings
-        numbersAlignment: document.getElementById('numbersAlignment').value,
-        numbersFontSize: parseInt(document.getElementById('numbersFontSize').value),
-        numbersAngle: parseInt(document.getElementById('numbersAngle').value),
+            // Barcode type
+            useDataMatrix: document.getElementById('useDataMatrix').checked,
 
-        // Barcode settings
-        barcodeAlignment: document.getElementById('barcodeAlignment').value,
-        barcodeFontSize: parseInt(document.getElementById('barcodeFontSize').value),
-        barcodeAngle: parseInt(document.getElementById('barcodeAngle').value)
-    });
+            // Number settings
+            numbersAlignment: document.getElementById('numbersAlignment').value,
+            numbersFontSize: parseInt(document.getElementById('numbersFontSize').value),
+            numbersAngle: parseInt(document.getElementById('numbersAngle').value),
+
+            // Barcode settings
+            barcodeAlignment: document.getElementById('barcodeAlignment').value,
+            barcodeFontSize: parseInt(document.getElementById('barcodeFontSize').value),
+            barcodeAngle: parseInt(document.getElementById('barcodeAngle').value)
+        }
+    );
 }
 
 async function createNewProfile() {
@@ -202,13 +202,16 @@ async function createNewProfile() {
         }
     }
 
-    const currentProfile = getCurrentProfile();
-    
+    const currentProfile = getCurrentProfileFromForm();
+    currentProfile.profileName = profileName;
+
+    // Generate new ID for the profile
     const nextId = await calculateNextProfileId(profiles);
     currentProfile.id = nextId;
-    
-    profiles[profileName] = currentProfile.toObject();
-    
+
+    // Save to storage using the class method
+    profiles[profileName] = currentProfile.toStorageObject();
+
     await chrome.storage.local.set({ profiles });
     await loadProfiles();
 
@@ -230,13 +233,19 @@ async function saveCurrentProfile() {
     const result = await chrome.storage.local.get(['profiles']);
     const profiles = result.profiles || {};
 
-    const currentProfile = getCurrentProfile();
-    profiles[profileName] = currentProfile.toObject();
-    
+    const currentProfile = getCurrentProfileFromForm();
+    currentProfile.profileName = profileName;
+
+    // Preserve the original ID
+    if (profiles[profileName]) {
+        currentProfile.id = profiles[profileName].id;
+    }
+
+    profiles[profileName] = currentProfile.toStorageObject();
+
     await chrome.storage.local.set({ profiles });
-    
     await sendProfileToBackground(currentProfile);
-    
+
     alert(`Profile "${profileName}" saved successfully!`);
 }
 
@@ -259,9 +268,8 @@ async function deleteCurrentProfile() {
 
     await loadProfiles();
     document.getElementById('profileSelect').value = 'default';
-    
+
     await chrome.storage.local.set({ currentProfileName: 'default' });
-    
     await loadSelectedProfile();
 
     alert(`Profile "${profileName}" deleted successfully!`);
@@ -271,12 +279,12 @@ async function resetToDefault() {
     if (confirm('Are you sure you want to reset to default settings?')) {
         const defaultProfile = Profile.getDefaultProfile();
         applyProfile(defaultProfile);
-        
+
         const currentProfileName = document.getElementById('profileSelect').value;
         if (currentProfileName !== 'default') {
             await saveCurrentProfile();
         }
-        
+
         alert('Settings reset to default!');
     }
 }
@@ -289,4 +297,16 @@ function loadPrinters() {
     option.value = "custom";
     option.textContent = "Custom printer...";
     printerSelect.appendChild(option);
+}
+
+async function clearAllProfiles() {
+    const defaultProfile = Profile.getDefaultProfile();
+    const profiles = {
+        'default': defaultProfile.toStorageObject()
+    };
+
+    await chrome.storage.local.set({ profiles });
+
+    await loadProfiles();
+    await loadSelectedProfile();
 }

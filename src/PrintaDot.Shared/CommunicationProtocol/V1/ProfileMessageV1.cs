@@ -22,7 +22,7 @@ public class ProfileMessageV1 : Message
     public required int LabelsPerColumn { get; set; }
 
     // Text settings
-    public required Aligment TextAlignment { get; set; }
+    public required string TextAlignment { get; set; }
     public required int TextMaxLength { get; set; }
     public required int TextTrimLength { get; set; }
     public required double TextFontSize { get; set; }
@@ -35,12 +35,12 @@ public class ProfileMessageV1 : Message
     public bool UseDataMatrix { get; set; }
 
     // Settings of number
-    public required Aligment NumbersAlignment { get; set; }
+    public required string NumbersAlignment { get; set; }
     public required double NumbersFontSize { get; set; }
     public required double NumbersAngle { get; set; }
 
     // Settings of barcode
-    public required Aligment BarcodeAlignment { get; set; }
+    public required string BarcodeAlignment { get; set; }
     public required double BarcodeFontSize { get; set; }
     public required double BarcodeAngle { get; set; }
 }

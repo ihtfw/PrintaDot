@@ -1,11 +1,9 @@
 class Profile {
-    constructor(id = 1, settings = {}) {
+    constructor(id = 1, profileName = "default", settings = {}) {
         this.id = id;
-        
+        this.profileName = profileName;
         this.version = 1;
         this.type = "profile";
-
-        this.profileName = settings.profileName || "default";
 
         // Main settings
         this.paperHeight = settings.paperHeight || 297;
@@ -26,11 +24,14 @@ class Profile {
         this.textFontSize = settings.textFontSize || 12;
         this.textAngle = settings.textAngle || 0;
 
+        // Printer name
+        this.printerName = settings.printerName || "Default Printer";
+
         // Barcode type
         this.useDataMatrix = settings.useDataMatrix || false;
 
         // Number settings
-        this.numbersAlignment = settings.numbersAlignment || 'Center';  
+        this.numbersAlignment = settings.numbersAlignment || 'Center';
         this.numbersFontSize = settings.numbersFontSize || 10;
         this.numbersAngle = settings.numbersAngle || 0;
 
@@ -41,9 +42,12 @@ class Profile {
     }
 
     // Convert to plain object for storage
-    toObject() {
+    toStorageObject() {
         return {
             id: this.id,
+            profileName: this.profileName,
+            version: this.version,
+            type: this.type,
             paperHeight: this.paperHeight,
             paperWidth: this.paperWidth,
             labelHeight: this.labelHeight,
@@ -59,6 +63,7 @@ class Profile {
             textTrimLength: this.textTrimLength,
             textFontSize: this.textFontSize,
             textAngle: this.textAngle,
+            printerName: this.printerName,
             useDataMatrix: this.useDataMatrix,
             numbersAlignment: this.numbersAlignment,
             numbersFontSize: this.numbersFontSize,
@@ -69,13 +74,41 @@ class Profile {
         };
     }
 
-    // Create from plain object
-    static fromObject(obj) {
-        return new Profile(obj.id, obj);
+    // Create from storage object
+    static fromStorageObject(obj) {
+        return new Profile(
+            obj.id,
+            obj.profileName,
+            {
+                paperHeight: obj.paperHeight,
+                paperWidth: obj.paperWidth,
+                labelHeight: obj.labelHeight,
+                labelWidth: obj.labelWidth,
+                marginX: obj.marginX,
+                marginY: obj.marginY,
+                offsetX: obj.offsetX,
+                offsetY: obj.offsetY,
+                labelsPerRow: obj.labelsPerRow,
+                labelsPerColumn: obj.labelsPerColumn,
+                textAlignment: obj.textAlignment,
+                textMaxLength: obj.textMaxLength,
+                textTrimLength: obj.textTrimLength,
+                textFontSize: obj.textFontSize,
+                textAngle: obj.textAngle,
+                printerName: obj.printerName,
+                useDataMatrix: obj.useDataMatrix,
+                numbersAlignment: obj.numbersAlignment,
+                numbersFontSize: obj.numbersFontSize,
+                numbersAngle: obj.numbersAngle,
+                barcodeAlignment: obj.barcodeAlignment,
+                barcodeFontSize: obj.barcodeFontSize,
+                barcodeAngle: obj.barcodeAngle
+            }
+        );
     }
 
-    // Get default settings (id = 0)
+    // Get default settings
     static getDefaultProfile() {
-        return new Profile(1);
+        return new Profile(1, 'default');
     }
 }

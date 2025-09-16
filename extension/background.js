@@ -53,7 +53,7 @@ function print(header, barcode) {
         port.postMessage({
             type: "printRequest",
             version: 1,
-            profile: "DefaultProfile",
+            profile: "default",
             items: [
                 {
                     header: header,
@@ -90,11 +90,14 @@ async function connect() {
 }
 
 async function sendProfilesToNativeHost() {
-    const profiles = await chrome.storage.local.get('profiles');
+    const result = await chrome.storage.local.get('profiles');
+    const profilesObject = result.profiles || {};
     
-        port.postMessage({
-            version: 1,
-            type: "profiles",
-            profiles: profiles
-        });
+    const profilesArray = Object.values(profilesObject);
+    
+    port.postMessage({
+        version: 1,
+        type: "profiles",
+        profiles: profilesArray
+    });
 }
