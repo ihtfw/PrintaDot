@@ -234,5 +234,9 @@
   "cantOverwriteDefault": {
     "message": "Cannot overwrite default profile. Create a new profile instead.",
     "description": "Cannot overwrite default profile message"
+  },
+    "clearAllProfilesButton": {
+    "message": "Clear all profiles",
+    "description": "Delete all profiles and reset to default"
   }
 }

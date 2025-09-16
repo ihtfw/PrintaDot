@@ -300,6 +300,10 @@ function loadPrinters() {
 }
 
 async function clearAllProfiles() {
+    if (!confirm(`Are you sure you want to delete all profiles?`)) {
+        return;
+    }
+
     const defaultProfile = Profile.getDefaultProfile();
     const profiles = {
         'default': defaultProfile.toStorageObject()

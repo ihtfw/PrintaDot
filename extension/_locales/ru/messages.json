@@ -231,5 +231,9 @@
   "cantOverwriteDefault": {
     "message": "Нельзя перезаписать пресет по умолчанию. Создайте новый пресет.",
     "description": "Cannot overwrite default profile message"
+  },
+    "clearAllProfilesButton": {
+    "message": "Удалить все профили печати",
+    "description": "Delete all profiles and reset to default"
   }
 }

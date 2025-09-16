@@ -20,8 +20,117 @@ h1 {
     color: #2c3e50;
     margin-bottom: 20px;
     font-size: 24px;
+    background: linear-gradient(135deg, #007bff, #0056b3);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
+/* Стили для секции ввода данных (как в popup) */
+.content {
+    margin: 20px 0;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+}
+
+.input-group {
+    margin-bottom: 15px;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+    font-size: 13px;
+    color: #2c3e50;
+}
+
+.input-group input[type="text"] {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    font-size: 14px;
+    box-sizing: border-box;
+    background-color: white;
+    transition: all 0.2s ease;
+}
+
+.input-group input[type="text"]:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+.input-group input[type="text"]::placeholder {
+    color: #6c757d;
+    opacity: 0.7;
+}
+
+/* Стили для кнопок (как в popup) */
+.button-group {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+button {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+button:focus {
+    outline: 2px solid #007bff;
+    outline-offset: 2px;
+}
+
+.main-btn {
+    width: auto;
+    min-width: 120px;
+}
+
+#saveBtn {
+    background-color: #007bff;
+    color: white;
+}
+
+#saveBtn:hover {
+    background-color: #0056b3;
+}
+
+
+#resetBtn {
+    background-color: #6c757d;
+    color: white;
+}
+
+#resetBtn:hover {
+    background-color: #5a6268;
+}
+
+/* Стили для секции профилей */
 .profiles-section {
     margin-bottom: 20px;
     padding: 15px;
@@ -42,13 +151,65 @@ h1 {
 .profiles-controls input {
     flex: 1;
     min-width: 120px;
+    padding: 8px 12px;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    font-size: 14px;
+    background-color: white;
 }
 
-.profiles-controls button {
-    padding: 6px 12px;
+.profiles-controls select:focus,
+.profiles-controls input:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+.small-btn {
+    padding: 8px 12px;
     font-size: 12px;
+    text-transform: none;
+    letter-spacing: normal;
 }
 
+#newProfileBtn {
+    background-color: #28a745;
+    color: white;
+}
+
+#newProfileBtn:hover {
+    background-color: #218838;
+}
+
+#deleteProfileBtn {
+    background-color: #dc3545;
+    color: white;
+}
+
+#deleteProfileBtn:hover {
+    background-color: #c82333;
+}
+
+#clearAllProfilesBtn {
+    background-color: #dc3545;
+    color: white;
+}
+
+#clearAllProfilesBtn:hover {
+    background-color: #c82333;
+}
+
+.danger {
+    background-color: #dc3545 !important;
+    border-color: #dc3545 !important;
+}
+
+.danger:hover {
+    background-color: #c82333 !important;
+    border-color: #bd2130 !important;
+}
+
+/* Стили для сетки настроек */
 .settings-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -61,6 +222,12 @@ h1 {
     border-radius: 8px;
     padding: 15px;
     background: #fff;
+    transition: all 0.3s ease;
+}
+
+.settings-group:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transform: translateY(-2px);
 }
 
 .group-header {
@@ -73,14 +240,6 @@ h1 {
     display: flex;
     justify-content: space-between;
     align-items: center;
-}
-
-.group-toggle {
-    background: none;
-    border: none;
-    color: #6c757d;
-    cursor: pointer;
-    font-size: 14px;
 }
 
 .group-content {
@@ -110,18 +269,19 @@ h1 {
 .setting-input input,
 .setting-input select {
     width: 100%;
-    padding: 6px 10px;
+    padding: 8px 10px;
     border: 1px solid #ced4da;
-    border-radius: 4px;
-    font-size: 12px;
+    border-radius: 6px;
+    font-size: 14px;
     box-sizing: border-box;
+    background-color: white;
 }
 
 .setting-input input:focus,
 .setting-input select:focus {
     outline: none;
     border-color: #007bff;
-    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.1);
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
 }
 
 .checkbox-container {
@@ -131,73 +291,219 @@ h1 {
 }
 
 input[type="checkbox"] {
-    width: 16px;
-    height: 16px;
+    width: 18px;
+    height: 18px;
     margin: 0;
+    accent-color: #007bff;
+}
+
+/* Анимации (как в popup) */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+body {
+    animation: fadeIn 0.3s ease-out;
+}
+
+.content {
+    animation: fadeIn 0.4s ease-out;
+}
+
+.profiles-section {
+    animation: fadeIn 0.5s ease-out;
+}
+
+.settings-grid {
+    animation: fadeIn 0.6s ease-out;
 }
 
 .button-group {
-    display: flex;
-    gap: 10px;
-    justify-content: center;
-    margin-top: 20px;
+    animation: fadeIn 0.7s ease-out;
 }
 
-button {
-    padding: 10px 20px;
-    border: none;
+/* Стили для сообщений об ошибках */
+.error-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: #ffebee;
+    color: #c62828;
+    padding: 15px;
+    border-top: 2px solid #c62828;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    display: none;
+    z-index: 1000;
+}
+
+.error-close {
+    float: right;
+    cursor: pointer;
+    font-weight: bold;
+    margin-left: 10px;
+    padding: 5px 10px;
+    border-radius: 4px;
+    background-color: #ffcdd2;
+}
+
+.error-close:hover {
+    background-color: #ef9a9a;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    body {
+        padding: 10px;
+        min-width: auto;
+    }
+    
+    .container {
+        padding: 15px;
+    }
+    
+    .profiles-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .settings-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .setting-row {
+        grid-template-columns: 1fr;
+        gap: 5px;
+    }
+    
+    .button-group {
+        flex-direction: column;
+    }
+    
+    button {
+        width: 100%;
+    }
+}
+
+.print-form-card {
+    background: #ffffff;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 25px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e1e5e9;
+}
+
+.print-form-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 18px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #007bff;
+}
+
+.print-form-icon {
+    width: 32px;
+    height: 32px;
+    background: #007bff;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 12px;
+    color: white;
+}
+
+.print-form-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #2c3e50;
+    margin: 0;
+}
+
+.print-form-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.print-input-group {
+    margin-bottom: 15px;
+}
+
+.print-input-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+    color: #2c3e50;
+    font-size: 13px;
+}
+
+.print-input-group input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ced4da;
     border-radius: 6px;
     font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
     transition: all 0.2s ease;
+    box-sizing: border-box;
+    background-color: white;
+    color: #2c3e50;
 }
 
-#saveBtn {
+.print-input-group input:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
+}
+
+.print-button-container {
+    grid-column: span 2;
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+#printBtn {
     background-color: #007bff;
     color: white;
+    padding: 12px 30px;
+    font-size: 15px;
+    font-weight: 600;
+    border-radius: 6px;
+    box-shadow: 0 3px 8px rgba(0, 123, 255, 0.25);
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: none;
 }
 
-#saveBtn:hover {
+#printBtn:hover {
     background-color: #0056b3;
+    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.35);
+    transform: translateY(-1px);
 }
 
-#resetBtn {
-    background-color: #6c757d;
-    color: white;
+#printBtn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(0, 123, 255, 0.25);
 }
 
-#resetBtn:hover {
-    background-color: #5a6268;
-}
+@media (max-width: 768px) {
+    .print-form-content {
+        grid-template-columns: 1fr;
+    }
 
-#newProfileBtn {
-    background-color: #28a745;
-    color: white;
-}
-
-#newProfileBtn:hover {
-    background-color: #218838;
-}
-
-#deleteProfileBtn {
-    background-color: #dc3545;
-    color: white;
-}
-
-#deleteProfileBtn:hover {
-    background-color: #c82333;
-}
-
-.small-btn {
-    padding: 4px 8px;
-    font-size: 11px;
-}
-
-.collapsed .group-content {
-    display: none;
-}
-
-.profile-name-input {
-    min-width: 150px;
+    .print-button-container {
+        grid-column: span 1;
+    }
 }
