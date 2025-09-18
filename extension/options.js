@@ -187,7 +187,7 @@ function getCurrentProfileFromForm() {
 async function createNewProfile() {
     const profileName = document.getElementById('profileName').value.trim();
     if (!profileName) {
-        alert('Please enter a profile name');
+        showError('Please enter a profile name');
         return;
     }
 
@@ -220,14 +220,12 @@ async function createNewProfile() {
     document.getElementById('profileName').value = '';
 
     await chrome.storage.local.set({ currentProfileName: profileName });
-
-    alert(`Profile "${profileName}" created successfully with ID: ${currentProfile.id}!`);
 }
 
 async function saveCurrentProfile() {
     const profileName = document.getElementById('profileSelect').value;
     if (profileName === 'default') {
-        alert('Cannot overwrite default profile. Create a new profile instead.');
+        showError('Cannot overwrite default profile. Create a new profile instead.');
         return;
     }
 
@@ -246,18 +244,12 @@ async function saveCurrentProfile() {
 
     await chrome.storage.local.set({ profiles });
     await sendProfileToBackground(currentProfile);
-
-    alert(`Profile "${profileName}" saved successfully!`);
 }
 
 async function deleteCurrentProfile() {
     const profileName = document.getElementById('profileSelect').value;
     if (profileName === 'default') {
-        alert('Cannot delete default profile');
-        return;
-    }
-
-    if (!confirm(`Are you sure you want to delete profile "${profileName}"?`)) {
+        showError('Cannot delete default profile');
         return;
     }
 
@@ -272,21 +264,15 @@ async function deleteCurrentProfile() {
 
     await chrome.storage.local.set({ currentProfileName: 'default' });
     await loadSelectedProfile();
-
-    alert(`Profile "${profileName}" deleted successfully!`);
 }
 
 async function resetToDefault() {
-    if (confirm('Are you sure you want to reset to default settings?')) {
-        const defaultProfile = Profile.getDefaultProfile();
-        applyProfile(defaultProfile);
+    const defaultProfile = Profile.getDefaultProfile();
+    applyProfile(defaultProfile);
 
-        const currentProfileName = document.getElementById('profileSelect').value;
-        if (currentProfileName !== 'default') {
-            await saveCurrentProfile();
-        }
-
-        alert('Settings reset to default!');
+    const currentProfileName = document.getElementById('profileSelect').value;
+    if (currentProfileName !== 'default') {
+        await saveCurrentProfile();
     }
 }
 
@@ -317,12 +303,11 @@ async function clearAllProfiles() {
 }
 
 function handlePrint() {
-    const header = document.getElementById('headerInput').value.trim();
     const barcode = document.getElementById('barcodeInput').value.trim();
     const profile = document.getElementById('profileSelect').value;
 
-    if (!header || !barcode) {
-        alert('Please fill all fields');
+    if (!barcode) {
+        showError("Please fill in barcode");
         headerInput.focus();
         return;
     }
@@ -338,4 +323,21 @@ function handlePrint() {
             }
         ]
     });
+}
+
+function showError(message) {
+    const errorContainer = document.getElementById('errorContainer');
+    const errorMessage = document.getElementById('errorMessage');
+
+    errorMessage.textContent = message;
+    errorContainer.style.display = 'block';
+
+    setTimeout(() => {
+        hideError();
+    }, 10000);
+}
+
+function hideError() {
+    const errorContainer = document.getElementById('errorContainer');
+    errorContainer.style.display = 'none';
 }

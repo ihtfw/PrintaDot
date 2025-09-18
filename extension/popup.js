@@ -55,12 +55,12 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     function handlePrint() {
-        const header = headerInput.value.trim();
         const barcode = barcodeInput.value.trim();
 
-        if (!header || !barcode) {
-            alert('Please fill all fields');
-            headerInput.focus();
+        if (!barcode) {
+            barcodeInput.focus();
+
+            showError("Fill in barcode input");
             return;
         }
 
