@@ -2,6 +2,13 @@
 
 public static class MessageTypes
 {
+    /// <summary>
+    /// Variable for supported message protocol version.
+    /// All versions lower than SupportedMessageVersion autumaticly supported.
+    /// Higher versions than SupportedMessageVersion not supported and can be deserialize to lower version.
+    /// </summary>
+    public const int SupportedMessageVersion = 1;
+
     public static readonly Dictionary<string, List<int>> SupportedMessageVersions = new()
     {
         [PrintRequestMessageType] = [1],

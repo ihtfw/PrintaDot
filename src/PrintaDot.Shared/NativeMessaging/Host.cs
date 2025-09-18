@@ -49,18 +49,14 @@ public class Host
         {
             if (message is not null)
             {
-                ProcessMessageByType(message);
-
-                var exception = ExceptionMessageV1.Create("test ex after print");
-                StreamHandler.Write(exception);
-            }
-            
-
-            Log.LogMessage("Data Received:" + message.ToJson());
-
-            if (_sendConfirmationReceipt)
-            {
-                StreamHandler.Write(message);
+                if (message.Type == MessageTypes.ExceptionType)
+                {
+                    StreamHandler.Write(message);
+                }
+                else
+                {
+                    ProcessMessageByType(message);
+                }
             }
         }
     }

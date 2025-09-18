@@ -15,7 +15,7 @@ public static class Log
     /// </summary>
     public static bool Active { get; set; } = false;
 
-    internal static void LogMessage(string msg)
+    internal static void LogMessage(string msg, string? nameof = null)
     {
         if (!Active)
         {
@@ -24,7 +24,19 @@ public static class Log
 
         try
         {
-            File.AppendAllText(MessageLogLocation, msg + Environment.NewLine);
+            if (nameof is not null)
+            {
+                var messageLine = $"[{nameof}]: {msg} {Environment.NewLine}";
+
+                File.AppendAllText(MessageLogLocation, messageLine);
+            }
+            else
+            {
+                var messageLine = $"[NATIVEHOST]: {msg} {Environment.NewLine}";
+
+                File.AppendAllText(MessageLogLocation, messageLine);
+            }
+            
         }
         catch (IOException)
         {

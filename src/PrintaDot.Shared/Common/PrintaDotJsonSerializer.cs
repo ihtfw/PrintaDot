@@ -16,7 +16,7 @@ public static class PrintaDotJsonSerializer
         ApplyDefaultJsonSerializerOptions(DefaultOptions);
     }
 
-    public static T FromJson<T>(this string self, bool safe = false)
+    public static T FromJson<T>(this string self, bool safe = true)
     {
         return (T)self.FromJson(typeof(T), safe);
     }
@@ -44,6 +44,8 @@ public static class PrintaDotJsonSerializer
             }
             catch (JsonException)
             {
+                Log.LogMessage($"Can deserialize to type {type}", nameof(PrintaDotJsonSerializer));
+
                 return null;
             }
         }
@@ -74,69 +76,37 @@ public static class PrintaDotJsonSerializer
         return JsonSerializer.Serialize(value, typeof(TBase), options);
     }
 
-    public static Message? FromJsonToMessage(this string self)
+    public static Message FromJsonToMessage(this string self)
     {
-        try
+        using var document = JsonDocument.Parse(self);
+        var root = document.RootElement;
+
+        if (!root.TryGetProperty("type", out var typeProperty) || !root.TryGetProperty("version", out var versionProperty))
         {
-            using var document = JsonDocument.Parse(self);
-            var root = document.RootElement;
-
-            if (!root.TryGetProperty("type", out var typeProperty) ||
-                !root.TryGetProperty("version", out var versionProperty))
-            {
-                return null;
-            }
-
-            var type = typeProperty.GetString();
-            var version = versionProperty.GetInt32();
-            
-            if (string.IsNullOrEmpty(type))
-                return null;
-
-            return DeserializeWithFallback(self, type, version);
+            Log.LogMessage("Json must contains type and version fields", nameof(PrintaDotJsonSerializer));
+            return ExceptionMessageV1.Create($"Exception during deserialization: json must contains type and version fields");
         }
-        catch (JsonException)
-        {
-            return null;
-        }
+
+        return DeserializeWithFallback(self, typeProperty.ToString(), versionProperty.GetInt32());
     }
 
-    private static Message? DeserializeWithFallback(string json, string messageType, int requestedVersion)
+    private static Message DeserializeWithFallback(string json, string messageType, int requestedVersion)
     {
-        Log.LogMessage($"{requestedVersion} {messageType}");
-        if (!MessageTypes.SupportedMessageVersions.TryGetValue(messageType, out var supportedVersions) ||
-            supportedVersions.Count == 0)
+        for (var targetVersion = MessageTypes.SupportedMessageVersion; targetVersion > 0; targetVersion--)
         {
-            return null;
-        }
-        Log.LogMessage("type recived");
-        var sortedVersions = supportedVersions.OrderByDescending(v => v).ToList();
-
-        foreach (var targetVersion in sortedVersions)
-        {
-            if (targetVersion > requestedVersion)
-                continue;
-
-            try
+            var message = DeserializeToVersion(json, messageType, targetVersion);
+            if (message != null)
             {
-                var message = DeserializeToVersion(json, messageType, targetVersion);
-                if (message != null)
-                {
-                    Log.LogMessage("Message deserialized");
+                Log.LogMessage("Message deserialized");
 
-                    message.Version = targetVersion;
-                    return message;
-                }
-            }
-            catch (Exception ex)
-            {
-                Log.LogMessage($"{ex.Message}");
+                message.Version = targetVersion;
 
-                continue;
+                return message;
             }
         }
 
-        return null;
+        Log.LogMessage("Deserialization failed", nameof(PrintaDotJsonSerializer));
+        return ExceptionMessageV1.Create($"Exception during deserialization: '{messageType ?? "NULL"} v{requestedVersion}' message type is not supported");
     }
 
     private static Message? DeserializeToVersion(string json, string messageType, int targetVersion)
@@ -145,7 +115,6 @@ public static class PrintaDotJsonSerializer
         {
             MessageTypes.PrintRequestMessageType => targetVersion switch
             {
-                0 => json.FromJson<Message>(),
                 1 => json.FromJson<PrintRequestMessageV1>(),
                 _ => null
             },
@@ -169,7 +138,7 @@ public static class PrintaDotJsonSerializer
                 1 => json.FromJson<ProfilesMessageV1>(),
                 _ => null
             },
-            _ => ExceptionMessageV1.Create("Exception during deserialization: Provided messsage type doesnt exist"),
+            _ => null,
         };
     }
 
