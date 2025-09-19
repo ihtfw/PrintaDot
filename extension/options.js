@@ -3,15 +3,26 @@ document.addEventListener('DOMContentLoaded', function () {
     initializeOptionsPage();
 });
 
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    if (request.type === "exception" && request.messageText) {
+        showError(request.messageText);
+    }
+});
+
 async function initializeOptionsPage() {
     await loadProfiles();
     await loadProfile();
+
+    document.getElementById('headerInput').value = 'test';
+    document.getElementById('barcodeInput').value = '0123456789';
+
     loadPrinters();
     initEventHandlers();
     initCollapsibleGroups();
 }
 
 function initEventHandlers() {
+    document.getElementById('errorContainer').addEventListener('click', hideError);
     document.getElementById('printBtn').addEventListener('click', handlePrint);
     document.getElementById('saveBtn').addEventListener('click', saveCurrentProfile);
     document.getElementById('resetBtn').addEventListener('click', resetToDefault);
@@ -303,6 +314,7 @@ async function clearAllProfiles() {
 }
 
 function handlePrint() {
+     const header = document.getElementById('headerInput').value.trim();
     const barcode = document.getElementById('barcodeInput').value.trim();
     const profile = document.getElementById('profileSelect').value;
 

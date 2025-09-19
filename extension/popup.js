@@ -23,13 +23,15 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
 document.addEventListener('DOMContentLoaded', function () {
     localizeHtmlPage();
-
+    
     const printBtn = document.getElementById('printBtn');
     const settingsBtn = document.getElementById('settingsBtn');
     const closeBtn = document.getElementById('closeBtn');
     const headerInput = document.getElementById('headerInput');
     const barcodeInput = document.getElementById('barcodeInput');
+    const errorCloseBtn = document.getElementById('errorCloseBtn');
 
+    errorCloseBtn.addEventListener('click', hideError);
     printBtn.addEventListener('click', handlePrint);
 
     settingsBtn.addEventListener('click', function () {
@@ -55,6 +57,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     function handlePrint() {
+        const header = headerInput.value.trim();
         const barcode = barcodeInput.value.trim();
 
         if (!barcode) {
