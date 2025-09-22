@@ -31,7 +31,7 @@ public class PrintService
             {
                 e.Graphics?.DrawString(profile.ProfileName, font, Brushes.Black, 100, 190);
                 e.Graphics?.DrawString(profile.Id.ToString(), font, Brushes.Black, 100, 220);
-                e.Graphics?.DrawString(profile.Type, font, Brushes.Black, 100, 250);
+                e.Graphics?.DrawString(profile.Type.ToString(), font, Brushes.Black, 100, 250);
             }
         };
 
@@ -43,7 +43,7 @@ public class PrintService
         // TODO Implement logic of getting printing status
         return new GetPrintStatusResponseMessageV1 
         {
-            Type = "getPrintStatusResponse",
+            Type = MessageType.GetPrintStatusResponse,
             Version = 1,
             Guid  = Guid.NewGuid(),
             PrintStatus = PrintStatus.Success,

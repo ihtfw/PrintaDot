@@ -4,6 +4,13 @@ namespace PrintaDot.Shared.Common;
 
 public static class Utils
 {
+    /// <summary>
+    /// Variable for supported message protocol version.
+    /// All versions lower than SupportedMessageVersion autumaticly supported.
+    /// Higher versions than SupportedMessageVersion not supported and can be deserialize to lower version.
+    /// </summary>
+    public const int SupportedMessageVersion = 1;
+
     public static string MessageLogLocation => Path.Combine(AssemblyLoadDirectory(), "native-messaging.log");
 
     static public string AssemblyLoadDirectory()

@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', async function () {
 });
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    if (request.type === "exception" && request.messageText) {
+    if (request.type === "Exception" && request.messageText) {
         showError(request.messageText);
     }
 });

@@ -16,7 +16,7 @@ function hideError() {
 }
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    if (request.type === "exception" && request.messageText) {
+    if (request.type === "Exception" && request.messageText) {
         showError(request.messageText);
     }
 });
@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         }
 
         chrome.runtime.sendMessage({
-            type: "printRequest",
+            type: "PrintRequest",
             version: 1,
             profile: "default",
             items: [

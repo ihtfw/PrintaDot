@@ -49,7 +49,7 @@ public class Host
         {
             if (message is not null)
             {
-                if (message.Type == MessageTypes.ExceptionType)
+                if (message.Type == MessageType.Exception)
                 {
                     StreamHandler.Write(message);
                 }

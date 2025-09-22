@@ -87,12 +87,20 @@ public static class PrintaDotJsonSerializer
             return ExceptionMessageV1.Create($"Exception during deserialization: json must contains type and version fields");
         }
 
-        return DeserializeWithFallback(self, typeProperty.ToString(), versionProperty.GetInt32());
+        var type = typeProperty.ToString();
+
+        if (!Enum.TryParse<MessageType>(type, out var messageType))
+        {
+            Log.LogMessage($"Invalid message type '{type}'", nameof(PrintaDotJsonSerializer));
+            return ExceptionMessageV1.Create($"Exception during deserialization: invalid message type '{type}'");
+        }
+
+        return DeserializeWithFallback(self, messageType, versionProperty.GetInt32());
     }
 
-    private static Message DeserializeWithFallback(string json, string messageType, int requestedVersion)
+    private static Message DeserializeWithFallback(string json, MessageType messageType, int requestedVersion)
     {
-        for (var targetVersion = MessageTypes.SupportedMessageVersion; targetVersion > 0; targetVersion--)
+        for (var targetVersion = Utils.SupportedMessageVersion; targetVersion > 0; targetVersion--)
         {
             var message = DeserializeToVersion(json, messageType, targetVersion);
             if (message != null)
@@ -106,34 +114,34 @@ public static class PrintaDotJsonSerializer
         }
 
         Log.LogMessage("Deserialization failed", nameof(PrintaDotJsonSerializer));
-        return ExceptionMessageV1.Create($"Exception during deserialization: '{messageType ?? "NULL"} v{requestedVersion}' message type is not supported");
+        return ExceptionMessageV1.Create($"Exception during deserialization: '{messageType.ToString() ?? "NULL"} v{requestedVersion}' message type is not supported");
     }
 
-    private static Message? DeserializeToVersion(string json, string messageType, int targetVersion)
+    private static Message? DeserializeToVersion(string json, MessageType messageType, int targetVersion)
     {
         return messageType switch
         {
-            MessageTypes.PrintRequestMessageType => targetVersion switch
+            MessageType.PrintRequest => targetVersion switch
             {
                 1 => json.FromJson<PrintRequestMessageV1>(),
                 _ => null
             },
-            MessageTypes.GetPrintStatusRequestMessageType => targetVersion switch
+            MessageType.GetPrintStatusRequest => targetVersion switch
             {
                 1 => json.FromJson<GetPrintStatusRequestMessageV1>(),
                 _ => null
             },
-            MessageTypes.GetPrintStatusResponseMessageType => targetVersion switch
+            MessageType.GetPrintStatusResponse => targetVersion switch
             {
                 1 => json.FromJson<GetPrintStatusResponseMessageV1>(),
                 _ => null
             },
-            MessageTypes.ProfileType => targetVersion switch
+            MessageType.Profile => targetVersion switch
             {
                 1 => json.FromJson<ProfileMessageV1>(),
                 _ => null
             },
-            MessageTypes.ProfilesType => targetVersion switch
+            MessageType.Profiles => targetVersion switch
             {
                 1 => json.FromJson<ProfilesMessageV1>(),
                 _ => null

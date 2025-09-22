@@ -5,12 +5,12 @@ initializeStorage().then(() => {
 });
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {    
-    if (request.type === "printRequest" || request.type === "profile") {
+    if (request.type === "PrintRequest" || request.type === "Profile") {
         if (port) {
             port.postMessage(request);
         } else {
             chrome.runtime.sendMessage({
-                type: "exception",
+                type: "Exception",
                 message: "Error happened when sending native message"
             }).catch(() => {});
         }
@@ -51,7 +51,7 @@ function onNativeMessage(message) {
 function print(header, barcode) {
     if (port) {
         port.postMessage({
-            type: "printRequest",
+            type: "PrintRequest",
             version: 1,
             profile: "default",
             items: [
@@ -97,7 +97,7 @@ async function sendProfilesToNativeHost() {
     
     port.postMessage({
         version: 1,
-        type: "profiles",
+        type: "Profiles",
         profiles: profilesArray
     });
 }

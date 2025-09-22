@@ -3,7 +3,7 @@ class Profile {
         this.id = id;
         this.profileName = profileName;
         this.version = 1;
-        this.type = "profile";
+        this.type = "Profile";
 
         // Main settings
         this.paperHeight = settings.paperHeight ?? 297;
