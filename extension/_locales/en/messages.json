@@ -1,242 +1,184 @@
 {
   "appName": {
-    "message": "PrintaDot",
-    "description": "The name of the extension"
+    "message": "PrintaDot"
   },
   "appDescription": {
-    "message": "Print labels with headers and barcodes",
-    "description": "The description of the extension"
+    "message": "Print labels with headers and barcodes"
   },
   
   "headerLabel": {
-    "message": "Header:",
-    "description": "Label for header input"
+    "message": "Header:"
   },
   "headerPlaceholder": {
-    "message": "Enter header",
-    "description": "Placeholder for header input"
+    "message": "Enter header"
   },
   "barcodeLabel": {
-    "message": "Barcode:",
-    "description": "Label for barcode input"
+    "message": "Barcode:"
   },
   "barcodePlaceholder": {
-    "message": "Enter barcode",
-    "description": "Placeholder for barcode input"
+    "message": "Enter barcode"
   },
   "printButton": {
-    "message": "Print",
-    "description": "Text for print button"
+    "message": "Print"
   },
   "settingsButton": {
-    "message": "Settings",
-    "description": "Text for settings button"
+    "message": "Settings"
   },
   "closeTitle": {
-    "message": "Close",
-    "description": "Title for close button"
+    "message": "Close"
   },
   "settingsTitle": {
-    "message": "Settings",
-    "description": "Title for settings button"
+    "message": "Settings"
   },
   "emptyFieldError": {
-    "message": "Please fill in at least one field",
-    "description": "Error message when both fields are empty"
+    "message": "Please fill in at least one field"
   },
   
   "settingsTitleText": {
-    "message": "PrintaDot - Settings",
-    "description": "Title of settings page"
+    "message": "PrintaDot - Settings"
   },
   "saveSettingsButton": {
-    "message": "Save Settings",
-    "description": "Save settings button text"
+    "message": "Save Settings"
   },
   "resetSettingsButton": {
-    "message": "Reset to Default",
-    "description": "Reset settings button text"
+    "message": "Reset to Default"
   },
   "newProfileButton": {
-    "message": "New Profile",
-    "description": "New profile button text"
+    "message": "New Profile"
   },
   "deleteProfileButton": {
-    "message": "Delete Profile",
-    "description": "Delete profile button text"
+    "message": "Delete Profile"
   },
   "profileNamePlaceholder": {
-    "message": "New profile name",
-    "description": "Placeholder for profile name input"
+    "message": "New profile name"
   },
   
   "mainSettingsGroup": {
-    "message": "Main Settings",
-    "description": "Main settings group title"
+    "message": "Main Settings"
   },
   "printerSettingsGroup": {
-    "message": "Printer",
-    "description": "Printer settings group title"
+    "message": "Printer"
   },
   "textSettingsGroup": {
-    "message": "Text",
-    "description": "Text settings group title"
+    "message": "Text"
   },
   "barcodeTypeGroup": {
-    "message": "Barcode Type",
-    "description": "Barcode type group title"
+    "message": "Barcode Type"
   },
   "numbersSettingsGroup": {
-    "message": "Numbers",
-    "description": "Numbers settings group title"
+    "message": "Numbers"
   },
   "barcodeSettingsGroup": {
-    "message": "Barcode",
-    "description": "Barcode settings group title"
+    "message": "Barcode"
   },
   
   "paperHeightLabel": {
-    "message": "Paper Height",
-    "description": "Paper height label"
+    "message": "Paper Height"
   },
   "paperWidthLabel": {
-    "message": "Paper Width",
-    "description": "Paper width label"
+    "message": "Paper Width"
   },
   "labelHeightLabel": {
-    "message": "Label Height",
-    "description": "Label height label"
+    "message": "Label Height"
   },
   "labelWidthLabel": {
-    "message": "Label Width",
-    "description": "Label width label"
+    "message": "Label Width"
   },
   "marginXLabel": {
-    "message": "Margin X",
-    "description": "Margin X label"
+    "message": "Margin X"
   },
   "marginYLabel": {
-    "message": "Margin Y",
-    "description": "Margin Y label"
+    "message": "Margin Y"
   },
   "offsetXLabel": {
-    "message": "Offset X",
-    "description": "Offset X label"
+    "message": "Offset X"
   },
   "offsetYLabel": {
-    "message": "Offset Y",
-    "description": "Offset Y label"
+    "message": "Offset Y"
   },
   "labelsPerRowLabel": {
-    "message": "Labels per Row",
-    "description": "Labels per row label"
+    "message": "Labels per Row"
   },
   "labelsPerColumnLabel": {
-    "message": "Labels per Column",
-    "description": "Labels per column label"
+    "message": "Labels per Column"
   },
   
   "printerNameLabel": {
-    "message": "Printer Name",
-    "description": "Printer name label"
+    "message": "Printer Name"
   },
   "defaultPrinterOption": {
-    "message": "Default Printer",
-    "description": "Default printer option"
+    "message": "Default Printer"
   },
   "customPrinterOption": {
-    "message": "Custom printer...",
-    "description": "Custom printer option"
+    "message": "Custom printer..."
   },
   
   "alignmentLabel": {
-    "message": "Alignment",
-    "description": "Alignment label"
+    "message": "Alignment"
   },
   "alignmentLeft": {
-    "message": "Left",
-    "description": "Left alignment option"
+    "message": "Left"
   },
   "alignmentCenter": {
-    "message": "Center",
-    "description": "Center alignment option"
+    "message": "Center"
   },
   "alignmentRight": {
-    "message": "Right",
-    "description": "Right alignment option"
+    "message": "Right"
   },
   "alignmentStretched": {
-    "message": "Stretched",
-    "description": "Stretched alignment option"
+    "message": "Stretched"
   },
   "maxLengthLabel": {
-    "message": "Max Length",
-    "description": "Max length label"
+    "message": "Max Length"
   },
   "trimLengthLabel": {
-    "message": "Trim After",
-    "description": "Trim length label"
+    "message": "Trim After"
   },
   "fontSizeLabel": {
-    "message": "Font Size",
-    "description": "Font size label"
+    "message": "Font Size"
   },
   "angleLabel": {
-    "message": "Angle",
-    "description": "Angle label"
+    "message": "Angle"
   },
   
   "dataMatrixLabel": {
-    "message": "DataMatrix",
-    "description": "DataMatrix checkbox label"
+    "message": "DataMatrix"
   },
   
   "saveSuccessMessage": {
-    "message": "Settings saved successfully!",
-    "description": "Settings saved successfully message"
+    "message": "Settings saved successfully!"
   },
   "resetSuccessMessage": {
-    "message": "Settings reset to default values!",
-    "description": "Settings reset successfully message"
+    "message": "Settings reset to default values!"
   },
   "profileCreatedMessage": {
-    "message": "Profile \"$1\" created successfully!",
-    "description": "Profile created message"
-  },
-  "profileSavedMessage": {
-    "message": "Profile \"$1\" saved successfully!",
-    "description": "Profile saved message"
+    "message": "Profile \"$1\" created successfully!"
   },
   "profileDeletedMessage": {
-    "message": "Profile \"$1\" deleted successfully!",
-    "description": "Profile deleted message"
-  },
-  "profileExistsMessage": {
-    "message": "Profile \"$1\" already exists. Overwrite?",
-    "description": "Profile already exists message"
+    "message": "Profile \"$1\" deleted successfully!"
   },
   "deleteProfileConfirm": {
-    "message": "Are you sure you want to delete profile \"$1\"?",
-    "description": "Delete profile confirmation"
+    "message": "Are you sure you want to delete profile \"$1\"?"
   },
   "resetConfirm": {
-    "message": "Are you sure you want to reset settings to default values?",
-    "description": "Reset settings confirmation"
+    "message": "Are you sure you want to reset settings to default values?"
   },
   "noProfileNameMessage": {
-    "message": "Please enter a profile name",
-    "description": "No profile name message"
+    "message": "Please enter a profile name"
   },
   "cantDeleteDefault": {
-    "message": "Cannot delete default profile",
-    "description": "Cannot delete default profile message"
+    "message": "Cannot delete default profile"
   },
   "cantOverwriteDefault": {
-    "message": "Cannot overwrite default profile. Create a new profile instead.",
-    "description": "Cannot overwrite default profile message"
+    "message": "Cannot overwrite default profile. Create a new profile instead."
   },
-    "clearAllProfilesButton": {
-    "message": "Clear all profiles",
-    "description": "Delete all profiles and reset to default"
+  "clearAllProfilesButton": {
+    "message": "Clear all profiles"
+  },
+  "printFormTitle": {
+    "message": "Printing"
+  },
+  "profileSectionTitle": {
+    "message": "Profile Selection"
   }
 }

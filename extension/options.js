@@ -1,5 +1,5 @@
-document.addEventListener('DOMContentLoaded', function () {
-    localizeHtmlPage();
+document.addEventListener('DOMContentLoaded', async function () {   
+    await initLocalization();
     initializeOptionsPage();
 });
 
@@ -19,6 +19,7 @@ async function initializeOptionsPage() {
     loadPrinters();
     initEventHandlers();
     initCollapsibleGroups();
+    initLanguageToggle();
 }
 
 function initEventHandlers() {
@@ -352,4 +353,31 @@ function showError(message) {
 function hideError() {
     const errorContainer = document.getElementById('errorContainer');
     errorContainer.style.display = 'none';
+}
+
+async function initLanguageToggle() {
+    const savedLang = localStorage.getItem("appLanguage") || "en";
+
+    const langRu = document.getElementById("langRu");
+    const langEn = document.getElementById("langEn");
+
+    if (savedLang === "ru") {
+        langRu.checked = true;
+    } else {
+        langEn.checked = true;
+    }
+
+    await loadMessages(savedLang);
+    await localizeHtmlPage(savedLang);
+
+    [langRu, langEn].forEach(input => {
+        input.addEventListener("change", async () => {
+            if (input.checked) {
+                window.location.reload();
+
+                const newLang = input.value;
+                localStorage.setItem("appLanguage", newLang);
+            }
+        });
+    });
 }

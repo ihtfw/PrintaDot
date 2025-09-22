@@ -12,7 +12,7 @@ body {
     background: white;
     padding: 20px;
     border-radius: 10px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 h1 {
@@ -226,7 +226,7 @@ button:focus {
 }
 
 .settings-group:hover {
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     transform: translateY(-2px);
 }
 
@@ -303,6 +303,7 @@ input[type="checkbox"] {
         opacity: 0;
         transform: translateY(-10px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -365,29 +366,29 @@ body {
         padding: 10px;
         min-width: auto;
     }
-    
+
     .container {
         padding: 15px;
     }
-    
+
     .profiles-controls {
         flex-direction: column;
         align-items: stretch;
     }
-    
+
     .settings-grid {
         grid-template-columns: 1fr;
     }
-    
+
     .setting-row {
         grid-template-columns: 1fr;
         gap: 5px;
     }
-    
+
     .button-group {
         flex-direction: column;
     }
-    
+
     button {
         width: 100%;
     }
@@ -506,4 +507,41 @@ body {
     .print-button-container {
         grid-column: span 1;
     }
+}
+
+.bottom-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.hidden-radio {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.lang-option {
+    display: inline-block;
+    padding: 6px 12px;
+    border: 1px solid #ced4da;
+    background: white;
+    border-radius: 6px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.lang-option:hover {
+    background: #e9ecef;
+}
+
+.hidden-radio:checked + .lang-option {
+    background: #007bff;
+    color: white;
+    border-color: #007bff;
 }

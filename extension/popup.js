@@ -21,8 +21,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     }
 });
 
-document.addEventListener('DOMContentLoaded', function () {
-    localizeHtmlPage();
+document.addEventListener('DOMContentLoaded', async function () {
+    await initLocalization();
     
     const printBtn = document.getElementById('printBtn');
     const settingsBtn = document.getElementById('settingsBtn');

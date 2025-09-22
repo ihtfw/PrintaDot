@@ -3,19 +3,21 @@
 
 <head>
     <meta charset="utf-8">
-    <title>__MSG_settingsTitleText__</title>    
+    <title>__MSG_settingsTitleText__</title>
     <link rel="stylesheet" href="options.css">
 </head>
 
 <body>
     <div class="container">
+        <h1 data-i18n="settingsTitleText"></h1>
         <h1>__MSG_settingsTitleText__</h1>
 
         <div class="print-form-card">
             <div class="print-form-header">
                 <div class="print-form-icon">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+                        <path
+                            d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
                         <path d="M6 14h12v8H6z" />
                     </svg>
                 </div>
@@ -35,8 +37,10 @@
 
                 <div class="print-button-container">
                     <button id="printBtn">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path
+                                d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
                             <path d="M6 14h12v8H6z" />
                         </svg>
                         __MSG_printButton__
@@ -59,7 +63,8 @@
                 <select id="profileSelect">
                     <option value="default">Default Profile</option>
                 </select>
-                <input type="text" id="profileName" placeholder="__MSG_profileNamePlaceholder__" class="profile-name-input">
+                <input type="text" id="profileName" placeholder="__MSG_profileNamePlaceholder__"
+                    class="profile-name-input">
                 <button id="newProfileBtn">__MSG_newProfileButton__</button>
                 <button id="deleteProfileBtn" class="danger">__MSG_deleteProfileButton__</button>
             </div>
@@ -208,7 +213,20 @@
             <button id="resetBtn">__MSG_resetSettingsButton__</button>
         </div>
 
-        <button id="clearAllProfilesBtn" class="small-btn danger">__MSG_clearAllProfilesButton__</button>
+        <div class="bottom-controls">
+            <button id="clearAllProfilesBtn" class="small-btn danger">__MSG_clearAllProfilesButton__</button>
+
+            <div class="language-toggle">
+                <label>
+                    <input type="radio" name="lang" value="ru" id="langRu" class="hidden-radio">
+                    <span class="lang-option">Русский</span>
+                </label>
+                <label>
+                    <input type="radio" name="lang" value="en" id="langEn" class="hidden-radio">
+                    <span class="lang-option">English</span>
+                </label>
+            </div>
+        </div>
     </div>
 
     <div id="errorContainer" class="error-container">

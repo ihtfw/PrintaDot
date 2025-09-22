@@ -1,239 +1,182 @@
 {
   "appName": {
-    "message": "ПРИНТАДОТ",
-    "description": "Название расширения"
+    "message": "ПРИНТАДОТ"
   },
   "appDescription": {
-    "message": "Печать этикеток с заголовками и штрих-кодами",
-    "description": "Описание расширения"
+    "message": "Печать этикеток с заголовками и штрих-кодами"
   },
   "headerLabel": {
-    "message": "Заголовок:",
-    "description": "Подпись для поля заголовка"
+    "message": "Заголовок:"
   },
   "headerPlaceholder": {
-    "message": "Введите заголовок",
-    "description": "Плейсхолдер для поля заголовка"
+    "message": "Введите заголовок"
   },
   "barcodeLabel": {
-    "message": "Штрих-код:",
-    "description": "Подпись для поля штрих-кода"
+    "message": "Штрих-код:"
   },
   "barcodePlaceholder": {
-    "message": "Введите штрих-код",
-    "description": "Плейсхолдер для поля штрих-кода"
+    "message": "Введите штрих-код"
   },
   "printButton": {
-    "message": "Печать",
-    "description": "Текст кнопки печати"
+    "message": "Печать"
   },
   "settingsButton": {
-    "message": "Настройки",
-    "description": "Текст кнопки настроек"
+    "message": "Настройки"
   },
   "closeTitle": {
-    "message": "Закрыть",
-    "description": "Заголовок кнопки закрытия"
+    "message": "Закрыть"
   },
   "settingsTitle": {
-    "message": "Настройки",
-    "description": "Заголовок кнопки настроек"
+    "message": "Настройки"
   },
   "emptyFieldError": {
-    "message": "Пожалуйста, заполните хотя бы одно поле",
-    "description": "Ошибка при пустых полях"
+    "message": "Пожалуйста, заполните хотя бы одно поле"
   },
-   "mainSettingsGroup": {
-    "message": "Основные",
-    "description": "Main settings group title"
+  "mainSettingsGroup": {
+    "message": "Основные"
   },
   "printerSettingsGroup": {
-    "message": "Принтер",
-    "description": "Printer settings group title"
+    "message": "Принтер"
   },
   "textSettingsGroup": {
-    "message": "Текст",
-    "description": "Text settings group title"
+    "message": "Текст"
   },
   "barcodeTypeGroup": {
-    "message": "Тип штрих-кода",
-    "description": "Barcode type group title"
+    "message": "Тип штрих-кода"
   },
   "numbersSettingsGroup": {
-    "message": "Цифры",
-    "description": "Numbers settings group title"
+    "message": "Цифры"
   },
   "barcodeSettingsGroup": {
-    "message": "Штрих-код",
-    "description": "Barcode settings group title"
+    "message": "Штрих-код"
   },
-    "settingsTitleText": {
-    "message": "ПринтаДот - Настройки печати",
-    "description": "Title of settings page"
+  "settingsTitleText": {
+    "message": "ПринтаДот - Настройки печати"
   },
   "saveSettingsButton": {
-    "message": "Сохранить",
-    "description": "Save settings button text"
+    "message": "Сохранить"
   },
   "resetSettingsButton": {
-    "message": "Сбросить",
-    "description": "Reset settings button text"
+    "message": "Сбросить"
   },
   "newProfileButton": {
-    "message": "Новый профиль",
-    "description": "New profile button text"
+    "message": "Новый профиль"
   },
   "deleteProfileButton": {
-    "message": "Удалить профиль",
-    "description": "Delete profile button text"
+    "message": "Удалить профиль"
   },
   "profileNamePlaceholder": {
-    "message": "Название нового профиля",
-    "description": "Placeholder for profile name input"
+    "message": "Название нового профиля"
   },
-  
   "paperHeightLabel": {
-    "message": "Высота листа",
-    "description": "Paper height label"
+    "message": "Высота листа"
   },
   "paperWidthLabel": {
-    "message": "Ширина листа",
-    "description": "Paper width label"
+    "message": "Ширина листа"
   },
   "labelHeightLabel": {
-    "message": "Высота наклейки",
-    "description": "Label height label"
+    "message": "Высота наклейки"
   },
   "labelWidthLabel": {
-    "message": "Ширина наклейки",
-    "description": "Label width label"
+    "message": "Ширина наклейки"
   },
   "marginXLabel": {
-    "message": "Отступ по X",
-    "description": "Margin X label"
+    "message": "Отступ по X"
   },
   "marginYLabel": {
-    "message": "Отступ по Y",
-    "description": "Margin Y label"
+    "message": "Отступ по Y"
   },
   "offsetXLabel": {
-    "message": "Сдвиг по X",
-    "description": "Offset X label"
+    "message": "Сдвиг по X"
   },
   "offsetYLabel": {
-    "message": "Сдвиг по Y",
-    "description": "Offset Y label"
+    "message": "Сдвиг по Y"
   },
   "labelsPerRowLabel": {
-    "message": "Наклеек по ширине",
-    "description": "Labels per row label"
+    "message": "Наклеек по ширине"
   },
   "labelsPerColumnLabel": {
-    "message": "Наклеек по высоте",
-    "description": "Labels per column label"
+    "message": "Наклеек по высоте"
   },
-  
   "printerNameLabel": {
-    "message": "Имя принтера",
-    "description": "Printer name label"
+    "message": "Имя принтера"
   },
   "defaultPrinterOption": {
-    "message": "Принтер по умолчанию",
-    "description": "Default printer option"
+    "message": "Принтер по умолчанию"
   },
   "customPrinterOption": {
-    "message": "Другой принтер...",
-    "description": "Custom printer option"
+    "message": "Другой принтер..."
   },
-  
   "alignmentLabel": {
-    "message": "Выравнивание",
-    "description": "Alignment label"
+    "message": "Выравнивание"
   },
   "alignmentLeft": {
-    "message": "Слева",
-    "description": "Left alignment option"
+    "message": "Слева"
   },
   "alignmentCenter": {
-    "message": "По центру",
-    "description": "Center alignment option"
+    "message": "По центру"
   },
   "alignmentRight": {
-    "message": "Справа",
-    "description": "Right alignment option"
+    "message": "Справа"
   },
   "alignmentStretched": {
-    "message": "Растянуть",
-    "description": "Stretched alignment option"
+    "message": "Растянуть"
   },
   "maxLengthLabel": {
-    "message": "Длина строки",
-    "description": "Max length label"
+    "message": "Длина строки"
   },
   "trimLengthLabel": {
-    "message": "Обрезать после",
-    "description": "Trim length label"
+    "message": "Обрезать после"
   },
   "fontSizeLabel": {
-    "message": "Размер шрифта",
-    "description": "Font size label"
+    "message": "Размер шрифта"
   },
   "angleLabel": {
-    "message": "Угол",
-    "description": "Angle label"
+    "message": "Угол"
   },
-  
   "dataMatrixLabel": {
-    "message": "DataMatrix",
-    "description": "DataMatrix checkbox label"
+    "message": "DataMatrix"
   },
-  
   "saveSuccessMessage": {
-    "message": "Настройки успешно сохранены!",
-    "description": "Settings saved successfully message"
+    "message": "Настройки успешно сохранены!"
   },
   "resetSuccessMessage": {
-    "message": "Настройки сброшены к значениям по умолчанию!",
-    "description": "Settings reset successfully message"
+    "message": "Настройки сброшены к значениям по умолчанию!"
   },
   "profileCreatedMessage": {
-    "message": "Пресет \"$1\" успешно создан!",
-    "description": "Profile created message"
+    "message": "Пресет \"$1\" успешно создан!"
   },
   "profileSavedMessage": {
-    "message": "Пресет \"$1\" успешно сохранен!",
-    "description": "Profile saved message"
+    "message": "Пресет \"$1\" успешно сохранен!"
   },
   "profileDeletedMessage": {
-    "message": "Пресет \"$1\" успешно удален!",
-    "description": "Profile deleted message"
+    "message": "Пресет \"$1\" успешно удален!"
   },
   "profileExistsMessage": {
-    "message": "Пресет \"$1\" уже существует. Перезаписать?",
-    "description": "Profile already exists message"
+    "message": "Пресет \"$1\" уже существует. Перезаписать?"
   },
   "deleteProfileConfirm": {
-    "message": "Вы уверены, что хотите удалить пресет \"$1\"?",
-    "description": "Delete profile confirmation"
+    "message": "Вы уверены, что хотите удалить пресет \"$1\"?"
   },
   "resetConfirm": {
-    "message": "Вы уверены, что хотите сбросить настройки к значениям по умолчанию?",
-    "description": "Reset settings confirmation"
+    "message": "Вы уверены, что хотите сбросить настройки к значениям по умолчанию?"
   },
   "noProfileNameMessage": {
-    "message": "Пожалуйста, введите название пресета",
-    "description": "No profile name message"
+    "message": "Пожалуйста, введите название пресета"
   },
   "cantDeleteDefault": {
-    "message": "Нельзя удалить пресет по умолчанию",
-    "description": "Cannot delete default profile message"
+    "message": "Нельзя удалить пресет по умолчанию"
   },
   "cantOverwriteDefault": {
-    "message": "Нельзя перезаписать пресет по умолчанию. Создайте новый пресет.",
-    "description": "Cannot overwrite default profile message"
+    "message": "Нельзя перезаписать пресет по умолчанию. Создайте новый пресет."
   },
-    "clearAllProfilesButton": {
-    "message": "Удалить все профили печати",
-    "description": "Delete all profiles and reset to default"
+  "clearAllProfilesButton": {
+    "message": "Удалить все профили печати"
+  },
+  "printFormTitle": {
+    "message": "Печать"
+  },
+  "profileSectionTitle": {
+    "message": "Выбор профиля печати"
   }
 }
