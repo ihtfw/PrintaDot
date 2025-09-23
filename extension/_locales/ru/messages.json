@@ -178,5 +178,17 @@
   },
   "profileSectionTitle": {
     "message": "Выбор профиля печати"
+  },
+  "mappingSectionTitle": {
+    "message": "Соответствие профилей"
+  },
+  "mappingKeyHeader": {
+    "message": "Печать"
+  },
+  "mappingProfileHeader": {
+    "message": "Профиль"
+  },
+  "deleteButton": {
+    "message": "Delete"
   }
 }

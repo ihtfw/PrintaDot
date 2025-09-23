@@ -1,6 +1,8 @@
 document.addEventListener('DOMContentLoaded', async function () {   
     await initLocalization();
     initializeOptionsPage();
+
+    await updateMappingTable();
 });
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
@@ -31,6 +33,16 @@ function initEventHandlers() {
     document.getElementById('deleteProfileBtn').addEventListener('click', deleteCurrentProfile);
     document.getElementById('profileSelect').addEventListener('change', loadSelectedProfile);
     document.getElementById('clearAllProfilesBtn').addEventListener('click', clearAllProfiles);
+    
+    const addMappingBtn = document.getElementById('addMappingBtn');
+    if (addMappingBtn) {
+        addMappingBtn.addEventListener('click', addNewMapping);
+    }
+    
+    const clearMappingsBtn = document.getElementById('clearMappingsBtn');
+    if (clearMappingsBtn) {
+        clearMappingsBtn.addEventListener('click', clearAllMappings);
+    }
 }
 
 function initCollapsibleGroups() {
@@ -381,3 +393,117 @@ async function initLanguageToggle() {
         });
     });
 }
+
+const MAPPING_KEY = "printTypeMapping";
+
+// Функции для работы с маппингом
+function getMapping() {
+    return new Promise((resolve) => {
+        chrome.storage.local.get([MAPPING_KEY], (result) => {
+            resolve(result[MAPPING_KEY] || {});
+        });
+    });
+}
+
+function saveMapping(mapping) {
+    return new Promise((resolve) => {
+        chrome.storage.local.set({ [MAPPING_KEY]: mapping }, () => {
+            resolve();
+        });
+    });
+}
+
+async function updateMappingTable() {
+    try {
+        const mapping = await getMapping();
+        const profiles = await loadProfilesForMapping();
+        const tbody = document.getElementById("mappingTableBody");
+        
+        if (!tbody) {
+            console.error("Element with id 'mappingTableBody' not found");
+            return;
+        }
+        
+        tbody.innerHTML = '';
+        
+        if (Object.keys(mapping).length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="3" class="empty-mapping">
+                        No mappings configured
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+        
+        // Создаем строки для каждого маппинга
+        Object.entries(mapping).forEach(([printType, profileName]) => {
+            const row = document.createElement('tr');
+            
+            // Создаем опции для селекта
+            const profileOptions = Object.keys(profiles).map(profile => 
+                `<option value="${profile}" ${profile === profileName ? 'selected' : ''}>${profile}</option>`
+            ).join('');
+            
+            row.innerHTML = `
+                <td class="mapping-key">${printType}</td>
+                <td>
+                    <select class="mapping-profile-select" data-printtype="${printType}">
+                        ${profileOptions}
+                    </select>
+                </td>
+                <td class="mapping-actions">
+                    <button class="mapping-delete-btn" data-printtype="${printType}">
+                        __MSG_deleteButton__
+                    </button>
+                </td>
+            `;
+            
+            tbody.appendChild(row);
+        });
+        
+        // Добавляем обработчики для селектов
+        document.querySelectorAll('.mapping-profile-select').forEach(select => {
+            select.addEventListener('change', async function() {
+                const printType = this.getAttribute('data-printtype');
+                const mapping = await getMapping();
+                mapping[printType] = this.value;
+                await saveMapping(mapping);
+                console.log(`Mapping updated: ${printType} -> ${this.value}`);
+            });
+        });
+        
+        // Добавляем обработчики для кнопок удаления
+        document.querySelectorAll('.mapping-delete-btn').forEach(button => {
+            button.addEventListener('click', async function() {
+                const printType = this.getAttribute('data-printtype');
+                const mapping = await getMapping();
+                delete mapping[printType];
+                await saveMapping(mapping);
+                updateMappingTable();
+                console.log(`Mapping deleted: ${printType}`);
+            });
+        });
+        
+    } catch (error) {
+        console.error("Error updating mapping table:", error);
+    }
+}
+
+async function loadProfilesForMapping() {
+    return new Promise((resolve) => {
+        chrome.storage.local.get(['profiles'], (result) => {
+            const profiles = result.profiles || {
+                'default': Profile.getDefaultProfile().toStorageObject()
+            };
+            resolve(profiles);
+        });
+    });
+}
+
+chrome.storage.onChanged.addListener((changes, namespace) => {
+    if (namespace === 'local' && changes.profiles) {
+        updateMappingTable();
+    }
+}); 

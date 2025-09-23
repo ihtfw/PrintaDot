@@ -5,7 +5,6 @@
   "appDescription": {
     "message": "Print labels with headers and barcodes"
   },
-  
   "headerLabel": {
     "message": "Header:"
   },
@@ -33,7 +32,6 @@
   "emptyFieldError": {
     "message": "Please fill in at least one field"
   },
-  
   "settingsTitleText": {
     "message": "PrintaDot - Settings"
   },
@@ -52,7 +50,6 @@
   "profileNamePlaceholder": {
     "message": "New profile name"
   },
-  
   "mainSettingsGroup": {
     "message": "Main Settings"
   },
@@ -71,7 +68,6 @@
   "barcodeSettingsGroup": {
     "message": "Barcode"
   },
-  
   "paperHeightLabel": {
     "message": "Paper Height"
   },
@@ -102,7 +98,6 @@
   "labelsPerColumnLabel": {
     "message": "Labels per Column"
   },
-  
   "printerNameLabel": {
     "message": "Printer Name"
   },
@@ -112,7 +107,6 @@
   "customPrinterOption": {
     "message": "Custom printer..."
   },
-  
   "alignmentLabel": {
     "message": "Alignment"
   },
@@ -140,11 +134,9 @@
   "angleLabel": {
     "message": "Angle"
   },
-  
   "dataMatrixLabel": {
     "message": "DataMatrix"
   },
-  
   "saveSuccessMessage": {
     "message": "Settings saved successfully!"
   },
@@ -180,5 +172,17 @@
   },
   "profileSectionTitle": {
     "message": "Profile Selection"
+  },
+  "mappingSectionTitle": {
+    "message": "Соответствие профилей"
+  },
+  "mappingKeyHeader": {
+    "message": "Печать"
+  },
+  "mappingProfileHeader": {
+    "message": "Профиль"
+  },
+  "deleteButton": {
+    "message": "Удалить"
   }
 }

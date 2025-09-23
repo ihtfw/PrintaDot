@@ -1,40 +1,75 @@
 var port = null;
 
+const PRINT_TYPE_KEY = "printTypeMapping";
+const PROFILES_KEY = "profiles";
+
+
 initializeStorage().then(() => {
     connect();
 });
 
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {    
-    if (request.type === "PrintRequest" || request.type === "Profile") {
-        if (port) {
-            port.postMessage(request);
-        } else {
-            chrome.runtime.sendMessage({
-                type: "Exception",
-                message: "Error happened when sending native message"
-            }).catch(() => {});
-        }
+chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
+    if (!request.type === "PrintRequest" && !request.type === "Profile")
+        return;
+
+    if (request.type === "PrintRequest" && request.printType) {
+        request = await handleMessageFromSite(request);
     }
+
+    sendMessage(request);
 });
+
+function sendMessage(message) {
+    if (port) {
+        port.postMessage(message);
+    } else {
+        chrome.runtime.sendMessage({
+            type: "Exception",
+            message: "Error happened when sending native message"
+        }).catch(() => { });
+    }
+}
+
+async function handleMessageFromSite(message) {
+    try {
+        const result = await chrome.storage.local.get(PRINT_TYPE_KEY);
+        let mapping = result[PRINT_TYPE_KEY] || {};
+        let printType = message.printType;
+
+        if (!mapping[printType]) {
+            mapping[printType] = "default";
+            await chrome.storage.local.set({[PRINT_TYPE_KEY]: mapping});
+        }
+        
+        return {
+            type: message.type,
+            version: message.version,
+            profile: mapping[printType],
+            items: message.items
+        };
+    } catch (error) {
+        console.error("Error in handleMessageFromSite:", error);
+        return message;
+    }
+}
 
 async function initializeStorage() {
     try {
-        const result = await chrome.storage.local.get(['profiles']);
+        const result = await chrome.storage.local.get([PROFILES_KEY]);
         
         if (!result.profiles || Object.keys(result.profiles).length === 0) {
             const defaultProfile = Profile.getDefaultProfile();
-            
+
             const profiles = {
                 'default': defaultProfile.toObject()
             };
-            
+
             await chrome.storage.local.set({
                 profiles: profiles,
                 currentProfileName: 'default'
             });
-            
-            console.log("Default profile created in storage using Profile.getDefaultProfile()");
         }
+
     } catch (error) {
         console.error("Failed to initialize storage:", error);
     }
@@ -42,32 +77,28 @@ async function initializeStorage() {
 
 function onNativeMessage(message) {
     if (!message?.type) return;
-    
-    chrome.runtime.sendMessage(message).catch(() => {}); 
+
+    chrome.runtime.sendMessage(message).catch(() => { });
 
     console.log("Native message:", message);
 }
 
 function print(header, barcode) {
-    if (port) {
-        port.postMessage({
-            type: "PrintRequest",
-            version: 1,
-            profile: "default",
-            items: [
-                {
-                    header: header,
-                    barcode: barcode
-                }
-            ]
-        });
-    }
+    sendMessage({
+        type: "PrintRequest",
+        version: 1,
+        profile: "default",
+        items: [
+            {
+                header: header,
+                barcode: barcode
+            }
+        ]
+    });
 }
 
 function sendProfileToNativeApp(profile) {
-    if (port && profile) {
-        port.postMessage(profile.toObject());
-    }
+    sendMessage(profile.toObject());
 }
 
 function onDisconnected() {
@@ -90,12 +121,12 @@ async function connect() {
 }
 
 async function sendProfilesToNativeHost() {
-    const result = await chrome.storage.local.get('profiles');
+    const result = await chrome.storage.local.get(PROFILES_KEY);
     const profilesObject = result.profiles || {};
-    
+
     const profilesArray = Object.values(profilesObject);
-    
-    port.postMessage({
+
+    sendMessage({
         version: 1,
         type: "Profiles",
         profiles: profilesArray

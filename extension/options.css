@@ -545,3 +545,113 @@ body {
     color: white;
     border-color: #007bff;
 }
+
+.mapping-section {
+    margin-bottom: 20px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+}
+
+.mapping-table-container {
+    margin-top: 15px;
+}
+
+.mapping-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.mapping-table th {
+    background: #007bff;
+    color: white;
+    padding: 12px 15px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 13px;
+}
+
+.mapping-table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #e9ecef;
+    font-size: 13px;
+}
+
+.mapping-table tr:last-child td {
+    border-bottom: none;
+}
+
+.mapping-table tr:hover {
+    background-color: #f8f9fa;
+}
+
+.mapping-key {
+    font-weight: 600;
+    color: #2c3e50;
+    font-family: monospace;
+}
+
+.mapping-profile-select {
+    width: 100%;
+    padding: 6px 10px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 13px;
+    background: white;
+}
+
+.mapping-profile-select:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.1);
+}
+
+.mapping-actions {
+    display: flex;
+    gap: 5px;
+}
+
+.mapping-delete-btn {
+    padding: 4px 8px;
+    background: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: all 0.2s ease;
+}
+
+.mapping-delete-btn:hover {
+    background: #c82333;
+}
+
+.mapping-controls {
+    margin-top: 15px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+#addMappingBtn {
+    background: #28a745;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+#addMappingBtn:hover {
+    background: #218838;
+}
+
+.empty-mapping {
+    text-align: center;
+    padding: 20px;
+    color: #6c757d;
+    font-style: italic;
+}
