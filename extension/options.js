@@ -1,8 +1,6 @@
 document.addEventListener('DOMContentLoaded', async function () {   
     await initLocalization();
-    initializeOptionsPage();
-
-    await updateMappingTable();
+    await initializeOptionsPage();
 });
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
@@ -22,6 +20,11 @@ async function initializeOptionsPage() {
     initEventHandlers();
     initCollapsibleGroups();
     initLanguageToggle();
+
+    //without this function values of all inputs on page got broken
+    await new Promise(resolve => setTimeout(resolve, 0));
+
+    await updateMappingTable()
 }
 
 function initEventHandlers() {
@@ -109,7 +112,7 @@ async function loadSelectedProfile() {
     const profileName = document.getElementById('profileSelect').value;
     const result = await chrome.storage.local.get(['profiles']);
     const profiles = result.profiles || {};
-
+    
     if (profiles[profileName]) {
         const profile = Profile.fromStorageObject(profiles[profileName]);
         applyProfile(profile);
@@ -338,7 +341,7 @@ function handlePrint() {
     }
 
     chrome.runtime.sendMessage({
-        type: "printRequest",
+        type: "PrintRequest",
         version: 1,
         profile: profile,
         items: [
@@ -414,7 +417,7 @@ function saveMapping(mapping) {
 }
 
 async function updateMappingTable() {
-    try {
+    try {        
         const mapping = await getMapping();
         const profiles = await loadProfilesForMapping();
         const tbody = document.getElementById("mappingTableBody");
@@ -423,6 +426,12 @@ async function updateMappingTable() {
             console.error("Element with id 'mappingTableBody' not found");
             return;
         }
+        
+        const currentValues = {};
+        tbody.querySelectorAll('.mapping-profile-select').forEach(select => {
+            const printType = select.dataset.printtype;
+            currentValues[printType] = select.value;
+        });
         
         tbody.innerHTML = '';
         
@@ -434,16 +443,17 @@ async function updateMappingTable() {
                     </td>
                 </tr>
             `;
+            console.log('No mappings found, showing empty message');
             return;
         }
         
-        // Создаем строки для каждого маппинга
         Object.entries(mapping).forEach(([printType, profileName]) => {
             const row = document.createElement('tr');
             
-            // Создаем опции для селекта
+            const selectedProfile = currentValues[printType] || profileName;
+            
             const profileOptions = Object.keys(profiles).map(profile => 
-                `<option value="${profile}" ${profile === profileName ? 'selected' : ''}>${profile}</option>`
+                `<option value="${profile}" ${profile === selectedProfile ? 'selected' : ''}>${profile}</option>`
             ).join('');
             
             row.innerHTML = `
@@ -455,7 +465,7 @@ async function updateMappingTable() {
                 </td>
                 <td class="mapping-actions">
                     <button class="mapping-delete-btn" data-printtype="${printType}">
-                        __MSG_deleteButton__
+                        Delete
                     </button>
                 </td>
             `;
@@ -463,32 +473,35 @@ async function updateMappingTable() {
             tbody.appendChild(row);
         });
         
-        // Добавляем обработчики для селектов
-        document.querySelectorAll('.mapping-profile-select').forEach(select => {
-            select.addEventListener('change', async function() {
-                const printType = this.getAttribute('data-printtype');
-                const mapping = await getMapping();
-                mapping[printType] = this.value;
-                await saveMapping(mapping);
-                console.log(`Mapping updated: ${printType} -> ${this.value}`);
-            });
-        });
-        
-        // Добавляем обработчики для кнопок удаления
-        document.querySelectorAll('.mapping-delete-btn').forEach(button => {
-            button.addEventListener('click', async function() {
-                const printType = this.getAttribute('data-printtype');
-                const mapping = await getMapping();
-                delete mapping[printType];
-                await saveMapping(mapping);
-                updateMappingTable();
-                console.log(`Mapping deleted: ${printType}`);
-            });
-        });
+        console.log('Table updated with', Object.keys(mapping).length, 'mappings');
+        attachMappingEventHandlers();
         
     } catch (error) {
         console.error("Error updating mapping table:", error);
     }
+}
+
+function attachMappingEventHandlers() {
+    document.querySelectorAll('.mapping-profile-select').forEach(select => {
+        select.addEventListener('change', async function() {
+            const printType = this.getAttribute('data-printtype');
+            const mapping = await getMapping();
+            mapping[printType] = this.value;
+            await saveMapping(mapping);
+            console.log(`Mapping updated: ${printType} -> ${this.value}`);
+        });
+    });
+    
+    document.querySelectorAll('.mapping-delete-btn').forEach(button => {
+        button.addEventListener('click', async function() {
+            const printType = this.getAttribute('data-printtype');
+            const mapping = await getMapping();
+            delete mapping[printType];
+            await saveMapping(mapping);
+            updateMappingTable();
+            console.log(`Mapping deleted: ${printType}`);
+        });
+    });
 }
 
 async function loadProfilesForMapping() {
