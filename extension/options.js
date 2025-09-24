@@ -46,6 +46,36 @@ function initEventHandlers() {
     if (clearMappingsBtn) {
         clearMappingsBtn.addEventListener('click', clearAllMappings);
     }
+
+    // Добавляем обработчики для автосохранения
+    initAutoSaveHandlers();
+}
+
+function initAutoSaveHandlers() {
+    // Все inputs и selects с настройками профиля
+    const settingInputs = document.querySelectorAll(`
+        #paperHeight, #paperWidth, #labelHeight, #labelWidth,
+        #marginX, #marginY, #offsetX, #offsetY,
+        #labelsPerRow, #labelsPerColumn,
+        #textAlignment, #textMaxLength, #textTrimLength, #textFontSize, #textAngle,
+        #useDataMatrix,
+        #numbersAlignment, #numbersFontSize, #numbersAngle,
+        #barcodeAlignment, #barcodeFontSize, #barcodeAngle
+    `);
+
+    settingInputs.forEach(input => {
+        if (input.type === 'checkbox') {
+            input.addEventListener('change', handleSettingChange);
+        } else {
+            input.addEventListener('input', handleSettingChange);
+        }
+    });
+}
+
+async function handleSettingChange() {
+    const profileName = document.getElementById('profileSelect').value;
+
+    await saveCurrentProfile();
 }
 
 function initCollapsibleGroups() {
@@ -239,10 +269,6 @@ async function createNewProfile() {
 
 async function saveCurrentProfile() {
     const profileName = document.getElementById('profileSelect').value;
-    if (profileName === 'default') {
-        showError('Cannot overwrite default profile. Create a new profile instead.');
-        return;
-    }
 
     const result = await chrome.storage.local.get(['profiles']);
     const profiles = result.profiles || {};
@@ -506,4 +532,4 @@ chrome.storage.onChanged.addListener((changes, namespace) => {
     if (namespace === 'local' && changes.profiles) {
         updateMappingTable();
     }
-}); 
+});
