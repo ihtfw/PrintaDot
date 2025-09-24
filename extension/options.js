@@ -120,16 +120,6 @@ async function loadSelectedProfile() {
         await chrome.storage.local.set({
             currentProfileName: profileName
         });
-
-        await sendProfileToBackground(profile);
-    }
-}
-
-async function sendProfileToBackground(profile) {
-    try {
-        await chrome.runtime.sendMessage(profile.toStorageObject());
-    } catch (error) {
-        console.error("Failed to send profile to background:", error);
     }
 }
 
@@ -239,8 +229,6 @@ async function createNewProfile() {
 
     await chrome.storage.local.set({ profiles });
 
-    await sendProfileToBackground(currentProfile);
-
     await loadProfiles();
 
     document.getElementById('profileSelect').value = profileName;
@@ -270,7 +258,6 @@ async function saveCurrentProfile() {
     profiles[profileName] = currentProfile.toStorageObject();
 
     await chrome.storage.local.set({ profiles });
-    await sendProfileToBackground(currentProfile);
 }
 
 async function deleteCurrentProfile() {

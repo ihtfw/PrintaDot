@@ -95,29 +95,6 @@ public class Host
             case GetPrintStatusRequestMessageV1:
                 // TODO: Add handling for GetPrintStatusRequestMessageV1
                 break;
-            case ProfileMessageV1:
-                var profileMessage = message as ProfileMessageV1;
-
-                var profile = _printService.Profiles.FirstOrDefault(p => p.ProfileName == profileMessage!.ProfileName);
-
-                if (profile is not null)
-                {
-                    int index = _printService.Profiles.IndexOf(profile);
-                    _printService.Profiles[index] = profileMessage!;
-                }
-                else
-                {
-                    _printService.Profiles.Add((message as ProfileMessageV1)!);
-                }
-                break;
-            case ProfilesMessageV1:
-                var profilesMessage = message as ProfilesMessageV1;
-
-                if (profilesMessage.Profiles is not null)
-                {
-                    _printService.Profiles = profilesMessage.Profiles;
-                }
-                break;
             default:
                 Log.LogMessage("Current type of messages is not supported");
 

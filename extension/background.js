@@ -3,18 +3,16 @@ var port = null;
 const PRINT_TYPE_KEY = "printTypeMapping";
 const PROFILES_KEY = "profiles";
 
-
-initializeStorage().then(() => {
-    connect();
-});
+connect();
 
 chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
-    if (!request.type === "PrintRequest" && !request.type === "Profile")
+    if (!request.type === "PrintRequest")
         return;
 
-    if (request.type === "PrintRequest" && request.printType) {
-        request = await handleMessageFromSite(request);
-    }
+    request = await handleMessageFromSite(request);
+    request = await addProfile(request);
+
+    console.log(request);
 
     sendMessage(request);
 });
@@ -28,6 +26,21 @@ function sendMessage(message) {
             message: "Error happened when sending native message"
         }).catch(() => { });
     }
+}
+
+async function addProfile(message) {
+    const result = await chrome.storage.local.get(PROFILES_KEY);
+    const profilesObject = result.profiles || {};
+
+    const profilesArray = Object.values(profilesObject);
+
+    const profile = profilesArray.find(profile => 
+        profile.profileName === message.profile
+    );
+
+    message.profile = profile;
+    
+    return message;
 }
 
 async function handleMessageFromSite(message) {
@@ -53,52 +66,12 @@ async function handleMessageFromSite(message) {
     }
 }
 
-async function initializeStorage() {
-    try {
-        const result = await chrome.storage.local.get([PROFILES_KEY]);
-        
-        if (!result.profiles || Object.keys(result.profiles).length === 0) {
-            const defaultProfile = Profile.getDefaultProfile();
-
-            const profiles = {
-                'default': defaultProfile.toObject()
-            };
-
-            await chrome.storage.local.set({
-                profiles: profiles,
-                currentProfileName: 'default'
-            });
-        }
-
-    } catch (error) {
-        console.error("Failed to initialize storage:", error);
-    }
-}
-
 function onNativeMessage(message) {
     if (!message?.type) return;
 
     chrome.runtime.sendMessage(message).catch(() => { });
 
     console.log("Native message:", message);
-}
-
-function print(header, barcode) {
-    sendMessage({
-        type: "PrintRequest",
-        version: 1,
-        profile: "default",
-        items: [
-            {
-                header: header,
-                barcode: barcode
-            }
-        ]
-    });
-}
-
-function sendProfileToNativeApp(profile) {
-    sendMessage(profile.toObject());
 }
 
 function onDisconnected() {
@@ -113,22 +86,7 @@ async function connect() {
         port.onMessage.addListener(onNativeMessage);
         port.onDisconnect.addListener(onDisconnected);
         console.log("Connected to native app");
-
-        await sendProfilesToNativeHost();
     } catch (error) {
         console.error("Connection failed:", error);
     }
-}
-
-async function sendProfilesToNativeHost() {
-    const result = await chrome.storage.local.get(PROFILES_KEY);
-    const profilesObject = result.profiles || {};
-
-    const profilesArray = Object.values(profilesObject);
-
-    sendMessage({
-        version: 1,
-        type: "Profiles",
-        profiles: profilesArray
-    });
 }

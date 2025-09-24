@@ -136,16 +136,6 @@ public static class PrintaDotJsonSerializer
                 1 => json.FromJson<GetPrintStatusResponseMessageV1>(),
                 _ => null
             },
-            MessageType.Profile => targetVersion switch
-            {
-                1 => json.FromJson<ProfileMessageV1>(),
-                _ => null
-            },
-            MessageType.Profiles => targetVersion switch
-            {
-                1 => json.FromJson<ProfilesMessageV1>(),
-                _ => null
-            },
             _ => null,
         };
     }
