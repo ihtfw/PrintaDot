@@ -174,15 +174,15 @@
     "message": "Profile Selection"
   },
   "mappingSectionTitle": {
-    "message": "Соответствие профилей"
+    "message": "Profiles"
   },
   "mappingKeyHeader": {
-    "message": "Печать"
+    "message": "Print"
   },
   "mappingProfileHeader": {
-    "message": "Профиль"
+    "message": "Profile"
   },
   "deleteButton": {
-    "message": "Удалить"
+    "message": "Delete"
   }
 }

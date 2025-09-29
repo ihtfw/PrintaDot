@@ -478,7 +478,7 @@ async function updateMappingTable() {
                 </td>
                 <td class="mapping-actions">
                     <button class="mapping-delete-btn" data-printtype="${printType}">
-                        Delete
+                        __MSG_deleteButton__
                     </button>
                 </td>
             `;
