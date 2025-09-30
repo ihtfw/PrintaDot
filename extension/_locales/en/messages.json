@@ -184,5 +184,14 @@
   },
   "deleteButton": {
     "message": "Delete"
+  },
+    "nativeAppNotInstalledTitle": {
+    "message": "Native App Required"
+  },
+  "nativeAppNotInstalledMessage": {
+    "message": "The native application is not installed or not running. Please download and install it and rerun the extension."
+  },
+  "downloadNativeAppButton": {
+    "message": "Download Native App"
   }
 }

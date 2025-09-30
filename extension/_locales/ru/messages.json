@@ -190,5 +190,14 @@
   },
   "deleteButton": {
     "message": "Удалить"
+  },
+  "nativeAppNotInstalledTitle": {
+    "message": "Требуется Нативное Приложение"
+  },
+  "nativeAppNotInstalledMessage": {
+    "message": "Нативное приложение не установлено или не запущено. Пожалуйста, скачайте и установите его и перезапустите расширение."
+  },
+  "downloadNativeAppButton": {
+    "message": "Скачать Нативное Приложение"
   }
 }

@@ -36,6 +36,7 @@ function initEventHandlers() {
     document.getElementById('deleteProfileBtn').addEventListener('click', deleteCurrentProfile);
     document.getElementById('profileSelect').addEventListener('change', loadSelectedProfile);
     document.getElementById('clearAllProfilesBtn').addEventListener('click', clearAllProfiles);
+    document.getElementById('downloadNativeApp').addEventListener('click', downloadNativeApp);
     
     const addMappingBtn = document.getElementById('addMappingBtn');
     if (addMappingBtn) {
@@ -47,12 +48,10 @@ function initEventHandlers() {
         clearMappingsBtn.addEventListener('click', clearAllMappings);
     }
 
-    // Добавляем обработчики для автосохранения
     initAutoSaveHandlers();
 }
 
 function initAutoSaveHandlers() {
-    // Все inputs и selects с настройками профиля
     const settingInputs = document.querySelectorAll(`
         #paperHeight, #paperWidth, #labelHeight, #labelWidth,
         #marginX, #marginY, #offsetX, #offsetY,

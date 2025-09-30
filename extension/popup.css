@@ -203,3 +203,35 @@ body {
 .button-group {
     animation: fadeIn 0.5s ease-out;
 }
+
+.native-app-warning {
+    text-align: center;
+    padding: 20px 0;
+}
+
+.warning-icon {
+    color: #ff6b6b;
+    margin-bottom: 15px;
+}
+
+.warning-icon svg {
+    stroke: #ff6b6b;
+}
+
+.native-app-warning h3 {
+    color: #333;
+    margin-bottom: 10px;
+    font-size: 16px;
+}
+
+.native-app-warning p {
+    color: #666;
+    margin-bottom: 20px;
+    line-height: 1.4;
+}
+
+.warning-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
