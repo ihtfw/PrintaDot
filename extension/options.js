@@ -469,6 +469,8 @@ async function updateMappingTable() {
                 `<option value="${profile}" ${profile === selectedProfile ? 'selected' : ''}>${profile}</option>`
             ).join('');
             
+             const deleteButtonText = getMessage('deleteButton');
+
             row.innerHTML = `
                 <td class="mapping-key">${printType}</td>
                 <td>
@@ -478,7 +480,7 @@ async function updateMappingTable() {
                 </td>
                 <td class="mapping-actions">
                     <button class="mapping-delete-btn" data-printtype="${printType}">
-                        __MSG_deleteButton__
+                        ${deleteButtonText}
                     </button>
                 </td>
             `;
