@@ -111,26 +111,24 @@ button:focus {
     min-width: 120px;
 }
 
-#saveBtn {
+#resetToTermoBtn {
     background-color: #007bff;
     color: white;
 }
 
-#saveBtn:hover {
+#resetToTermoBtn:hover {
     background-color: #0056b3;
 }
 
-
-#resetBtn {
+#resetToA4Btn {
     background-color: #6c757d;
     color: white;
 }
 
-#resetBtn:hover {
+#resetToTermoBtn:hover {
     background-color: #5a6268;
 }
 
-/* Стили для секции профилей */
 .profiles-section {
     margin-bottom: 20px;
     padding: 15px;
@@ -209,7 +207,6 @@ button:focus {
     border-color: #bd2130 !important;
 }
 
-/* Стили для сетки настроек */
 .settings-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));

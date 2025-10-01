@@ -18,25 +18,25 @@ class Profile {
         this.labelsPerColumn = settings.labelsPerColumn ?? 5;
 
         // Text settings
-        this.textAlignment = settings.textAlignment || 'Center';
+        this.textAlignment = settings.textAlignment || 'Left';
         this.textMaxLength = settings.textMaxLength ?? 20;
         this.textTrimLength = settings.textTrimLength ?? 18;
         this.textFontSize = settings.textFontSize ?? 12;
         this.textAngle = settings.textAngle ?? 0;
 
         // Printer name
-        this.printerName = settings.printerName || "Default Printer";
+        this.printerName = settings.printerName || "default";
 
         // Barcode type
         this.useDataMatrix = settings.useDataMatrix ?? false;
 
         // Number settings
-        this.numbersAlignment = settings.numbersAlignment || 'Center';
+        this.numbersAlignment = settings.numbersAlignment || 'Left';
         this.numbersFontSize = settings.numbersFontSize ?? 10;
         this.numbersAngle = settings.numbersAngle ?? 0;
 
         // Barcode settings
-        this.barcodeAlignment = settings.barcodeAlignment || 'Center';
+        this.barcodeAlignment = settings.barcodeAlignment || 'Left';
         this.barcodeFontSize = settings.barcodeFontSize ?? 8;
         this.barcodeAngle = settings.barcodeAngle ?? 0;
     }
@@ -107,8 +107,37 @@ class Profile {
         );
     }
 
-    // Get default settings
-    static getDefaultProfile() {
-        return new Profile(1, 'default');
+    static getA4Profile() {
+        return new Profile(1, 'A4');
+    }
+
+    static getTermoProfile() {
+        const settings = {
+            paperHeight: 24,
+            paperWidth: 45,
+            labelHeight: 24,
+            labelWidth: 45,
+            marginX: 9,
+            marginY: 2,
+            offsetX: 0,
+            offsetY: 0,
+            labelsPerRow: 1,
+            labelsPerColumn: 1,
+            textAlignment: 'Center',
+            textMaxLength: 0,
+            textTrimLength: 0,
+            textFontSize: 12,
+            textAngle: 0,
+            printerName: "default",
+            useDataMatrix: false,
+            numbersAlignment: 'Center',
+            numbersFontSize: 12,
+            numbersAngle: 0,
+            barcodeAlignment: 'Center',
+            barcodeFontSize: 30,
+            barcodeAngle: 0
+        };
+
+        return new Profile(2, 'Termo', settings);
     }
 }

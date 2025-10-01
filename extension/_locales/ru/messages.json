@@ -53,11 +53,11 @@
   "settingsTitleText": {
     "message": "ПринтаДот - Настройки печати"
   },
-  "saveSettingsButton": {
-    "message": "Сохранить"
+  "resetSettingsToA4Button": {
+    "message": "Сбросить до A4"
   },
-  "resetSettingsButton": {
-    "message": "Сбросить"
+    "resetSettingsToTermoButton": {
+    "message": "Сбросить до Термо"
   },
   "newProfileButton": {
     "message": "Новый профиль"

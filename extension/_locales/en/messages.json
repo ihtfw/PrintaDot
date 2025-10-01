@@ -35,11 +35,11 @@
   "settingsTitleText": {
     "message": "PrintaDot - Settings"
   },
-  "saveSettingsButton": {
-    "message": "Save Settings"
+  "resetSettingsToA4Button": {
+    "message": "Reset to A4"
   },
-  "resetSettingsButton": {
-    "message": "Reset to Default"
+    "resetSettingsToTermoButton": {
+    "message": "Reset to Termo"
   },
   "newProfileButton": {
     "message": "New Profile"

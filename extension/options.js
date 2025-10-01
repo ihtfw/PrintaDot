@@ -10,6 +10,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 });
 
 async function initializeOptionsPage() {
+    await initializeDefaultProfiles();
+
     await loadProfiles();
     await loadProfile();
 
@@ -30,8 +32,8 @@ async function initializeOptionsPage() {
 function initEventHandlers() {
     document.getElementById('errorContainer').addEventListener('click', hideError);
     document.getElementById('printBtn').addEventListener('click', handlePrint);
-    document.getElementById('saveBtn').addEventListener('click', saveCurrentProfile);
-    document.getElementById('resetBtn').addEventListener('click', resetToDefault);
+    document.getElementById('resetToA4Btn').addEventListener('click', resetToA4);
+    document.getElementById('resetToTermoBtn').addEventListener('click', resetToTermo);
     document.getElementById('newProfileBtn').addEventListener('click', createNewProfile);
     document.getElementById('deleteProfileBtn').addEventListener('click', deleteCurrentProfile);
     document.getElementById('profileSelect').addEventListener('change', loadSelectedProfile);
@@ -101,10 +103,30 @@ async function calculateNextProfileId(profiles) {
     return maxId + 1;
 }
 
+async function initializeDefaultProfiles() {
+    const result = await chrome.storage.local.get(['profiles']);
+    let profiles = result.profiles || {};
+
+    if (!profiles['A4']) {
+        profiles['A4'] = Profile.getA4Profile().toStorageObject();
+    }
+    if (!profiles['Termo']) {
+        profiles['Termo'] = Profile.getTermoProfile().toStorageObject();
+    }
+
+    const currentResult = await chrome.storage.local.get(['currentProfileName']);
+    if (!currentResult.currentProfileName) {
+        await chrome.storage.local.set({ currentProfileName: 'A4' });
+    }
+
+    await chrome.storage.local.set({ profiles });
+}
+
 async function loadProfiles() {
     const result = await chrome.storage.local.get(['profiles']);
     const profiles = result.profiles || {
-        'default': Profile.getDefaultProfile().toStorageObject()
+        'A4': Profile.getA4Profile().toStorageObject(),
+        'Termo': Profile.getTermoProfile().toStorageObject()
     };
 
     const select = document.getElementById('profileSelect');
@@ -123,9 +145,10 @@ async function loadProfiles() {
 
 async function loadProfile() {
     const result = await chrome.storage.local.get(['currentProfileName', 'profiles']);
-    const currentProfileName = result.currentProfileName || 'default';
+    const currentProfileName = result.currentProfileName || 'A4';
     const profiles = result.profiles || {
-        'default': Profile.getDefaultProfile().toStorageObject()
+        'A4': Profile.getA4Profile().toStorageObject(),
+        'Termo': Profile.getTermoProfile().toStorageObject()
     };
 
     document.getElementById('profileSelect').value = currentProfileName;
@@ -286,8 +309,9 @@ async function saveCurrentProfile() {
 
 async function deleteCurrentProfile() {
     const profileName = document.getElementById('profileSelect').value;
-    if (profileName === 'default') {
-        showError('Cannot delete default profile');
+
+    if (profileName === 'A4' || profileName === 'Termo') {
+        showError('Cannot delete default profiles (A4 and Termo)');
         return;
     }
 
@@ -298,21 +322,32 @@ async function deleteCurrentProfile() {
     await chrome.storage.local.set({ profiles });
 
     await loadProfiles();
-    document.getElementById('profileSelect').value = 'default';
+    document.getElementById('profileSelect').value = 'A4';
 
-    await chrome.storage.local.set({ currentProfileName: 'default' });
+    await chrome.storage.local.set({ currentProfileName: 'A4' });
     await loadSelectedProfile();
 }
 
-async function resetToDefault() {
-    const defaultProfile = Profile.getDefaultProfile();
+async function resetToA4() {
+    const defaultProfile = Profile.getA4Profile();
     applyProfile(defaultProfile);
 
     const currentProfileName = document.getElementById('profileSelect').value;
-    if (currentProfileName !== 'default') {
+    if (currentProfileName !== 'A4') {
         await saveCurrentProfile();
     }
 }
+
+async function resetToTermo() {
+    const defaultProfile = Profile.getTermoProfile();
+    applyProfile(defaultProfile);
+
+    const currentProfileName = document.getElementById('profileSelect').value;
+    if (currentProfileName !== 'Termo') {
+        await saveCurrentProfile();
+    }
+}
+
 
 function loadPrinters() {
     const printerSelect = document.getElementById('printerName');
@@ -329,9 +364,10 @@ async function clearAllProfiles() {
         return;
     }
 
-    const defaultProfile = Profile.getDefaultProfile();
+    const defaultProfile = Profile.getDPefaultrofile();
     const profiles = {
-        'default': defaultProfile.toStorageObject()
+        'A4': Profile.getA4Profile(),
+        'Termo': Profile.getTermoProfile()
     };
 
     await chrome.storage.local.set({ profiles });
@@ -521,7 +557,8 @@ async function loadProfilesForMapping() {
     return new Promise((resolve) => {
         chrome.storage.local.get(['profiles'], (result) => {
             const profiles = result.profiles || {
-                'default': Profile.getDefaultProfile().toStorageObject()
+                'A4': Profile.getA4Profile().toStorageObject(),
+                'Termo': Profile.getTermoProfile().toStorageObject(),
             };
             resolve(profiles);
         });
