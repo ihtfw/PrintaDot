@@ -36,7 +36,6 @@ function initEventHandlers() {
     document.getElementById('deleteProfileBtn').addEventListener('click', deleteCurrentProfile);
     document.getElementById('profileSelect').addEventListener('change', loadSelectedProfile);
     document.getElementById('clearAllProfilesBtn').addEventListener('click', clearAllProfiles);
-    document.getElementById('downloadNativeApp').addEventListener('click', downloadNativeApp);
     
     const addMappingBtn = document.getElementById('addMappingBtn');
     if (addMappingBtn) {
