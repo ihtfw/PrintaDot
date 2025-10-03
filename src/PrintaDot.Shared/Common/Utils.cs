@@ -11,6 +11,9 @@ public static class Utils
     /// </summary>
     public const int SupportedMessageVersion = 1;
 
+    /// <summary>
+    /// Logs from application.
+    /// </summary>
     public static string MessageLogLocation => Path.Combine(AssemblyLoadDirectory(), "native-messaging.log");
     public static string TargetApplicationDirectory => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "PrintaDot");
 

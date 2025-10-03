@@ -1,5 +1,4 @@
 ﻿using PrintaDot.Shared.Common;
-
 using PrintaDot.Shared.NativeMessaging;
 
 namespace PrintaDot;
