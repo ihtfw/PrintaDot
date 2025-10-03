@@ -12,35 +12,124 @@ public static class Utils
     public const int SupportedMessageVersion = 1;
 
     public static string MessageLogLocation => Path.Combine(AssemblyLoadDirectory(), "native-messaging.log");
+    public static string TargetApplicationDirectory => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "PrintaDot");
 
-    static public string AssemblyLoadDirectory()
+    public static string AssemblyLoadDirectory()
     {
-        string? codeBase = Assembly.GetEntryAssembly()?.Location;
+        string baseDirectory = AppContext.BaseDirectory;
 
-        if (codeBase == null)
+        if (baseDirectory.EndsWith(Path.DirectorySeparatorChar.ToString()) ||
+            baseDirectory.EndsWith(Path.AltDirectorySeparatorChar.ToString()))
         {
-            throw new InvalidOperationException("Invalid assembly directory.");
+            baseDirectory = baseDirectory.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
         }
 
-        UriBuilder uri = new UriBuilder(codeBase);
-        string path = Uri.UnescapeDataString(uri.Path);
+        return baseDirectory;
+    }
+    public static string AssemblyExecuteablePath()
+    {
+        string? processPath = Environment.ProcessPath;
 
-        // Ensuring the return string is never null, since
-        // GetDirectoryName will return null if in the root directory
-        return Path.GetDirectoryName(path) ?? "";
+        if (!string.IsNullOrEmpty(processPath))
+        {
+            return processPath;
+        }
+
+        string? assemblyPath = Assembly.GetEntryAssembly()?.Location;
+        if (!string.IsNullOrEmpty(assemblyPath))
+        {
+            return assemblyPath;
+        }
+
+        throw new InvalidOperationException("Invalid executable path.");
     }
 
-    static public string AssemblyExecuteablePath()
+    /// <summary>
+    /// Moving application to %LocalAppData%/PrintaDot/ directory.
+    /// </summary>
+    /// <returns></returns>
+    public static bool MoveApplicationToLocalAppData()
     {
-        string? codeBase = Environment.ProcessPath;
+        var currentDirectory = AssemblyLoadDirectory();
 
-        if (codeBase == null)
+        if (string.Equals(currentDirectory, TargetApplicationDirectory, StringComparison.OrdinalIgnoreCase))
         {
-            throw new InvalidOperationException("Invalid executable path.");
+            Console.WriteLine("Native application is already in right folder");
+            return true;
         }
 
-        UriBuilder uri = new UriBuilder(codeBase);
+        try
+        {
+            if (Directory.Exists(TargetApplicationDirectory))
+            {
+                RemoveDirectory(TargetApplicationDirectory);
+            }
 
-        return Uri.UnescapeDataString(uri.Path);
+            Directory.CreateDirectory(TargetApplicationDirectory);
+
+            CopyAllFiles(currentDirectory, TargetApplicationDirectory);
+
+            Console.WriteLine($"Application moved to: {TargetApplicationDirectory}");
+
+            Environment.Exit(0);
+
+            return true;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error mooving application: {ex.Message}");
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// Recursivly copying files to target folder.
+    /// </summary>
+    /// <param name="sourceDir">Directory from copy files.</param>
+    /// <param name="targetDir">Directory to copy files.</param>
+    private static void CopyAllFiles(string sourceDir, string targetDir)
+    {
+        try
+        {
+            foreach (var file in Directory.GetFiles(sourceDir))
+            {
+                var fileName = Path.GetFileName(file);
+                var destFile = Path.Combine(targetDir, fileName);
+
+                File.Copy(file, destFile, true);
+            }
+
+            foreach (var directory in Directory.GetDirectories(sourceDir))
+            {
+                var dirName = Path.GetFileName(directory);
+                var destDirPath = Path.Combine(targetDir, dirName);
+
+                if (!Directory.Exists(destDirPath))
+                {
+                    Directory.CreateDirectory(destDirPath);
+                }
+
+                CopyAllFiles(directory, destDirPath);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error moving files");
+        }
+    }
+
+    /// <summary>
+    /// Used for removing directory with files.
+    /// </summary>
+    private static void RemoveDirectory(string directoryPath)
+    {
+        try
+        {
+            Directory.Delete(directoryPath, true);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Directory cannot be removed: {ex.Message}");
+        }
     }
 }

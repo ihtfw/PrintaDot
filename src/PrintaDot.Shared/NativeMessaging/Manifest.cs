@@ -35,9 +35,7 @@ public class Manifest
         }
         else
         {
-            Log.LogMessage("Generating Manifest");
-
-            string manifest = this.ToJson();
+            var manifest = this.ToJson();
 
             File.WriteAllText(ManifestPath, manifest);
 

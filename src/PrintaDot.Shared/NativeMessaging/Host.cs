@@ -131,4 +131,9 @@ public class Host
     {
         SupportedBrowsers.Unregister(_manifest.HostName);
     }
+
+    public void MoveHostToLocalAppData()
+    {
+        Utils.MoveApplicationToLocalAppData();
+    }
 }
