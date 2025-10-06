@@ -15,7 +15,7 @@ public class Manifest
     public string Description => "PrintaDot host application";
 
     [JsonPropertyName("path")]
-    public string ExecuteablePath => Utils.AssemblyExecuteablePath();
+    public string ExecuteablePath => Path.Combine(Utils.TargetApplicationDirectory, "PrintaDot.exe");
 
     [JsonPropertyName("type")]
     public string Type => "stdio";
@@ -23,24 +23,17 @@ public class Manifest
     public string[] AllowedOrigins { get; set; } = ["chrome-extension://ncpdldoackcgjeocgpkjbfimpdjkolpg/"];
 
     [JsonIgnore]
-    public string ManifestPath => Path.Combine(Utils.AssemblyLoadDirectory() ?? "", HostName + "-manifest.json");
+    public string ManifestPath => Path.Combine(Utils.TargetApplicationDirectory, HostName + "-manifest.json");
 
     public Manifest() { }
 
-    public void GenerateManifest(bool overwrite = true)
+    public void GenerateManifest()
     {
-        if (File.Exists(ManifestPath) && !overwrite)
-        {
-            Log.LogMessage("Manifest exists already");
-        }
-        else
-        {
-            var manifest = this.ToJson();
+        var manifest = this.ToJson();
 
-            File.WriteAllText(ManifestPath, manifest);
+        File.WriteAllText(ManifestPath, manifest);
 
-            Log.LogMessage("Manifest Generated");
-        }
+        Log.LogMessage("Manifest Generated");
     }
 
     public void RemoveManifest()
@@ -50,5 +43,4 @@ public class Manifest
             File.Delete(ManifestPath);
         }
     }
-
 }

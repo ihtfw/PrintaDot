@@ -108,9 +108,9 @@ public class Host
     /// Generates the manifest and saves it to the correct location.
     /// </summary>
     /// <param name="overwrite">Determines if the manifest should be overwritten if it already exists.<br />Defaults to <see langword="false"/>.</param>
-    public void GenerateManifest(bool overwrite = true)
+    public void GenerateManifest()
     {
-        _manifest.GenerateManifest(overwrite);
+        _manifest.GenerateManifest();
     }
 
     /// <summary>

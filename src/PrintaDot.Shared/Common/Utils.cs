@@ -33,6 +33,7 @@ public static class Utils
 
         return baseDirectory;
     }
+
     public static string AssemblyExecuteablePath()
     {
         string? processPath = Environment.ProcessPath;
@@ -51,6 +52,10 @@ public static class Utils
         throw new InvalidOperationException("Invalid executable path.");
     }
 
+    public static bool IsLocalAppDataDirectory(string directory) =>
+        string.Equals(directory, TargetApplicationDirectory, StringComparison.OrdinalIgnoreCase);
+
+
     /// <summary>
     /// Moving application to %LocalAppData%/PrintaDot/ directory.
     /// </summary>
@@ -59,9 +64,9 @@ public static class Utils
     {
         var currentDirectory = AssemblyLoadDirectory();
 
-        if (string.Equals(currentDirectory, TargetApplicationDirectory, StringComparison.OrdinalIgnoreCase))
+        if (IsLocalAppDataDirectory(currentDirectory))
         {
-            Console.WriteLine("Native application is already in right folder");
+            // Console.WriteLine("Native application is already in right folder");
             return true;
         }
 
@@ -76,15 +81,11 @@ public static class Utils
 
             CopyAllFiles(currentDirectory, TargetApplicationDirectory);
 
-            Console.WriteLine($"Application moved to: {TargetApplicationDirectory}");
-
-            Environment.Exit(0);
-
             return true;
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error mooving application: {ex.Message}");
+            //Console.WriteLine($"Error mooving application: {ex.Message}");
             return false;
         }
     }
