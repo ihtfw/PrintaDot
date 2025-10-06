@@ -15,6 +15,10 @@ public static class Utils
     /// Logs from application.
     /// </summary>
     public static string MessageLogLocation => Path.Combine(AssemblyLoadDirectory(), "native-messaging.log");
+
+    /// <summary>
+    /// Target application path.
+    /// </summary>
     public static string TargetApplicationDirectory => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "PrintaDot");
 
     public static string AssemblyLoadDirectory()
