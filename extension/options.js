@@ -391,6 +391,7 @@ function handlePrint() {
         type: "PrintRequest",
         version: 1,
         profile: profile,
+        isFromExtension: true,
         items: [
             {
                 header: header,

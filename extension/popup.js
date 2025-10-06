@@ -119,7 +119,8 @@ function handlePrint() {
     chrome.runtime.sendMessage({
         type: "PrintRequest",
         version: 1,
-        profile: "default",
+        profile: "A4",
+        isFromExtension: true,
         items: [
             {
                 header: header,

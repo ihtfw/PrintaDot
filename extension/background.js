@@ -4,33 +4,37 @@ var isConnected = false;
 const PRINT_TYPE_KEY = "printTypeMapping";
 const PROFILES_KEY = "profiles";
 
-    connect();
+connect();
 
-    chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
-        if (request.type == "CheckConnetcionToNativeApp") {
-            sendResponse({
-                type: "CheckConnetcionToNativeAppResponse",
-                isConnected: isConnected
-            });
-        }
+chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
+    if (request.type == "CheckConnetcionToNativeApp") {
+        sendResponse({
+            type: "CheckConnetcionToNativeAppResponse",
+            isConnected: isConnected
+        });
+    }
 
-        if (request.type !== "PrintRequest")
-            return;
+    if (request.type !== "PrintRequest")
+        return;
 
-        if (!isConnected) {
-            chrome.runtime.sendMessage({
-                type: "Exception",
-                messageText: "Native app is not connected. Application is not installed or have errors in installed version."
-            }).catch(() => { });
-            return;
-        }
+    if (!isConnected) {
+        chrome.runtime.sendMessage({
+            type: "Exception",
+            messageText: "Native app is not connected. Application is not installed or have errors in installed version."
+        }).catch(() => { });
+        return;
+    }
 
+    if (request.isFromExtension) {
+        request = await handleMessageFromExtension(request);
+    } else {
         request = await handleMessageFromSite(request);
-        request = await addProfile(request);
+    }
+    request = await addProfile(request);
 
-        console.log(request);
-        sendMessage(request);
-    });
+    console.log(request);
+    sendMessage(request);
+});
 
 function sendMessage(message) {
     if (port && isConnected) {
@@ -49,12 +53,12 @@ async function addProfile(message) {
 
     const profilesArray = Object.values(profilesObject);
 
-    const profile = profilesArray.find(profile => 
+    const profile = profilesArray.find(profile =>
         profile.profileName === message.profile
     );
 
     message.profile = profile;
-    
+
     return message;
 }
 
@@ -65,10 +69,10 @@ async function handleMessageFromSite(message) {
         let printType = message.printType;
 
         if (!mapping[printType]) {
-            mapping[printType] = "default";
-            await chrome.storage.local.set({[PRINT_TYPE_KEY]: mapping});
+            mapping[printType] = "A4";
+            await chrome.storage.local.set({ [PRINT_TYPE_KEY]: mapping });
         }
-        
+
         return {
             type: message.type,
             version: message.version,
@@ -79,6 +83,17 @@ async function handleMessageFromSite(message) {
         console.error("Error in handleMessageFromSite:", error);
         return message;
     }
+}
+
+async function handleMessageFromExtension(message) {
+
+    return {
+        type: message.type,
+        version: message.version,
+        profile: message.profile,
+        items: message.items
+    };
+
 }
 
 function onNativeMessage(message) {
@@ -92,7 +107,7 @@ function onDisconnected() {
     console.log("Disconnected");
     port = null;
     isConnected = false;
-    
+
     chrome.runtime.sendMessage({
         type: "NativeAppDisconnected"
     }).catch(() => { });
@@ -106,7 +121,7 @@ async function connect() {
         port.onDisconnect.addListener(onDisconnected);
         isConnected = true;
         console.log("Connected to native app");
-        
+
         chrome.runtime.sendMessage({
             type: "NativeAppConnected"
         }).catch(() => { });
