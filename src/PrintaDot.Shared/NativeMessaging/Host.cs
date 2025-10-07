@@ -10,7 +10,6 @@ namespace PrintaDot.Shared.NativeMessaging;
 /// </summary>
 public class Host
 {
-    private readonly Manifest _manifest;
     private bool _sendConfirmationReceipt;
     private readonly PrintService _printService;
 
@@ -29,7 +28,6 @@ public class Host
 
         _sendConfirmationReceipt = sendConfirmationReceipt;
 
-        _manifest = new Manifest();
         _printService = new PrintService();
     }
 
@@ -38,9 +36,9 @@ public class Host
     /// </summary>
     public void Listen()
     {
-        if (!SupportedBrowsers.IsAnyRegistered(_manifest.HostName, _manifest.ManifestPath))
+        if (!SupportedBrowsers.IsAnyRegistered(Manifest.HostName, Manifest.ManifestPath))
         {
-            throw new NotRegisteredWithBrowserException(_manifest.HostName);
+            throw new NotRegisteredWithBrowserException(Manifest.HostName);
         }
 
         Message? message;
@@ -110,7 +108,7 @@ public class Host
     /// <param name="overwrite">Determines if the manifest should be overwritten if it already exists.<br />Defaults to <see langword="false"/>.</param>
     public void GenerateManifest()
     {
-        _manifest.GenerateManifest();
+        Manifest.GenerateManifest();
     }
 
     /// <summary>
@@ -121,7 +119,7 @@ public class Host
         SupportedBrowsers.Add(BrowserCreator.GoogleChrome);
         SupportedBrowsers.Add(BrowserCreator.MicrosoftEdge);
 
-        SupportedBrowsers.Register(_manifest.HostName, _manifest.ManifestPath);
+        SupportedBrowsers.Register(Manifest.HostName, Manifest.ManifestPath);
     }
 
     /// <summary>
@@ -129,7 +127,7 @@ public class Host
     /// </summary>
     public void Unregister()
     {
-        SupportedBrowsers.Unregister(_manifest.HostName);
+        SupportedBrowsers.Unregister(Manifest.HostName);
     }
 
     public void MoveHostToLocalAppData()

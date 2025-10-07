@@ -3,6 +3,7 @@ using PrintaDot.Shared.CommunicationProtocol.V1;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Text.Json.Serialization.Metadata;
 using System.Text.Unicode;
 
 namespace PrintaDot.Shared.Common;
@@ -146,5 +147,7 @@ public static class PrintaDotJsonSerializer
         target.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
         target.UnmappedMemberHandling = JsonUnmappedMemberHandling.Skip;
         target.Converters.Add(new JsonStringEnumConverter());
+        target.TypeInfoResolver = new DefaultJsonTypeInfoResolver();
+        target.WriteIndented = true;
     }
 }
