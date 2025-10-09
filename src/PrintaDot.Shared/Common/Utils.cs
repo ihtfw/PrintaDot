@@ -66,7 +66,6 @@ public static class Utils
 
         if (IsLocalAppDataDirectory(currentDirectory))
         {
-            // Console.WriteLine("Native application is already in right folder");
             return true;
         }
 
@@ -81,11 +80,12 @@ public static class Utils
 
             CopyAllFiles(currentDirectory, TargetApplicationDirectory);
 
+            Environment.Exit(0);
+
             return true;
         }
         catch (Exception ex)
         {
-            //Console.WriteLine($"Error mooving application: {ex.Message}");
             return false;
         }
     }
