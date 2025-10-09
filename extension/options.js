@@ -363,8 +363,7 @@ async function clearAllProfiles() {
     if (!confirm(`Are you sure you want to delete all profiles?`)) {
         return;
     }
-
-    const defaultProfile = Profile.getDPefaultrofile();
+    
     const profiles = {
         'A4': Profile.getA4Profile(),
         'Termo': Profile.getTermoProfile()
@@ -447,7 +446,6 @@ async function initLanguageToggle() {
 
 const MAPPING_KEY = "printTypeMapping";
 
-// Функции для работы с маппингом
 function getMapping() {
     return new Promise((resolve) => {
         chrome.storage.local.get([MAPPING_KEY], (result) => {
