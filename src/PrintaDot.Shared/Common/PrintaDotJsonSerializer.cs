@@ -22,7 +22,7 @@ public static class PrintaDotJsonSerializer
         return (T)self.FromJson(typeof(T), safe);
     }
 
-    public static object FromJson(this string self, Type type, bool safe = false)
+    public static object FromJson(this string self, Type type, bool safe)
     {
         return Deserialize(self, type, safe);
     }
@@ -41,11 +41,13 @@ public static class PrintaDotJsonSerializer
         {
             try
             {
-                return JsonSerializer.Deserialize(value, type, DefaultOptions);
+                var json = JsonSerializer.Deserialize(value, type, DefaultOptions);
+
+                return json;
             }
-            catch (JsonException)
+            catch (JsonException ex)
             {
-                Log.LogMessage($"Can deserialize to type {type}", nameof(PrintaDotJsonSerializer));
+                Log.LogMessage(ex.Message, nameof(PrintaDotJsonSerializer));
 
                 return null;
             }
@@ -79,24 +81,33 @@ public static class PrintaDotJsonSerializer
 
     public static Message FromJsonToMessage(this string self)
     {
-        using var document = JsonDocument.Parse(self);
-        var root = document.RootElement;
-
-        if (!root.TryGetProperty("type", out var typeProperty) || !root.TryGetProperty("version", out var versionProperty))
+        try
         {
-            Log.LogMessage("Json must contains type and version fields", nameof(PrintaDotJsonSerializer));
-            return ExceptionMessageV1.Create($"Exception during deserialization: json must contains type and version fields");
+            using var document = JsonDocument.Parse(self);
+            var root = document.RootElement;
+
+            if (!root.TryGetProperty("type", out var typeProperty) || !root.TryGetProperty("version", out var versionProperty))
+            {
+                Log.LogMessage("Json must contains type and version fields", nameof(PrintaDotJsonSerializer));
+                return ExceptionMessageV1.Create($"Exception during deserialization: json must contains type and version fields");
+            }
+
+            var type = typeProperty.ToString();
+
+            if (!Enum.TryParse<MessageType>(type, out var messageType))
+            {
+                Log.LogMessage($"Invalid message type '{type}'", nameof(PrintaDotJsonSerializer));
+                return ExceptionMessageV1.Create($"Exception during deserialization: invalid message type '{type}'");
+            }
+
+            return DeserializeWithFallback(self, messageType, versionProperty.GetInt32());
+        }
+        catch (Exception ex)
+        {
+            Log.LogMessage(ex.StackTrace, nameof(JsonSerializer));
         }
 
-        var type = typeProperty.ToString();
-
-        if (!Enum.TryParse<MessageType>(type, out var messageType))
-        {
-            Log.LogMessage($"Invalid message type '{type}'", nameof(PrintaDotJsonSerializer));
-            return ExceptionMessageV1.Create($"Exception during deserialization: invalid message type '{type}'");
-        }
-
-        return DeserializeWithFallback(self, messageType, versionProperty.GetInt32());
+        return null;
     }
 
     private static Message DeserializeWithFallback(string json, MessageType messageType, int requestedVersion)
@@ -145,9 +156,13 @@ public static class PrintaDotJsonSerializer
     {
         target.Encoder = JavaScriptEncoder.Create(UnicodeRanges.All);
         target.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-        target.UnmappedMemberHandling = JsonUnmappedMemberHandling.Skip;
+        target.UnmappedMemberHandling = JsonUnmappedMemberHandling.Disallow;
         target.Converters.Add(new JsonStringEnumConverter());
         target.TypeInfoResolver = new DefaultJsonTypeInfoResolver();
-        target.WriteIndented = true;
+
+        target.TypeInfoResolver = JsonTypeInfoResolver.Combine(
+            PrintaDotJsonContext.Default,
+            new DefaultJsonTypeInfoResolver()
+        );
     }
 }

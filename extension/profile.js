@@ -2,8 +2,6 @@ class Profile {
     constructor(id = 1, profileName = "default", settings = {}) {
         this.id = id;
         this.profileName = profileName;
-        this.version = 1;
-        this.type = "Profile";
 
         // Main settings
         this.paperHeight = settings.paperHeight ?? 297;
@@ -46,8 +44,6 @@ class Profile {
         return {
             id: this.id,
             profileName: this.profileName,
-            version: this.version,
-            type: this.type,
             paperHeight: this.paperHeight,
             paperWidth: this.paperWidth,
             labelHeight: this.labelHeight,
