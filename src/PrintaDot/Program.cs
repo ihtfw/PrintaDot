@@ -13,9 +13,9 @@ class Program
 
         Host = new Host();
 
-        Host.MoveHostToLocalAppData();
         Host.GenerateManifest();
         Host.RegisterAllSupportedBrowsers();
+        Host.MoveHostToLocalAppData();
 
         if (args.Contains("--unregister"))
         {

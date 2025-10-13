@@ -24,8 +24,9 @@ public static class Manifest
     public static string[] AllowedOrigins { get; set; } = ["chrome-extension://ncpdldoackcgjeocgpkjbfimpdjkolpg/"];
 
     [JsonIgnore]
-    public static string ManifestPath => Path.Combine(Utils.TargetApplicationDirectory, HostName + "-manifest.json");
-
+    public static string ManifestPath => Path.Combine(Utils.TargetApplicationDirectory, ManifestFileName);
+    [JsonIgnore]
+    public static string ManifestFileName => HostName + "-manifest.json";
     public static void GenerateManifest()
     {
         var manifest = new Dictionary<string, object>
@@ -37,7 +38,7 @@ public static class Manifest
             ["allowed_origins"] = AllowedOrigins
         };
 
-        File.WriteAllText(ManifestPath, manifest.ToJson());
+        File.WriteAllText(ManifestFileName, manifest.ToJson());
 
         Log.LogMessage("Manifest Generated");
     }

@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using PrintaDot.Shared.NativeMessaging;
+using System.Reflection;
 
 namespace PrintaDot.Shared.Common;
 
@@ -55,7 +56,6 @@ public static class Utils
     public static bool IsLocalAppDataDirectory(string directory) =>
         string.Equals(directory, TargetApplicationDirectory, StringComparison.OrdinalIgnoreCase);
 
-
     /// <summary>
     /// Moving application to %LocalAppData%/PrintaDot/ directory.
     /// </summary>
@@ -78,16 +78,71 @@ public static class Utils
 
             Directory.CreateDirectory(TargetApplicationDirectory);
 
-            CopyAllFiles(currentDirectory, TargetApplicationDirectory);
-
-            Environment.Exit(0);
-
-            return true;
+#if DEBUG
+           var isFilesMoved =  CopyAllFiles(currentDirectory, TargetApplicationDirectory);
+#else
+            var isFilesMoved = CopyReleaseFiles(currentDirectory, TargetApplicationDirectory);
+#endif
+            if (isFilesMoved)
+            {
+                Environment.Exit(0);
+            }   
         }
         catch (Exception ex)
         {
             return false;
         }
+
+        return false;
+    }
+
+    /// <summary>
+    /// Copy only publish files (exe and pdb files) in Release mode
+    /// </summary>
+    /// <param name="sourceDir">Directory from copy files.</param>
+    /// <param name="targetDir">Directory to copy files.</param>
+    private static bool CopyReleaseFiles(string sourceDir, string targetDir)
+    {
+        var currentDirectory = AssemblyLoadDirectory();
+
+        if (IsLocalAppDataDirectory(currentDirectory))
+        {
+            return true;
+        }
+
+        try
+        {
+            var publishFiles = new[]
+            {
+                "PrintaDot.exe",
+                "PrintaDot.pdb",
+                "PrintaDot.Shared.pdb",
+                Manifest.ManifestFileName,
+            };
+
+            foreach (var fileName in publishFiles)
+            {
+                var sourceFile = Path.Combine(sourceDir, fileName);
+                var destFile = Path.Combine(targetDir, fileName);
+
+                if (File.Exists(sourceFile))
+                {
+                    File.Copy(sourceFile, destFile, true);
+                }
+                else
+                {
+                    throw new FileNotFoundException(fileName);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error copying publish files: {ex.Message}");
+
+            return false;
+        }
+
+        return true;
     }
 
     /// <summary>
@@ -95,7 +150,7 @@ public static class Utils
     /// </summary>
     /// <param name="sourceDir">Directory from copy files.</param>
     /// <param name="targetDir">Directory to copy files.</param>
-    private static void CopyAllFiles(string sourceDir, string targetDir)
+    private static bool CopyAllFiles(string sourceDir, string targetDir)
     {
         try
         {
@@ -123,7 +178,11 @@ public static class Utils
         catch (Exception ex)
         {
             Console.WriteLine($"Error moving files");
+
+            return false;
         }
+
+        return true;
     }
 
     /// <summary>
