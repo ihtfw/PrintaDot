@@ -38,8 +38,8 @@
   "resetSettingsToA4Button": {
     "message": "Reset to A4"
   },
-    "resetSettingsToTermoButton": {
-    "message": "Reset to Termo"
+    "resetSettingsToThermoButton": {
+    "message": "Reset to Thermo"
   },
   "newProfileButton": {
     "message": "New Profile"

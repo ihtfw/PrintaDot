@@ -107,7 +107,7 @@ class Profile {
         return new Profile(1, 'A4');
     }
 
-    static getTermoProfile() {
+    static getThermoProfile() {
         const settings = {
             paperHeight: 24,
             paperWidth: 45,
@@ -134,6 +134,6 @@ class Profile {
             barcodeAngle: 0
         };
 
-        return new Profile(2, 'Termo', settings);
+        return new Profile(2, 'Thermo', settings);
     }
 }
