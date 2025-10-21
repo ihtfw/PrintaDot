@@ -18,14 +18,14 @@ public class PrintRequestMessageV1 : Message
         public required string ProfileName { get; set; }
 
         // Main settings
-        public required double PaperHeight { get; set; }
-        public required double PaperWidth { get; set; }
-        public required double LabelHeight { get; set; }
-        public required double LabelWidth { get; set; }
-        public required double MarginX { get; set; }
-        public required double MarginY { get; set; }
-        public required double OffsetX { get; set; }
-        public required double OffsetY { get; set; }
+        public required float PaperHeight { get; set; }
+        public required float PaperWidth { get; set; }
+        public required float LabelHeight { get; set; }
+        public required float LabelWidth { get; set; }
+        public required float MarginX { get; set; }
+        public required float MarginY { get; set; }
+        public required float OffsetX { get; set; }
+        public required float OffsetY { get; set; }
         public required int LabelsPerRow { get; set; }
         public required int LabelsPerColumn { get; set; }
 
@@ -33,8 +33,8 @@ public class PrintRequestMessageV1 : Message
         public required string TextAlignment { get; set; }
         public required int TextMaxLength { get; set; }
         public required int TextTrimLength { get; set; }
-        public required double TextFontSize { get; set; }
-        public required double TextAngle { get; set; }
+        public required float TextFontSize { get; set; }
+        public required float TextAngle { get; set; }
 
         //Printer
         public required string PrinterName { get; set; }
@@ -44,12 +44,12 @@ public class PrintRequestMessageV1 : Message
 
         // Settings of number
         public required string NumbersAlignment { get; set; }
-        public required double NumbersFontSize { get; set; }
-        public required double NumbersAngle { get; set; }
+        public required float NumbersFontSize { get; set; }
+        public required float NumbersAngle { get; set; }
 
         // Settings of barcode
         public required string BarcodeAlignment { get; set; }
-        public required double BarcodeFontSize { get; set; }
-        public required double BarcodeAngle { get; set; }
+        public required float BarcodeFontSize { get; set; }
+        public required float BarcodeAngle { get; set; }
     }
 }

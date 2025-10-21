@@ -1,6 +1,7 @@
 ﻿using PrintaDot.Shared.Common;
 using PrintaDot.Shared.CommunicationProtocol;
 using PrintaDot.Shared.CommunicationProtocol.V1;
+using PrintaDot.Shared.ImageGeneration.V1;
 using PrintaDot.Shared.Printing;
 
 namespace PrintaDot.Shared.NativeMessaging;
@@ -26,9 +27,7 @@ public class Host
     {
         SupportedBrowsers = new List<Browser>(2);
 
-        _sendConfirmationReceipt = sendConfirmationReceipt;
-
-        _printService = new PrintService();
+        _sendConfirmationReceipt = sendConfirmationReceipt;       
     }
 
     /// <summary>
@@ -88,7 +87,10 @@ public class Host
                 StreamHandler.Write(exceptionMessage);
                 break;
             case PrintRequestMessageV1:
-                _printService.PrintRequestMessageV1((message as PrintRequestMessageV1)!);
+                var barcodeImageGenerator = new BarcodeImageGeneratorV1((message as PrintRequestMessageV1)!);
+                var printService = new PrintService(barcodeImageGenerator);
+                printService.Print();
+                //printService.PrintRequestMessageV1((message as PrintRequestMessageV1)!);
                 break;
             case GetPrintStatusRequestMessageV1:
                 // TODO: Add handling for GetPrintStatusRequestMessageV1
