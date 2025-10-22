@@ -94,6 +94,10 @@ public class BarcodeImageGeneratorV1 : BarcodeImageGenerator
         var barcodeTopLeft = ImageGenerationHelper.CalculateTopLeftFromCenter(barcodeCenter, _profile.BarcodeFontSizeWidth, _profile.BarcodeFontSize);
         var figuresTopLeft = ImageGenerationHelper.CalculateTopLeftFromCenter(figuresCenter, figuresTextSize.Width, _profile.NumbersFontSize);
 
+        headerTopLeft.X = GetWidthAligment(_profile.TextAlignment, _profile.LabelWidth, headerTextSize.Width);
+        barcodeTopLeft.X = GetWidthAligment(_profile.TextAlignment, _profile.LabelWidth, _profile.BarcodeFontSizeWidth);
+        figuresTopLeft.X = GetWidthAligment(_profile.TextAlignment, _profile.LabelWidth, figuresTextSize.Width);
+
         DrawText(image, item.Header, headerTopLeft, _profile.TextFontSize);
         DrawBarcode(image, item.Barcode, barcodeTopLeft);
         DrawText(image, item.Figures, figuresTopLeft, _profile.NumbersFontSize);
@@ -174,5 +178,30 @@ public class BarcodeImageGeneratorV1 : BarcodeImageGenerator
                 SymbolShape = SymbolShapeHint.FORCE_SQUARE
             }
         };
+    }
+
+    private float GetWidthAligment(string aligment, float labelWdith, float elementWidth)
+    {
+        //    switch (aligment)
+        //    {
+        //        case "Left":
+        //            return 0;
+        //            break;
+        //        case "Right":
+        //            return labelWdith - elementWidth;
+        //            break;
+        //        case "Center":
+        //            return labelWdith / 2.0f;
+        //            break;
+        //        case "Stretched":
+        //            throw new NotImplementedException();
+        //            break;
+        //        default:
+        //            return labelWdith / 2.0f;
+        //    }
+
+        //}
+
+        return labelWdith - elementWidth;
     }
 }
