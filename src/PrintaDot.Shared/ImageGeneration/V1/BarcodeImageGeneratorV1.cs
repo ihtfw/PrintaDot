@@ -9,7 +9,6 @@ using ZXing.Datamatrix.Encoder;
 using PrintaDot.Shared.CommunicationProtocol.V1;
 using ZXing.Datamatrix;
 using ZXing.ImageSharp.Rendering;
-using System.Reflection.Emit;
 
 namespace PrintaDot.Shared.ImageGeneration.V1;
 
@@ -17,8 +16,6 @@ public class BarcodeImageGeneratorV1 : BarcodeImageGenerator
 {
     private List<PrintRequestMessageV1.Item> _items;
     private ImageProfileV1 _profile;
-
-    private const float MARGIN_BETWEEN_TEXT_AND_BARCODE = 2.0f;
 
     public BarcodeImageGeneratorV1(PrintRequestMessageV1 message)
     {
@@ -47,7 +44,7 @@ public class BarcodeImageGeneratorV1 : BarcodeImageGenerator
     private Figure CalculateTextSize(string text, float fontSize)
     {
         var font = SystemFonts.CreateFont("Arial", fontSize);
-        var textSize = TextMeasurer.MeasureSize(text, new TextOptions(font));
+        var textSize = TextMeasurer.MeasureAdvance(text, new TextOptions(font));
 
         return new Figure
         {
@@ -61,16 +58,14 @@ public class BarcodeImageGeneratorV1 : BarcodeImageGenerator
         var headerTextSize = CalculateTextSize(item.Header, _profile.TextFontSize);
         var figuresTextSize = CalculateTextSize(item.Figures, _profile.NumbersFontSize);
 
-        var barcodeSize = new Figure { Width = 150, Height = _profile.BarcodeFontSize };
-
         var heightCenter = _profile.LabelHeight / 2;
 
-        var barcodeHalfAndHeaderHeight = headerTextSize.Height + barcodeSize.Height / 2.0f + MARGIN_BETWEEN_TEXT_AND_BARCODE;
-        var barcodeHalfAndFiguresHeight = figuresTextSize.Height + barcodeSize.Height / 2.0f + MARGIN_BETWEEN_TEXT_AND_BARCODE;
+        var barcodeHalfAndHeaderHeight = headerTextSize.Height + _profile.BarcodeFontSize / 2.0f;
+        var barcodeHalfAndFiguresHeight = figuresTextSize.Height + _profile.BarcodeFontSize / 2.0f;
         
-        var allElementsHeight = 2.0f * MARGIN_BETWEEN_TEXT_AND_BARCODE + figuresTextSize.Height + headerTextSize.Height + barcodeSize.Height;
+        var allElementsHeight = figuresTextSize.Height + headerTextSize.Height + _profile.BarcodeFontSize;
 
-        PointF headerCenter = new(), figuresCenter = new(), barcodeTopLeft= new();
+        PointF headerCenter = new(), figuresCenter = new(), barcodeCenter= new();
 
         if (allElementsHeight > _profile.LabelHeight)
         {
@@ -78,37 +73,30 @@ public class BarcodeImageGeneratorV1 : BarcodeImageGenerator
         }
         else if (barcodeHalfAndHeaderHeight > heightCenter)
         {
-            headerCenter = new PointF(_profile.LabelWidth / 2.0f, headerTextSize.Height / 2);      
-
-            var barcodeCenter = new PointF(_profile.LabelWidth / 2.0f, headerTextSize.Height + MARGIN_BETWEEN_TEXT_AND_BARCODE);
-            barcodeTopLeft = ImageGenerationHelper.CalculateTopLeftFromCenter(barcodeCenter, barcodeSize.Width, barcodeSize.Height);
-
-            figuresCenter = new PointF(_profile.LabelWidth / 2.0f, headerTextSize.Height + MARGIN_BETWEEN_TEXT_AND_BARCODE * 2.0f + barcodeSize.Height);           
+            headerCenter = new PointF(_profile.LabelWidth / 2.0f, headerTextSize.Height / 2.0f);
+            barcodeCenter = new PointF(_profile.LabelWidth / 2.0f, headerTextSize.Height + _profile.BarcodeFontSize / 2.0f);
+            figuresCenter = new PointF(_profile.LabelWidth / 2.0f, headerTextSize.Height + _profile.BarcodeFontSize + figuresTextSize.Height / 2.0f);
         }
         else if (barcodeHalfAndFiguresHeight > heightCenter) 
-        { 
-
+        {
+            headerCenter = new PointF(_profile.LabelWidth / 2.0f, _profile.LabelHeight - figuresTextSize.Height - _profile.BarcodeFontSize- headerTextSize.Height / 2);
+            barcodeCenter = new PointF(_profile.LabelWidth / 2.0f, _profile.LabelHeight - figuresTextSize.Height - _profile.BarcodeFontSize / 2.0f);
+            figuresCenter = new PointF(_profile.LabelWidth / 2.0f, _profile.LabelHeight - figuresTextSize.Height / 2.0f);
         }
         else
         {
-            headerCenter = new PointF(_profile.LabelWidth / 2.0f, _profile.LabelHeight / 2.0f - barcodeSize.Height / 2.0f - headerTextSize.Height / 2.0f - MARGIN_BETWEEN_TEXT_AND_BARCODE);
-            //Label.HeaderTopLeft = ImageGenerationHelper.CalculateTopLeftFromCenter(headerCenter, headerTextSize.Width, headerTextSize.Height);
-
-            var barcodeCenter = new PointF(_profile.LabelWidth / 2.0f, _profile.LabelHeight / 2.0f);
-            barcodeTopLeft = ImageGenerationHelper.CalculateTopLeftFromCenter(barcodeCenter, barcodeSize.Width, barcodeSize.Height);
-
-            figuresCenter = new PointF(_profile.LabelWidth / 2.0f, _profile.LabelHeight / 2.0f + barcodeSize.Height / 2.0f + figuresTextSize.Height / 2.0f + MARGIN_BETWEEN_TEXT_AND_BARCODE);
-            //Label.FiguresTopLeft = ImageGenerationHelper.CalculateTopLeftFromCenter(figuresCenter, figuresTextSize.Width, figuresTextSize.Height);
-
-            //DrawText(image, item.Header, headerCenter, _profile.TextFontSize);
-            //DrawBarcode(image, item.Barcode, Label.BarcodeTopLeft);
-            //DrawText(image, item.Figures, figuresCenter, _profile.NumbersFontSize);
+            headerCenter = new PointF(_profile.LabelWidth / 2.0f, _profile.LabelHeight / 2.0f - _profile.BarcodeFontSize / 2.0f - headerTextSize.Height / 2.0f);
+            barcodeCenter = new PointF(_profile.LabelWidth / 2.0f, _profile.LabelHeight / 2.0f);
+            figuresCenter = new PointF(_profile.LabelWidth / 2.0f, _profile.LabelHeight / 2.0f + _profile.BarcodeFontSize / 2.0f + figuresTextSize.Height / 2.0f);
         }
 
+        var headerTopLeft = ImageGenerationHelper.CalculateTopLeftFromCenter(headerCenter, headerTextSize.Width, _profile.TextFontSize);
+        var barcodeTopLeft = ImageGenerationHelper.CalculateTopLeftFromCenter(barcodeCenter, _profile.BarcodeFontSizeWidth, _profile.BarcodeFontSize);
+        var figuresTopLeft = ImageGenerationHelper.CalculateTopLeftFromCenter(figuresCenter, figuresTextSize.Width, _profile.NumbersFontSize);
 
-        DrawText(image, item.Header, headerCenter, _profile.TextFontSize);
+        DrawText(image, item.Header, headerTopLeft, _profile.TextFontSize);
         DrawBarcode(image, item.Barcode, barcodeTopLeft);
-        DrawText(image, item.Figures, figuresCenter, _profile.NumbersFontSize);
+        DrawText(image, item.Figures, figuresTopLeft, _profile.NumbersFontSize);
     }
 
     private void DrawText(Image<Rgba32> image, string text, PointF topLeft, float fontSize)
@@ -118,9 +106,9 @@ public class BarcodeImageGeneratorV1 : BarcodeImageGenerator
         var textOptions = new RichTextOptions(font)
         {
             Origin = topLeft,
-            HorizontalAlignment = HorizontalAlignment.Center,
-            VerticalAlignment = VerticalAlignment.Center,
-            TextAlignment = TextAlignment.Start,
+            HorizontalAlignment = HorizontalAlignment.Left,
+            VerticalAlignment = VerticalAlignment.Top,
+            TextAlignment = TextAlignment.Center,
         };
 
         //// Обрезаем текст если нужно
@@ -138,26 +126,6 @@ public class BarcodeImageGeneratorV1 : BarcodeImageGenerator
 
         var point = new Point((int)topLeft.X, (int)topLeft.Y);
         image.Mutate(ctx => ctx.DrawImage(barcodeImage, point, 1f));
-    }
-
-    private void DrawFigures(Image<Rgba32> image, PrintRequestMessageV1.Item item)
-    {
-        if (string.IsNullOrEmpty(item.Figures)) return;
-
-        var font = SystemFonts.CreateFont("Arial", _profile.NumbersFontSize);
-
-        // Позиция под штрих-кодом
-        var barcodeHeight = GetBarcodeHeight();
-        var yPosition = barcodeHeight + 2f; // 2px отступ
-
-        var textOptions = new RichTextOptions(font)
-        {
-            Origin = new PointF(image.Width / 2, yPosition),
-            HorizontalAlignment = HorizontalAlignment.Center,
-            VerticalAlignment = VerticalAlignment.Top
-        };
-
-        image.Mutate(ctx => ctx.DrawText(textOptions, item.Figures, Color.Black));
     }
 
     private Image? GenerateBarcode(string barcodeText)
@@ -185,7 +153,7 @@ public class BarcodeImageGeneratorV1 : BarcodeImageGenerator
             Options = new EncodingOptions
             {
                 Height = (int)_profile.BarcodeFontSize,
-                Width = 40, // TODO: СДЕЛАТЬ ВЫЧИСЛЯЕМЫМ
+                Width = (int)_profile.BarcodeFontSize * 3,
                 Margin = 1,
                 PureBarcode = true
             }
@@ -206,50 +174,5 @@ public class BarcodeImageGeneratorV1 : BarcodeImageGenerator
                 SymbolShape = SymbolShapeHint.FORCE_SQUARE
             }
         };
-    }
-
-    private PointF CalculateTextPosition(string text, Font font, string alignment, float verticalOffset)
-    {
-        var marginPx = 0f; // 0px отступ
-
-        return alignment.ToLower() switch
-        {
-            "Left" => new PointF(marginPx, verticalOffset),
-            "Right" => new PointF(_profile.LabelWidth - marginPx, verticalOffset),
-            "Center" => new PointF(_profile.LabelWidth / 2, marginPx),
-            "Stretched" => new PointF(_profile.LabelWidth / 2, _profile.LabelHeight - 5f),
-            _ => new PointF(_profile.LabelWidth / 2, verticalOffset)
-        };
-    }
-
-    private PointF CalculateBarcodePosition(Image barcodeImage, PrintRequestMessageV1.Item item)
-    {
-        var center = new PointF(_profile.LabelWidth / 2, _profile.LabelHeight / 2);
-        return center;
-    }
-
-    private HorizontalAlignment GetHorizontalAlignment(string alignment)
-    {
-        return alignment.ToLower() switch
-        {
-            "Left" => HorizontalAlignment.Left,
-            "Right" => HorizontalAlignment.Right,
-            _ => HorizontalAlignment.Center
-        };
-    }
-
-    private VerticalAlignment GetVerticalAlignment(string alignment)
-    {
-        return alignment.ToLower() switch
-        {
-            "Top" => VerticalAlignment.Top,
-            "Bottom" => VerticalAlignment.Bottom,
-            _ => VerticalAlignment.Center
-        };
-    }
-
-    private float GetBarcodeHeight()
-    {
-        return 15f;
     }
 }

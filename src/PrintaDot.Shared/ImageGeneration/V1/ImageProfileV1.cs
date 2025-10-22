@@ -77,5 +77,6 @@ internal class ImageProfileV1
     // Settings of barcode
     public string BarcodeAlignment { get; set; }
     public float BarcodeFontSize { get; set; }
+    public float BarcodeFontSizeWidth => BarcodeFontSize * 3.0f;
     public float BarcodeAngle { get; set; }
 }
