@@ -44,7 +44,7 @@ public class BarcodeImageGeneratorV1 : BarcodeImageGenerator
     private Figure CalculateTextSize(string text, float fontSize)
     {
         var font = SystemFonts.CreateFont("Arial", fontSize);
-        var textSize = TextMeasurer.MeasureAdvance(text, new TextOptions(font));
+        var textSize = TextMeasurer.MeasureBounds(text, new TextOptions(font));
 
         return new Figure
         {
@@ -59,6 +59,8 @@ public class BarcodeImageGeneratorV1 : BarcodeImageGenerator
         var figuresTextSize = CalculateTextSize(item.Figures, _profile.NumbersFontSize);
 
         var heightCenter = _profile.LabelHeight / 2;
+
+        var barcodeImage = GenerateBarcode(item.Barcode);
 
         var barcodeHalfAndHeaderHeight = headerTextSize.Height + _profile.BarcodeFontSize / 2.0f;
         var barcodeHalfAndFiguresHeight = figuresTextSize.Height + _profile.BarcodeFontSize / 2.0f;
@@ -91,15 +93,15 @@ public class BarcodeImageGeneratorV1 : BarcodeImageGenerator
         }
 
         var headerTopLeft = ImageGenerationHelper.CalculateTopLeftFromCenter(headerCenter, headerTextSize.Width, _profile.TextFontSize);
-        var barcodeTopLeft = ImageGenerationHelper.CalculateTopLeftFromCenter(barcodeCenter, _profile.BarcodeFontSizeWidth, _profile.BarcodeFontSize);
+        var barcodeTopLeft = ImageGenerationHelper.CalculateTopLeftFromCenter(barcodeCenter, barcodeImage.Width, barcodeImage.Height);
         var figuresTopLeft = ImageGenerationHelper.CalculateTopLeftFromCenter(figuresCenter, figuresTextSize.Width, _profile.NumbersFontSize);
 
-        headerTopLeft.X = GetWidthAligment(_profile.TextAlignment, _profile.LabelWidth, headerTextSize.Width);
-        barcodeTopLeft.X = GetWidthAligment(_profile.TextAlignment, _profile.LabelWidth, _profile.BarcodeFontSizeWidth);
-        figuresTopLeft.X = GetWidthAligment(_profile.TextAlignment, _profile.LabelWidth, figuresTextSize.Width);
+        headerTopLeft.X = GetWidthAligment(_profile.TextAlignment, _profile.LabelWidth, headerTextSize.Width, headerTopLeft.X);
+        barcodeTopLeft.X = GetWidthAligment(_profile.TextAlignment, _profile.LabelWidth, barcodeImage.Width, barcodeTopLeft.X);
+        figuresTopLeft.X = GetWidthAligment(_profile.TextAlignment, _profile.LabelWidth, figuresTextSize.Width, figuresTopLeft.X);
 
         DrawText(image, item.Header, headerTopLeft, _profile.TextFontSize);
-        DrawBarcode(image, item.Barcode, barcodeTopLeft);
+        DrawBarcode(image, barcodeImage, barcodeTopLeft);
         DrawText(image, item.Figures, figuresTopLeft, _profile.NumbersFontSize);
     }
 
@@ -123,12 +125,12 @@ public class BarcodeImageGeneratorV1 : BarcodeImageGenerator
         image.Mutate(ctx => ctx.DrawText(textOptions, text, Color.Black));
     }
 
-    private void DrawBarcode(Image<Rgba32> image, string barcode, PointF topLeft)
+    private void DrawBarcode(Image<Rgba32> image, Image barcodeImage, PointF topLeft)
     {
-        var barcodeImage = GenerateBarcode(barcode);
         if (barcodeImage == null) return;
 
         var point = new Point((int)topLeft.X, (int)topLeft.Y);
+       
         image.Mutate(ctx => ctx.DrawImage(barcodeImage, point, 1f));
     }
 
@@ -138,14 +140,52 @@ public class BarcodeImageGeneratorV1 : BarcodeImageGenerator
         {
             var writer = _profile.UseDataMatrix ? CreateDataMatrixWriter() : CreateStandardBarcodeWriter();
 
-            var barcodeBitmap = writer.Write(barcodeText);
-            return barcodeBitmap;
+            var barcodeRaw = writer.Write(barcodeText);
+
+            using var tempStream = new MemoryStream();
+            barcodeRaw.SaveAsPng(tempStream);
+            tempStream.Position = 0;
+
+            var barcodeTyped = Image.Load<Rgba32>(tempStream);
+
+            return CropBarcodeImage(barcodeTyped);
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Ошибка генерации штрих-кода: {ex.Message}");
             return null;
         }
+    }
+
+    private Image<Rgba32> CropBarcodeImage(Image<Rgba32> src)
+    {
+        int left = src.Width, top = src.Height, right = 0, bottom = 0;
+
+        src.ProcessPixelRows(accessor =>
+        {
+            for (int y = 0; y < src.Height; y++)
+            {
+                var row = accessor.GetRowSpan(y);
+                for (int x = 0; x < src.Width; x++)
+                {
+                    if (row[x].R < 250)
+                    {
+                        left = Math.Min(left, x);
+                        right = Math.Max(right, x);
+                        top = Math.Min(top, y);
+                        bottom = Math.Max(bottom, y);
+                    }
+                }
+            }
+        });
+
+        if (right <= left || bottom <= top)
+            return src.Clone();
+
+        int width = right - left + 1;
+        int height = bottom - top + 1;
+
+        return src.Clone(ctx => ctx.Crop(new Rectangle(left, top, width, height)));
     }
 
     private BarcodeWriter<Image> CreateStandardBarcodeWriter()
@@ -157,9 +197,9 @@ public class BarcodeImageGeneratorV1 : BarcodeImageGenerator
             Options = new EncodingOptions
             {
                 Height = (int)_profile.BarcodeFontSize,
-                Width = (int)_profile.BarcodeFontSize * 3,
-                Margin = 1,
-                PureBarcode = true
+                Width = (int)_profile.BarcodeFontSizeWidth,
+                Margin = 0,
+                PureBarcode = true,
             }
         };
     }
@@ -180,28 +220,26 @@ public class BarcodeImageGeneratorV1 : BarcodeImageGenerator
         };
     }
 
-    private float GetWidthAligment(string aligment, float labelWdith, float elementWidth)
+    private float GetWidthAligment(string aligment, float labelWdith, float elementWidth, float alligmentValue)
     {
-        //    switch (aligment)
-        //    {
-        //        case "Left":
-        //            return 0;
-        //            break;
-        //        case "Right":
-        //            return labelWdith - elementWidth;
-        //            break;
-        //        case "Center":
-        //            return labelWdith / 2.0f;
-        //            break;
-        //        case "Stretched":
-        //            throw new NotImplementedException();
-        //            break;
-        //        default:
-        //            return labelWdith / 2.0f;
-        //    }
-
+        //switch (aligment)
+        //{
+        //    case "Left":
+        //        return 0.0f;
+        //        break;
+        //    case "Right":
+        //        return labelWdith - elementWidth;
+        //        break;
+        //    case "Center":
+        //        return alligmentValue;
+        //        break;
+        //    case "Stretched":
+        //        throw new NotImplementedException();
+        //        break;
+        //    default:
+        //        return 0.0f;
         //}
 
-        return labelWdith - elementWidth;
+        return 0f;
     }
 }
