@@ -36,12 +36,12 @@ internal class MessageV1Creator
                 NumbersFontSize = 10,
                 NumbersAngle = 0,
                 BarcodeAlignment = "Center",
-                BarcodeFontSize = 10,
+                BarcodeFontSize = 20,
                 BarcodeAngle = 0
             },
             Items = new List<PrintRequestMessageV1.Item>
                 {
-                    new() { Header = "Item 1", Barcode = "1234567890", Figures = "A1" }
+                    new() { Header = "Atem 1", Barcode = "1234567890", Figures = "Atem 1" }
                 }
         };
     }
