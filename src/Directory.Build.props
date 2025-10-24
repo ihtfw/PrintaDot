@@ -1,0 +1,13 @@
+<Project>
+  <PropertyGroup>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <!-- TODO later make it configurable in publish profile -->
+    <BuildForPlatform>WINDOWS</BuildForPlatform>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" $(BuildForPlatform) == 'WINDOWS' ">
+    <DefineConstants>$(DefineConstants);BUILD_FOR_WINDOWS</DefineConstants>
+  </PropertyGroup>
+
+</Project>

@@ -2,10 +2,12 @@
 
 internal class Program
 {
-    static TestsRunnerV1 testsRunnerV1 = new();
     private static void Main(string[] args)
     {
-        testsRunnerV1.PrintThermo();
+        var printerName = "Microsoft Print to PDF";
+
+        var testsRunner = new TestsRunnerV1();
+        testsRunner.PrintThermo(printerName);
         //testsRunnerV1.PrintA4();
     }
 }

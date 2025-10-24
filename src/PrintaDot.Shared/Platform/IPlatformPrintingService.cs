@@ -2,7 +2,7 @@
 
 namespace PrintaDot.Shared.Platform;
 
-interface IPlatformPrintingService
+public interface IPlatformPrintingService
 {
-    void Print(Image iamge);
+    void Print(string printerName, Image image);
 }

@@ -1,7 +1,9 @@
-﻿using PrintaDot.Shared.Common;
+﻿using System.Reflection;
+using PrintaDot.Shared.Common;
 using PrintaDot.Shared.CommunicationProtocol;
 using PrintaDot.Shared.CommunicationProtocol.V1;
 using PrintaDot.Shared.ImageGeneration.V1;
+using PrintaDot.Shared.Platform;
 using PrintaDot.Shared.Printing;
 
 namespace PrintaDot.Shared.NativeMessaging;
@@ -11,6 +13,7 @@ namespace PrintaDot.Shared.NativeMessaging;
 /// </summary>
 public class Host
 {
+    
     private bool _sendConfirmationReceipt;
     private readonly PrintService _printService;
 
@@ -29,6 +32,8 @@ public class Host
 
         _sendConfirmationReceipt = sendConfirmationReceipt;       
     }
+
+    public required IPlatformPrintingService PlatformPrintingService { get; init; }
 
     /// <summary>
     /// Starts listening for input.
@@ -80,16 +85,15 @@ public class Host
     {
         switch (message)
         {
-            case ExceptionMessageV1:
-                var exceptionMessage = message as ExceptionMessageV1;
-                Log.LogMessage(exceptionMessage!.MessageText);
+            case ExceptionMessageV1 exceptionMessageV1:
+                Log.LogMessage(exceptionMessageV1!.MessageText);
 
-                StreamHandler.Write(exceptionMessage);
+                StreamHandler.Write(exceptionMessageV1);
                 break;
-            case PrintRequestMessageV1:
-                var barcodeImageGenerator = new BarcodeImageGeneratorV1((message as PrintRequestMessageV1)!);
-                var printService = new PrintService(barcodeImageGenerator);
-                printService.Print();
+            case PrintRequestMessageV1 printRequestMessageV1:
+                var barcodeImageGenerator = new BarcodeImageGeneratorV1(printRequestMessageV1);
+                var printService = new PrintService(barcodeImageGenerator, PlatformPrintingService);
+                printService.Print(printRequestMessageV1.Profile.PrinterName);
                 //printService.PrintRequestMessageV1((message as PrintRequestMessageV1)!);
                 break;
             case GetPrintStatusRequestMessageV1:

@@ -2,19 +2,13 @@
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Png;
 using System.Drawing;
+using PrintaDot.Shared.Platform;
 
 namespace PrintaDot.Windows
 {
-    public class WindowsPrintingService
+    public class WindowsPrintingService : IPlatformPrintingService
     {
-        private string _printerName;
-
-        public WindowsPrintingService(string printerName = "Microsoft Print to PDF")
-        {
-            _printerName = printerName;
-        }
-
-        public void PrintImage(SixLabors.ImageSharp.Image image)
+        public void Print(string printerName, SixLabors.ImageSharp.Image image)
         {
             string tempFile = Path.Combine(Path.GetTempPath(), $"barcode_{Guid.NewGuid()}.png");
 
@@ -25,7 +19,7 @@ namespace PrintaDot.Windows
                 using var bitmap = new Bitmap(tempFile);
                 using var printDocument = new PrintDocument();
 
-                printDocument.PrinterSettings.PrinterName = _printerName;
+                printDocument.PrinterSettings.PrinterName = printerName;
 
                 float dpiX = bitmap.HorizontalResolution;
                 float dpiY = bitmap.VerticalResolution;
