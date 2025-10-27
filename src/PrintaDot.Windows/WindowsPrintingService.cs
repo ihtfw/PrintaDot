@@ -1,8 +1,8 @@
 ﻿using System.Drawing.Printing;
 using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Formats.Png;
 using System.Drawing;
 using PrintaDot.Shared.Platform;
+using SixLabors.ImageSharp.Formats.Bmp;
 
 namespace PrintaDot.Windows
 {
@@ -10,22 +10,22 @@ namespace PrintaDot.Windows
     {
         public void Print(string printerName, SixLabors.ImageSharp.Image image)
         {
-            string tempFile = Path.Combine(Path.GetTempPath(), $"barcode_{Guid.NewGuid()}.png");
+            string tempFile = Path.Combine(Path.GetTempPath(), $"barcode_{Guid.NewGuid()}.bmp");
 
             try
             {
-                image.Save(tempFile, new PngEncoder());
+                image.Save(tempFile, new BmpEncoder());
 
                 using var bitmap = new Bitmap(tempFile);
                 using var printDocument = new PrintDocument();
 
                 printDocument.PrinterSettings.PrinterName = printerName;
 
-                float dpiX = bitmap.HorizontalResolution;
-                float dpiY = bitmap.VerticalResolution;
+                int scaledWidth = bitmap.Width / 3;
+                int scaledHeight = bitmap.Height / 3;
 
-                int paperWidth = (int)(bitmap.Width / dpiX * 100.0f);
-                int paperHeight = (int)(bitmap.Height / dpiY * 100.0f);
+                int paperWidth = (int)(scaledWidth / 96.0f * 100.0f);
+                int paperHeight = (int)(scaledHeight / 96.0f * 100.0f);
 
                 var paperSize = new PaperSize("Custom", paperWidth, paperHeight)
                 {
@@ -36,12 +36,15 @@ namespace PrintaDot.Windows
                 printDocument.DefaultPageSettings.Landscape = false;
                 printDocument.PrinterSettings.DefaultPageSettings.Landscape = false;
                 printDocument.PrinterSettings.DefaultPageSettings.PaperSize = paperSize;
-
                 printDocument.DefaultPageSettings.Margins = new Margins(0, 0, 0, 0);
 
                 printDocument.PrintPage += (sender, e) =>
                 {
-                    e.Graphics.DrawImage(bitmap, 0, 0, bitmap.Width, bitmap.Height);
+                    e.Graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+                    e.Graphics.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
+                    e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+
+                    e.Graphics.DrawImage(bitmap, 0, 0, scaledWidth, scaledHeight);
                     e.HasMorePages = false;
                 };
 
@@ -49,7 +52,7 @@ namespace PrintaDot.Windows
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Ошибка печати");
+                Console.WriteLine($"Ошибка печати: {ex.Message}");
             }
             finally
             {

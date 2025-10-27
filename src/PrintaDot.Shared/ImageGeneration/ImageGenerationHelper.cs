@@ -4,9 +4,9 @@ namespace PrintaDot.Shared.ImageGeneration;
 
 public static class ImageGenerationHelper
 {
-    public static float MmToPixels(double mm, float dpi = 300f) => (float)(mm * dpi) / 25.4f;
+    public static float MmToDpi(double mm, float dpi = 300f) => (float)(mm * dpi) / 25.4f;
 
-    public static float MmToDpi(double mm) => 96.0f * (float)mm / 25.4f;
+    //public static float MmToDpi(double mm) => 96.0f * (float)mm / 25.4f;
 
     public static float FontSizeToPixels(double fontSize, float dpi = 300f) => (float)(fontSize * dpi) / 72.0f;
 

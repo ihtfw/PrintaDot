@@ -192,16 +192,12 @@ public class BarcodeImageGeneratorV1 : BarcodeImageGenerator
         {
             case "Left":
                 return 0.0f;
-                break;
             case "Right":
                 return labelWdith - elementWidth;
-                break;
             case "Center":
                 return alligmentValue;
-                break;
             case "Stretched":
                 throw new NotImplementedException();
-                break;
             default:
                 return 0.0f;
         }

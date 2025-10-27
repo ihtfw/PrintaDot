@@ -45,11 +45,14 @@ public class PrintService
 
     public void Print(string printerName)
     {
+        var zebra = "ZDesigner ZD411-203dpi ZPL";
+        var microsoftToPdf = "Microsoft Print To PDF";
+
         var images = _barcodeImageGenerator.GenerateBarcodeImage();
 
         foreach (var image in images) 
         {
-            _platformPrintingService.Print(printerName, image);
+            _platformPrintingService.Print(zebra, image);
             SaveImageToDesktop(image);
         }
     }
@@ -64,10 +67,10 @@ public class PrintService
             Directory.CreateDirectory(imagesFolder);
 
             string timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmssfff");
-            string fileName = $"barcode_{timestamp}.png";
+            string fileName = $"barcode_{timestamp}.bmp";
             string filePath = Path.Combine(imagesFolder, fileName);
 
-            image.SaveAsPng(filePath);
+            image.SaveAsBmp(filePath);
 
             Console.WriteLine($"Изображение сохранено: {filePath}");
         }
