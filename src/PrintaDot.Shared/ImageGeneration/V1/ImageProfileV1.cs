@@ -11,21 +11,21 @@ internal class ImageProfileV1
         Id = profile.Id;
         ProfileName = profile.ProfileName;
 
-        PaperHeight = ImageGenerationHelper.MmToPixels(profile.PaperHeight, DPI);
-        PaperWidth = ImageGenerationHelper.MmToPixels(profile.PaperWidth, DPI);
-        LabelHeight = ImageGenerationHelper.MmToPixels(profile.LabelHeight, DPI);
-        LabelWidth = ImageGenerationHelper.MmToPixels(profile.LabelWidth, DPI);
-        MarginX = ImageGenerationHelper.MmToPixels(profile.MarginX, DPI);
-        MarginY = ImageGenerationHelper.MmToPixels(profile.MarginY, DPI);
-        OffsetX = ImageGenerationHelper.MmToPixels(profile.OffsetX, DPI);
-        OffsetY = ImageGenerationHelper.MmToPixels(profile.OffsetY, DPI);
+        PaperHeight = ImageGenerationHelper.MmToDpi(profile.PaperHeight);
+        PaperWidth = ImageGenerationHelper.MmToDpi(profile.PaperWidth);
+        LabelHeight = ImageGenerationHelper.MmToDpi(profile.LabelHeight);
+        LabelWidth = ImageGenerationHelper.MmToDpi(profile.LabelWidth);
+        MarginX = ImageGenerationHelper.MmToDpi(profile.MarginX);
+        MarginY = ImageGenerationHelper.MmToDpi(profile.MarginY);
+        OffsetX = ImageGenerationHelper.MmToDpi(profile.OffsetX);
+        OffsetY = ImageGenerationHelper.MmToDpi(profile.OffsetY);
         LabelsPerRow = profile.LabelsPerRow;
         LabelsPerColumn = profile.LabelsPerColumn;
 
         TextAlignment = profile.TextAlignment;
         TextMaxLength = profile.TextMaxLength;
         TextTrimLength = profile.TextTrimLength;
-        TextFontSize = ImageGenerationHelper.FontSizeToPixels(profile.TextFontSize, DPI);
+        TextFontSize = ImageGenerationHelper.MmToDpi(profile.TextFontSize);
         TextAngle = profile.TextAngle;
 
         PrinterName = profile.PrinterName;
@@ -33,11 +33,11 @@ internal class ImageProfileV1
         UseDataMatrix = profile.UseDataMatrix;
 
         NumbersAlignment = profile.NumbersAlignment;
-        NumbersFontSize = ImageGenerationHelper.FontSizeToPixels(profile.NumbersFontSize, DPI);
+        NumbersFontSize = ImageGenerationHelper.MmToDpi(profile.NumbersFontSize);
         NumbersAngle = profile.NumbersAngle;
 
         BarcodeAlignment = profile.BarcodeAlignment;
-        BarcodeFontSize = ImageGenerationHelper.FontSizeToPixels(profile.BarcodeFontSize, DPI);
+        BarcodeFontSize = ImageGenerationHelper.MmToDpi(profile.BarcodeFontSize);
         BarcodeAngle = profile.BarcodeAngle;
     }
 
