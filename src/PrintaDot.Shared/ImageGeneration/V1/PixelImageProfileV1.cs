@@ -2,30 +2,28 @@
 
 namespace PrintaDot.Shared.ImageGeneration.V1;
 
-internal class ImageProfileV1
+internal class PixelImageProfileV1
 {
-    private const float DPI = 300f;
-
-    public ImageProfileV1(PrintRequestMessageV1.PrintProfile profile)
+    public PixelImageProfileV1(PrintRequestMessageV1.PrintProfile profile)
     {
         Id = profile.Id;
         ProfileName = profile.ProfileName;
 
-        PaperHeight = ImageGenerationHelper.MmToDpi(profile.PaperHeight);
-        PaperWidth = ImageGenerationHelper.MmToDpi(profile.PaperWidth);
-        LabelHeight = ImageGenerationHelper.MmToDpi(profile.LabelHeight);
-        LabelWidth = ImageGenerationHelper.MmToDpi(profile.LabelWidth);
-        MarginX = ImageGenerationHelper.MmToDpi(profile.MarginX);
-        MarginY = ImageGenerationHelper.MmToDpi(profile.MarginY);
-        OffsetX = ImageGenerationHelper.MmToDpi(profile.OffsetX);
-        OffsetY = ImageGenerationHelper.MmToDpi(profile.OffsetY);
+        PaperHeight = ImageGenerationHelper.FromMmToPixels(profile.PaperHeight);
+        PaperWidth = ImageGenerationHelper.FromMmToPixels(profile.PaperWidth);
+        LabelHeight = ImageGenerationHelper.FromMmToPixels(profile.LabelHeight);
+        LabelWidth = ImageGenerationHelper.FromMmToPixels(profile.LabelWidth);
+        MarginX = ImageGenerationHelper.FromMmToPixels(profile.MarginX);
+        MarginY = ImageGenerationHelper.FromMmToPixels(profile.MarginY);
+        OffsetX = ImageGenerationHelper.FromMmToPixels(profile.OffsetX);
+        OffsetY = ImageGenerationHelper.FromMmToPixels(profile.OffsetY);
         LabelsPerRow = profile.LabelsPerRow;
         LabelsPerColumn = profile.LabelsPerColumn;
 
         TextAlignment = profile.TextAlignment;
         TextMaxLength = profile.TextMaxLength;
         TextTrimLength = profile.TextTrimLength;
-        TextFontSize = ImageGenerationHelper.MmToDpi(profile.TextFontSize);
+        TextFontSize = ImageGenerationHelper.FontSizeToPixels(profile.TextFontSize);
         TextAngle = profile.TextAngle;
 
         PrinterName = profile.PrinterName;
@@ -33,11 +31,11 @@ internal class ImageProfileV1
         UseDataMatrix = profile.UseDataMatrix;
 
         NumbersAlignment = profile.NumbersAlignment;
-        NumbersFontSize = ImageGenerationHelper.MmToDpi(profile.NumbersFontSize);
+        NumbersFontSize = ImageGenerationHelper.FontSizeToPixels(profile.NumbersFontSize);
         NumbersAngle = profile.NumbersAngle;
 
         BarcodeAlignment = profile.BarcodeAlignment;
-        BarcodeFontSize = ImageGenerationHelper.MmToDpi(profile.BarcodeFontSize);
+        BarcodeFontSize = ImageGenerationHelper.FontSizeToPixels(profile.BarcodeFontSize);
         BarcodeAngle = profile.BarcodeAngle;
     }
 

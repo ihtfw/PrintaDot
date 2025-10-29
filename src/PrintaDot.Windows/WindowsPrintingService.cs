@@ -3,6 +3,7 @@ using SixLabors.ImageSharp;
 using System.Drawing;
 using PrintaDot.Shared.Platform;
 using SixLabors.ImageSharp.Formats.Bmp;
+using PrintaDot.Shared.ImageGeneration;
 
 namespace PrintaDot.Windows
 {
@@ -10,22 +11,14 @@ namespace PrintaDot.Windows
     {
         public void Print(string printerName, SixLabors.ImageSharp.Image image)
         {
-            string tempFile = Path.Combine(Path.GetTempPath(), $"barcode_{Guid.NewGuid()}.bmp");
-
             try
             {
-                image.Save(tempFile, new BmpEncoder());
-
-                using var bitmap = new Bitmap(tempFile);
                 using var printDocument = new PrintDocument();
 
                 printDocument.PrinterSettings.PrinterName = printerName;
 
-                int scaledWidth = bitmap.Width / 3;
-                int scaledHeight = bitmap.Height / 3;
-
-                int paperWidth = (int)(scaledWidth / 96.0f * 100.0f);
-                int paperHeight = (int)(scaledHeight / 96.0f * 100.0f);
+                int paperWidth = (ImageGenerationHelper.FromPixelsToHundredthsInch(image.Width, (float)image.Metadata.HorizontalResolution));
+                int paperHeight = (ImageGenerationHelper.FromPixelsToHundredthsInch(image.Height, (float)image.Metadata.VerticalResolution));
 
                 var paperSize = new PaperSize("Custom", paperWidth, paperHeight)
                 {
@@ -40,11 +33,19 @@ namespace PrintaDot.Windows
 
                 printDocument.PrintPage += (sender, e) =>
                 {
-                    e.Graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-                    e.Graphics.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
-                    e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+                    if (e.Graphics == null)
+                    {
+                        e.HasMorePages = false;
+                        return;
+                    }
 
-                    e.Graphics.DrawImage(bitmap, 0, 0, scaledWidth, scaledHeight);
+                    using var ms = new MemoryStream();
+                    image.Save(ms, new BmpEncoder());
+                    ms.Position = 0;
+
+                    using var bitmap = new Bitmap(ms);
+                    e.Graphics?.DrawImage(bitmap, 0, 0);
+
                     e.HasMorePages = false;
                 };
 
@@ -52,12 +53,8 @@ namespace PrintaDot.Windows
             }
             catch (Exception ex)
             {
+                //TODO - ЕСЛИ ОШИБКА ОТПРАВЛЯТЬ ERRORMESSAGE РАСШИРЕНИЮ
                 Console.WriteLine($"Ошибка печати: {ex.Message}");
-            }
-            finally
-            {
-                if (File.Exists(tempFile))
-                    File.Delete(tempFile);
             }
         }
     }

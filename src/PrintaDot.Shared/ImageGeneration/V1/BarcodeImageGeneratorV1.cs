@@ -9,36 +9,66 @@ using ZXing.Datamatrix.Encoder;
 using PrintaDot.Shared.CommunicationProtocol.V1;
 using ZXing.Datamatrix;
 using ZXing.ImageSharp.Rendering;
+using SixLabors.ImageSharp.Drawing;
+using PrintaDot.Shared.ImageGeneration.DrawElements;
 
 namespace PrintaDot.Shared.ImageGeneration.V1;
 
-public class BarcodeImageGeneratorV1 : BarcodeImageGenerator
+public class BarcodeImageGeneratorV1 : IPrintaDotImageGenerator
 {
     private List<PrintRequestMessageV1.Item> _items;
-    private ImageProfileV1 _profile;
+    private PixelImageProfileV1 _profile;
 
     public BarcodeImageGeneratorV1(PrintRequestMessageV1 message)
     {
-        _profile = new ImageProfileV1(message.Profile);
+        _profile = new PixelImageProfileV1(message.Profile);
         _items = message.Items;
     }
 
-    public List<Image> GenerateBarcodeImage()
+    public List<Image> GenerateImage()
     {
         var images = new List<Image>();
 
         foreach (var item in _items)
         {
-            var image = new Image<Rgba32>((int)_profile.LabelWidth, (int)_profile.LabelHeight);
+            var image = GenerateBackround();
 
             image.Mutate(ctx => ctx.BackgroundColor(Color.White));
 
-            DrawLabel(image, item);
+            var barcodeElement = new BarcodeElement(_profile, item.Barcode);
+            barcodeElement.Draw(image);
+            //DrawLabel(image, item);
 
             images.Add(image);
         }
 
         return images;
+    }
+
+    public Image<Rgba32> GenerateBackround()
+    {
+        var image = new Image<Rgba32>((int)_profile.LabelWidth, (int)_profile.LabelHeight);
+
+        image.Metadata.HorizontalResolution = ImageGenerationHelper.DEFAULT_DPI;
+        image.Metadata.VerticalResolution = ImageGenerationHelper.DEFAULT_DPI;
+
+        image.Mutate(ctx =>
+        {
+            ctx.BackgroundColor(Color.White);
+#if DEBUG
+            float strokeWidth = 1f;
+            var rectangle = new RectangularPolygon(
+                0,
+                0,
+                image.Width - strokeWidth,
+                image.Height - strokeWidth
+            );
+
+            ctx.Draw(Color.Black, strokeWidth, rectangle);
+#endif
+        });
+
+        return image;
     }
 
     private (float Width, float Height) CalculateTextSize(string text, float fontSize)

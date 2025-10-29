@@ -2,58 +2,36 @@
 using PrintaDot.Shared.CommunicationProtocol.V1;
 using PrintaDot.Shared.ImageGeneration;
 using SixLabors.ImageSharp;
-using System.Drawing;
-using System.Drawing.Printing;
 using PrintaDot.Shared.Platform;
+
 using Image = SixLabors.ImageSharp.Image;
 
 namespace PrintaDot.Shared.Printing;
 
 public class PrintService
 {
-    private readonly BarcodeImageGenerator _barcodeImageGenerator;
+    private readonly IPrintaDotImageGenerator _imageGenerator;
     private readonly IPlatformPrintingService _platformPrintingService;
 
-    public PrintService(BarcodeImageGenerator barcodeImageGenerator, IPlatformPrintingService platformPrintingService)
+    public PrintService(IPrintaDotImageGenerator imageGenerator, IPlatformPrintingService platformPrintingService)
     {
-        _barcodeImageGenerator = barcodeImageGenerator;
+        _imageGenerator = imageGenerator;
         _platformPrintingService = platformPrintingService;
     }
-
-    // public void PrintRequestMessageV1(PrintRequestMessageV1 message)
-    // {
-    //     using var printDocument = new PrintDocument();
-    //     printDocument.PrinterSettings.PrinterName = new PrinterSettings().PrinterName;
-    //
-    //     printDocument.PrintPage += (sender, e) =>
-    //     {
-    //         using var font = new Font("Arial", 14);
-    //         e.Graphics?.DrawString(message.Version.ToString(), font, Brushes.Black, 100, 100);
-    //         e.Graphics?.DrawString(message.Profile.ProfileName, font, Brushes.Black, 100, 130);
-    //         e.Graphics?.DrawString($"Date: {DateTime.Now}", font, Brushes.Black, 100, 160);
-    //
-    //         if (message.Items.Any())
-    //         {
-    //             e.Graphics?.DrawString(message.Profile.ProfileName, font, Brushes.Black, 100, 190);
-    //             e.Graphics?.DrawString(message.Profile.Id.ToString(), font, Brushes.Black, 100, 220);
-    //             e.Graphics?.DrawString(message.Profile.PrinterName.ToString(), font, Brushes.Black, 100, 250);
-    //         }
-    //     };
-    //
-    //     printDocument.Print();
-    // }
 
     public void Print(string printerName)
     {
         var zebra = "ZDesigner ZD411-203dpi ZPL";
         var microsoftToPdf = "Microsoft Print To PDF";
 
-        var images = _barcodeImageGenerator.GenerateBarcodeImage();
+        var images = _imageGenerator.GenerateImage();
 
         foreach (var image in images) 
         {
-            _platformPrintingService.Print(zebra, image);
+#if DEBUG
             SaveImageToDesktop(image);
+#endif
+            _platformPrintingService.Print(microsoftToPdf, image);
         }
     }
 
@@ -72,13 +50,14 @@ public class PrintService
 
             image.SaveAsBmp(filePath);
 
-            Console.WriteLine($"Изображение сохранено: {filePath}");
+            Console.WriteLine($"Image saved to: {filePath}");
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Ошибка при сохранении изображения: {ex.Message}");
+            Console.WriteLine($"Error when saving image: {ex.Message}");
         }
     }
+
     public GetPrintStatusResponseMessageV1 GetPrintStatusResponseMessageV1(GetPrintStatusRequestMessageV1 request)
     {
         return new GetPrintStatusResponseMessageV1

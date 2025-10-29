@@ -28,15 +28,15 @@ internal class MessageV1Creator
                 TextAlignment = "Center",
                 TextMaxLength = 0,
                 TextTrimLength = 0,
-                TextFontSize = 3,
+                TextFontSize = 20,
                 TextAngle = 0,
                 PrinterName = "default",
                 UseDataMatrix = false,
                 NumbersAlignment = "Center",
-                NumbersFontSize = 3,
+                NumbersFontSize = 20,
                 NumbersAngle = 0,
                 BarcodeAlignment = "Center",
-                BarcodeFontSize = 3,
+                BarcodeFontSize = 20,
                 BarcodeAngle = 0
             },
             Items = new List<PrintRequestMessageV1.Item>
