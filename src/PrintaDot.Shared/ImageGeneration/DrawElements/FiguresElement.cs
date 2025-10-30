@@ -28,5 +28,7 @@ internal class FiguresElement : TextElement
         TopLeft = ImageGenerationHelper.CalculateTopLeftFromCenter(center, TextBbox.Width, TextBbox.Height);
 
         TopLeft += new PointF(0, ImageGenerationHelper.MARGIM_FROM_BARCODE);
+
+        TopLeft = new PointF(GetHorizontalAligment(profile.NumbersAlignment, profile.LabelWidth, TextBbox.Width, TopLeft.X), TopLeft.Y);
     }
 }

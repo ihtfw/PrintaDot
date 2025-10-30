@@ -7,7 +7,7 @@ using PrintaDot.Shared.Common;
 
 namespace PrintaDot.Shared.ImageGeneration.DrawElements;
 
-internal class TextElement : IDrawElement
+internal class TextElement : Element, IDrawElement
 {
     public PointF TopLeft { get; set; }
     public string? Text { get; set; }

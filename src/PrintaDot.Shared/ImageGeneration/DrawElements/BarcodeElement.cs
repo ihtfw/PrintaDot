@@ -11,7 +11,7 @@ using PrintaDot.Shared.Common;
 
 namespace PrintaDot.Shared.ImageGeneration.DrawElements;
 
-internal class BarcodeElement : IDrawElement
+internal class BarcodeElement : Element, IDrawElement
 {
     public PointF TopLeft { get; set; }
     public Image BarcodeImage { get; set; }
@@ -34,6 +34,8 @@ internal class BarcodeElement : IDrawElement
         var center = new PointF(profile.LabelWidth / 2.0f, profile.LabelHeight / 2.0f);
 
         TopLeft = ImageGenerationHelper.CalculateTopLeftFromCenter(center, BarcodeImage.Width, BarcodeImage.Height);
+
+        TopLeft = new PointF(GetHorizontalAligment(profile.BarcodeAlignment, profile.LabelWidth, BarcodeImage.Width, TopLeft.X), TopLeft.Y);
     }
 
     private Image GenerateBarcode(PixelImageProfileV1 profile, string barcodeText)
