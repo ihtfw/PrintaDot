@@ -1,0 +1,32 @@
+﻿using PrintaDot.Shared.ImageGeneration.V1;
+using SixLabors.Fonts;
+using SixLabors.ImageSharp;
+
+
+namespace PrintaDot.Shared.ImageGeneration.DrawElements;
+internal class FiguresElement : TextElement
+{
+    public FiguresElement(PixelImageProfileV1 profile, string text, PointF barcodeTopLeft, float barcodeHeight)
+    {
+        Text = text;
+
+        Font = SystemFonts.CreateFont(ImageGenerationHelper.DEFAULT_FONT, profile.NumbersFontSize);
+        TextBbox = TextMeasurer.MeasureAdvance(text, new TextOptions(Font));
+
+        ReadOnlySpan<GlyphBounds> textSize;
+        TextMeasurer.TryMeasureCharacterBounds(text, new TextOptions(Font), out textSize);
+
+        CalculateTopLeft(profile, barcodeTopLeft, barcodeHeight);
+    }
+
+    private void CalculateTopLeft(PixelImageProfileV1 profile, PointF barcodeTopLeft, float barcodeHeight)
+    {
+        var y = barcodeTopLeft.Y + barcodeHeight + TextBbox.Height / 2.0f;
+
+        var center = new PointF(profile.LabelWidth / 2.0f, y);
+
+        TopLeft = ImageGenerationHelper.CalculateTopLeftFromCenter(center, TextBbox.Width, TextBbox.Height);
+
+        TopLeft += new PointF(0, ImageGenerationHelper.MARGIM_FROM_BARCODE);
+    }
+}

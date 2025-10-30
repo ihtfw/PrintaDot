@@ -1,4 +1,8 @@
 ﻿using PrintaDot.Shared.NativeMessaging;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Drawing;
+using SixLabors.ImageSharp.Drawing.Processing;
+using SixLabors.ImageSharp.Processing;
 
 namespace PrintaDot.Shared.Common;
 
@@ -40,5 +44,26 @@ public static class Extensions
         {
             browser.Unregister(hostName);
         }
+    }
+
+    /// <summary>
+    /// Needs for drawing bounds of element.
+    /// </summary>
+    /// <param name="ctx">Image processing context</param>
+    /// <param name="x">Top left X of element</param>
+    /// <param name="y">Top left Y point of element</param>
+    /// <param name="width">Width of element</param>
+    /// <param name="height">Height of element</param>
+    public static void DrawBbox(this IImageProcessingContext ctx, float x, float y, float width, float height)
+    {
+        float strokeWidth = 1f;
+        var rectangle = new RectangularPolygon(
+        x,
+        y,
+            width - strokeWidth,
+            height - strokeWidth
+        );
+
+        ctx.Draw(Color.Red, strokeWidth, rectangle);
     }
 }

@@ -7,14 +7,13 @@ using ZXing.ImageSharp.Rendering;
 using ZXing;
 using SixLabors.ImageSharp.Processing;
 using PrintaDot.Shared.ImageGeneration.V1;
+using PrintaDot.Shared.Common;
 
 namespace PrintaDot.Shared.ImageGeneration.DrawElements;
 
 internal class BarcodeElement : IDrawElement
 {
     public PointF TopLeft { get; set; }
-    public float Height { get; set; }
-    public float Width { get; set; }
     public Image BarcodeImage { get; set; }
 
     public BarcodeElement(PixelImageProfileV1 profile, string barcodeText)
@@ -39,25 +38,19 @@ internal class BarcodeElement : IDrawElement
 
     private Image GenerateBarcode(PixelImageProfileV1 profile, string barcodeText)
     {
-        try
-        {
-            var writer = profile.UseDataMatrix ? CreateDataMatrixWriter(profile.BarcodeFontSize) : CreateStandardBarcodeWriter(profile.BarcodeFontSize, profile.BarcodeFontSizeWidth);
+        var writer = profile.UseDataMatrix ? CreateDataMatrixWriter(profile.BarcodeFontSize) : CreateStandardBarcodeWriter(profile.BarcodeFontSize, profile.BarcodeFontSizeWidth);
 
-            var barcodeRaw = writer.Write(barcodeText);
+        var barcodeRaw = writer.Write(barcodeText);
 
-            using var tempStream = new MemoryStream();
-            barcodeRaw.SaveAsPng(tempStream);
-            tempStream.Position = 0;
+        using var tempStream = new MemoryStream();
+        barcodeRaw.SaveAsPng(tempStream);
+        tempStream.Position = 0;
 
-            var barcodeTyped = Image.Load<Rgba32>(tempStream);
-
-            return barcodeTyped;
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Ошибка генерации штрих-кода: {ex.Message}");
-            return null;
-        }
+        var barcodeTyped = Image.Load<Rgba32>(tempStream);
+#if DEBUG
+        barcodeTyped.Mutate(ctx => ctx.DrawBbox(0, 0, barcodeTyped.Width, barcodeTyped.Height));
+#endif
+        return barcodeTyped;
     }
 
     private BarcodeWriter<Image> CreateStandardBarcodeWriter(float barcodeFontSize, float barcodeFontSizeWidth)
@@ -93,6 +86,3 @@ internal class BarcodeElement : IDrawElement
         };
     }
 }
-
-// 1 - Сгенерировати штрихкод по высоте и ширине
-// 2 - Взять оттуда высоту и ширину и подставить в вычисления
