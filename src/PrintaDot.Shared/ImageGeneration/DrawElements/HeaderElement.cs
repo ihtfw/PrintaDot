@@ -10,6 +10,7 @@ internal class HeaderElement : TextElement
     {
         Text = text;
         Rotation = profile.TextAngle;
+        Offset = new PointF(profile.OffsetX, profile.OffsetY);
 
         Font = SystemFonts.CreateFont(ImageGenerationHelper.DEFAULT_FONT, profile.TextFontSize);
         TextBbox = TextMeasurer.MeasureAdvance(text, new TextOptions(Font));

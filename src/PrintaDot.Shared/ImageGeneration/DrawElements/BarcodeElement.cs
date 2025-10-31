@@ -18,6 +18,7 @@ internal class BarcodeElement : Element, IDrawElement
     public BarcodeElement(PixelImageProfileV1 profile, string barcodeText)
     {
         Rotation = profile.BarcodeAngle;
+        Offset = new PointF(profile.OffsetX, profile.OffsetY);
 
         BarcodeImage = GenerateBarcode(profile, barcodeText);
         CalculateTopLeft(profile);
@@ -27,12 +28,7 @@ internal class BarcodeElement : Element, IDrawElement
     {
         var rotatedBarcode = BarcodeImage.Clone(ctx => ctx.Rotate(Rotation));
 
-        var originalCenterX = TopLeft.X + BarcodeImage.Width / 2f;
-        var originalCenterY = TopLeft.Y + BarcodeImage.Height / 2f;
-
-        var newTopLeftX = originalCenterX - rotatedBarcode.Width / 2f;
-        var newTopLeftY = originalCenterY - rotatedBarcode.Height / 2f;
-        var newPoint = new Point((int)newTopLeftX, (int)newTopLeftY);
+        var newPoint = CalculateTopLeftRotated(rotatedBarcode, BarcodeImage.Width, BarcodeImage.Height);
 
         image.Mutate(ctx => {
             ctx.DrawImage(rotatedBarcode, newPoint, 1f);

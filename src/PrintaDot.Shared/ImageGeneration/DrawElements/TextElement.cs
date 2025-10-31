@@ -15,31 +15,42 @@ internal class TextElement : Element, IDrawElement
 
     public void Draw(Image<Rgba32> image)
     {
-        var textOptions = new RichTextOptions(Font)
+        var textImage = new Image<Rgba32>((int)TextBbox.Width, (int)TextBbox.Height);
+
+        textImage.Mutate(ctx =>
         {
-            Origin = TopLeft,
-            HorizontalAlignment = HorizontalAlignment.Left,
-            VerticalAlignment = VerticalAlignment.Top,
-            TextAlignment = TextAlignment.Center,
-        };
+            ctx.Clear(Color.Transparent);
 
-        var drawingOptions = new DrawingOptions
-        {
-            Transform = Matrix3x2Extensions.CreateRotationDegrees(Rotation, Center)
-        };
+            var textOptions = new RichTextOptions(Font)
+            {
+                Origin = new PointF(0, 0),
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Top,
+                TextAlignment = TextAlignment.Center,
+            };
 
-        //// Обрезаем текст если нужно
-        //var displayText = item.Header.Length > _profile.TextMaxLength
-        //    ? item.Header.Substring(0, _profile.TextTrimLength)
-        //    : item.Header;
+            var brush = Brushes.Solid(Color.Black);
+            ctx.DrawText(textOptions, Text, brush, null);
+        });
 
-        var brush = Brushes.Solid(Color.Black);
+        var rotatedText = textImage.Clone(ctx => ctx.Rotate(Rotation));
+
+        var newPoint = CalculateTopLeftRotated(rotatedText, TextBbox.Width, TextBbox.Height);
 
         image.Mutate(ctx => {
-            ctx.DrawText(drawingOptions, textOptions, Text, brush, null);
+            ctx.DrawImage(rotatedText, newPoint, 1f);
+
 #if DEBUG
-            ctx.DrawBbox(TopLeft.X, TopLeft.Y, TextBbox.Width, TextBbox.Height);
+            ctx.DrawBbox(newPoint.X, newPoint.Y, rotatedText.Width, rotatedText.Height);
 #endif
         });
+
+        textImage.Dispose();
+        rotatedText.Dispose();
     }
 }
+
+//// Обрезаем текст если нужно
+//var displayText = item.Header.Length > _profile.TextMaxLength
+//    ? item.Header.Substring(0, _profile.TextTrimLength)
+//    : item.Header

@@ -54,12 +54,12 @@ public static class Extensions
     /// <param name="y">Top left Y point of element</param>
     /// <param name="width">Width of element</param>
     /// <param name="height">Height of element</param>
-    public static void DrawBbox(this IImageProcessingContext ctx, float x, float y, float width, float height)
+    public static void DrawBbox(this IImageProcessingContext ctx, float x, float y, float width, float height, float offsetX = 0f, float offsetY = 0f)
     {
         float strokeWidth = 1f;
         var rectangle = new RectangularPolygon(
-        x,
-        y,
+        x + offsetX,
+        y + offsetY,
             width - strokeWidth,
             height - strokeWidth
         );

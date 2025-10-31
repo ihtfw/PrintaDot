@@ -10,6 +10,7 @@ internal class FiguresElement : TextElement
     {
         Text = text;
         Rotation = profile.NumbersAngle;
+        Offset = new PointF(profile.OffsetX, profile.OffsetY);
 
         Font = SystemFonts.CreateFont(ImageGenerationHelper.DEFAULT_FONT, profile.NumbersFontSize);
         TextBbox = TextMeasurer.MeasureAdvance(text, new TextOptions(Font));
