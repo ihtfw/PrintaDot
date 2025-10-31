@@ -31,6 +31,10 @@ internal class TextElement : Element, IDrawElement
 
             var brush = Brushes.Solid(Color.Black);
             ctx.DrawText(textOptions, Text, brush, null);
+
+#if DEBUG
+            ctx.DrawBbox(0f, 0f, TextBbox.Width, TextBbox.Height);
+#endif
         });
 
         var rotatedText = textImage.Clone(ctx => ctx.Rotate(Rotation));
@@ -40,9 +44,6 @@ internal class TextElement : Element, IDrawElement
         image.Mutate(ctx => {
             ctx.DrawImage(rotatedText, newPoint, 1f);
 
-#if DEBUG
-            ctx.DrawBbox(newPoint.X, newPoint.Y, rotatedText.Width, rotatedText.Height);
-#endif
         });
 
         textImage.Dispose();
