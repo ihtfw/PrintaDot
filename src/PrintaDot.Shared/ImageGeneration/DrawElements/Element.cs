@@ -1,7 +1,13 @@
-﻿namespace PrintaDot.Shared.ImageGeneration.DrawElements;
+﻿using SixLabors.ImageSharp;
+
+namespace PrintaDot.Shared.ImageGeneration.DrawElements;
 
 internal class Element
 {
+    public PointF TopLeft { get; set; }
+    public PointF Center { get; set; }
+    public float Rotation { get; set; }
+
     protected float GetHorizontalAligment(string aligment, float labelWdith, float elementWidth, float alligmentValue)
     {
         switch (aligment)

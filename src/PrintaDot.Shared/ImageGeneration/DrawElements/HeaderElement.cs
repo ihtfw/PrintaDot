@@ -1,5 +1,4 @@
-﻿using PrintaDot.Shared.Common;
-using PrintaDot.Shared.ImageGeneration.V1;
+﻿using PrintaDot.Shared.ImageGeneration.V1;
 using SixLabors.Fonts;
 using SixLabors.ImageSharp;
 
@@ -10,6 +9,7 @@ internal class HeaderElement : TextElement
     public HeaderElement(PixelImageProfileV1 profile, string text, PointF barcodeTopLeft)
     {
         Text = text;
+        Rotation = profile.TextAngle;
 
         Font = SystemFonts.CreateFont(ImageGenerationHelper.DEFAULT_FONT, profile.TextFontSize);
         TextBbox = TextMeasurer.MeasureAdvance(text, new TextOptions(Font));
@@ -24,9 +24,9 @@ internal class HeaderElement : TextElement
     {
         var y = barcodeTopLeft.Y - TextBbox.Height / 2.0f;
 
-        var center = new PointF(profile.LabelWidth / 2.0f, y);
+        Center = new PointF(profile.LabelWidth / 2.0f, y);
 
-        TopLeft = ImageGenerationHelper.CalculateTopLeftFromCenter(center, TextBbox.Width, TextBbox.Height);
+        TopLeft = ImageGenerationHelper.CalculateTopLeftFromCenter(Center, TextBbox.Width, TextBbox.Height);
         TopLeft -= new PointF(0, ImageGenerationHelper.MARGIM_FROM_BARCODE);
 
         TopLeft = new PointF(GetHorizontalAligment(profile.TextAlignment, profile.LabelWidth, TextBbox.Width, TopLeft.X), TopLeft.Y);

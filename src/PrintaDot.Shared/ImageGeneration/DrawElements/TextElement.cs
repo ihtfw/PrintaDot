@@ -9,7 +9,6 @@ namespace PrintaDot.Shared.ImageGeneration.DrawElements;
 
 internal class TextElement : Element, IDrawElement
 {
-    public PointF TopLeft { get; set; }
     public string? Text { get; set; }
     public FontRectangle TextBbox { get; set; }
     public Font Font { get; set; }
@@ -24,13 +23,20 @@ internal class TextElement : Element, IDrawElement
             TextAlignment = TextAlignment.Center,
         };
 
+        var drawingOptions = new DrawingOptions
+        {
+            Transform = Matrix3x2Extensions.CreateRotationDegrees(Rotation, Center)
+        };
+
         //// Обрезаем текст если нужно
         //var displayText = item.Header.Length > _profile.TextMaxLength
         //    ? item.Header.Substring(0, _profile.TextTrimLength)
         //    : item.Header;
 
+        var brush = Brushes.Solid(Color.Black);
+
         image.Mutate(ctx => {
-            ctx.DrawText(textOptions, Text, Color.Black);
+            ctx.DrawText(drawingOptions, textOptions, Text, brush, null);
 #if DEBUG
             ctx.DrawBbox(TopLeft.X, TopLeft.Y, TextBbox.Width, TextBbox.Height);
 #endif

@@ -13,27 +13,37 @@ namespace PrintaDot.Shared.ImageGeneration.DrawElements;
 
 internal class BarcodeElement : Element, IDrawElement
 {
-    public PointF TopLeft { get; set; }
     public Image BarcodeImage { get; set; }
 
     public BarcodeElement(PixelImageProfileV1 profile, string barcodeText)
     {
+        Rotation = profile.BarcodeAngle;
+
         BarcodeImage = GenerateBarcode(profile, barcodeText);
         CalculateTopLeft(profile);
     }
 
     public void Draw(Image<Rgba32> image)
     {
-        var point = new Point((int)TopLeft.X, (int)TopLeft.Y);
+        var rotatedBarcode = BarcodeImage.Clone(ctx => ctx.Rotate(Rotation));
 
-        image.Mutate(ctx => ctx.DrawImage(BarcodeImage, point, 1f));
+        var originalCenterX = TopLeft.X + BarcodeImage.Width / 2f;
+        var originalCenterY = TopLeft.Y + BarcodeImage.Height / 2f;
+
+        var newTopLeftX = originalCenterX - rotatedBarcode.Width / 2f;
+        var newTopLeftY = originalCenterY - rotatedBarcode.Height / 2f;
+        var newPoint = new Point((int)newTopLeftX, (int)newTopLeftY);
+
+        image.Mutate(ctx => {
+            ctx.DrawImage(rotatedBarcode, newPoint, 1f);
+        });
     }
 
     internal void CalculateTopLeft(PixelImageProfileV1 profile)
     {
-        var center = new PointF(profile.LabelWidth / 2.0f, profile.LabelHeight / 2.0f);
+        Center = new PointF(profile.LabelWidth / 2.0f, profile.LabelHeight / 2.0f);
 
-        TopLeft = ImageGenerationHelper.CalculateTopLeftFromCenter(center, BarcodeImage.Width, BarcodeImage.Height);
+        TopLeft = ImageGenerationHelper.CalculateTopLeftFromCenter(Center, BarcodeImage.Width, BarcodeImage.Height);
 
         TopLeft = new PointF(GetHorizontalAligment(profile.BarcodeAlignment, profile.LabelWidth, BarcodeImage.Width, TopLeft.X), TopLeft.Y);
     }

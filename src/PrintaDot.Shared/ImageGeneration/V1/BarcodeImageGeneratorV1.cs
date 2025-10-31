@@ -1,6 +1,4 @@
-﻿using SixLabors.Fonts;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Drawing.Processing;
+﻿using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 using PrintaDot.Shared.CommunicationProtocol.V1;
@@ -26,25 +24,26 @@ public class BarcodeImageGeneratorV1 : IPrintaDotImageGenerator
 
         foreach (var item in _items)
         {
-            var image = GenerateBackround();
+            var labelImage = GenerateBackround((int)_profile.LabelWidth, (int)_profile.LabelHeight);
+            var barcodeImage = GenerateBackround((int)_profile.PaperWidth, (int)_profile.PaperHeight);
 
             var barcodeElement = new BarcodeElement(_profile, item.Barcode);
             var headerElement = new HeaderElement(_profile, item.Header, barcodeElement.TopLeft);
             var figuresElement = new FiguresElement(_profile, item.Figures, barcodeElement.TopLeft, barcodeElement.BarcodeImage.Height);
 
-            headerElement.Draw(image);
-            barcodeElement.Draw(image);
-            figuresElement.Draw(image);
+            headerElement.Draw(barcodeImage);
+            barcodeElement.Draw(barcodeImage);
+            figuresElement.Draw(barcodeImage);
 
-            images.Add(image);
+            images.Add(barcodeImage);
         }
 
         return images;
     }
 
-    public Image<Rgba32> GenerateBackround()
+    public Image<Rgba32> GenerateBackround(int width, int height)
     {
-        var image = new Image<Rgba32>((int)_profile.LabelWidth, (int)_profile.LabelHeight);
+        var image = new Image<Rgba32>(width, height);
 
         image.Metadata.HorizontalResolution = ImageGenerationHelper.DEFAULT_DPI;
         image.Metadata.VerticalResolution = ImageGenerationHelper.DEFAULT_DPI;

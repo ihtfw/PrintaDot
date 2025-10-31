@@ -59,7 +59,7 @@ internal class PixelImageProfileV1
     public int TextMaxLength { get; set; }
     public int TextTrimLength { get; set; }
     public float TextFontSize { get; set; }
-    public double TextAngle { get; set; }
+    public float TextAngle { get; set; }
 
     // Printer
     public string PrinterName { get; set; }
@@ -70,7 +70,7 @@ internal class PixelImageProfileV1
     // Settings of number
     public string NumbersAlignment { get; set; }
     public float NumbersFontSize { get; set; }
-    public double NumbersAngle { get; set; }
+    public float NumbersAngle { get; set; }
 
     // Settings of barcode
     public string BarcodeAlignment { get; set; }

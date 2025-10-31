@@ -9,6 +9,7 @@ internal class FiguresElement : TextElement
     public FiguresElement(PixelImageProfileV1 profile, string text, PointF barcodeTopLeft, float barcodeHeight)
     {
         Text = text;
+        Rotation = profile.NumbersAngle;
 
         Font = SystemFonts.CreateFont(ImageGenerationHelper.DEFAULT_FONT, profile.NumbersFontSize);
         TextBbox = TextMeasurer.MeasureAdvance(text, new TextOptions(Font));
@@ -23,12 +24,10 @@ internal class FiguresElement : TextElement
     {
         var y = barcodeTopLeft.Y + barcodeHeight + TextBbox.Height / 2.0f;
 
-        var center = new PointF(profile.LabelWidth / 2.0f, y);
+        Center = new PointF(profile.LabelWidth / 2.0f, y);
 
-        TopLeft = ImageGenerationHelper.CalculateTopLeftFromCenter(center, TextBbox.Width, TextBbox.Height);
-
+        TopLeft = ImageGenerationHelper.CalculateTopLeftFromCenter(Center, TextBbox.Width, TextBbox.Height);
         TopLeft += new PointF(0, ImageGenerationHelper.MARGIM_FROM_BARCODE);
-
         TopLeft = new PointF(GetHorizontalAligment(profile.NumbersAlignment, profile.LabelWidth, TextBbox.Width, TopLeft.X), TopLeft.Y);
     }
 }
