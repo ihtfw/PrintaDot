@@ -50,8 +50,3 @@ internal class TextElement : Element, IDrawElement
         rotatedText.Dispose();
     }
 }
-
-//// Обрезаем текст если нужно
-//var displayText = item.Header.Length > _profile.TextMaxLength
-//    ? item.Header.Substring(0, _profile.TextTrimLength)
-//    : item.Header
