@@ -15,6 +15,7 @@ public static class ImageGenerationHelper
     public static float FromPixelsToMm(float pixels, float dpi = DEFAULT_DPI) => pixels * MM_PER_INCH / dpi;
     public static float FontSizeToPixels(float fontSize, float dpi = DEFAULT_DPI) => fontSize * dpi / POINTS_PER_INCH;
     public static float FontSizeToPixels(double fontSize, float dpi = DEFAULT_DPI) => (float)(fontSize * dpi / POINTS_PER_INCH);
+    public static int FromMmToHundredthsInch(float mm) => (int)Math.Round(mm / MM_PER_INCH * 100);
     public static PointF CalculateCenterFromTopLeft(PointF topLeft, float width, float height)
         => new PointF(topLeft.X + width / 2.0f, topLeft.Y + height / 2.0f);
     public static PointF CalculateTopLeftFromCenter(PointF center, float width, float height)

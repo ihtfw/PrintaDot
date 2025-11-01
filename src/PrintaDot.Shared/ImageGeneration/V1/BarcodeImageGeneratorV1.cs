@@ -18,7 +18,7 @@ public class BarcodeImageGeneratorV1 : IPrintaDotImageGenerator
         _items = message.Items;
     }
 
-    public List<Image> GenerateImage()
+    public List<Image> GenerateImages()
     {
         var images = new List<Image>();
 

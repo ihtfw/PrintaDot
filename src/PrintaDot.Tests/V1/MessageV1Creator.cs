@@ -19,29 +19,29 @@ internal class MessageV1Creator
                 PaperWidth = 45,
                 LabelHeight = 24,
                 LabelWidth = 45,
-                MarginX = 9,
-                MarginY = 2,
-                OffsetX = 3,
-                OffsetY = 3,
-                LabelsPerRow = 1,
-                LabelsPerColumn = 1,
+                MarginX = 0,
+                MarginY = 0,
+                OffsetX = 0,
+                OffsetY = 0,
+                LabelsPerRow = 2,
+                LabelsPerColumn = 3,
                 TextAlignment = "Center",
                 TextMaxLength = 0,
                 TextTrimLength = 0,
-                TextFontSize = 20,
+                TextFontSize = 10,
                 TextAngle = 0,
                 PrinterName = "default",
                 UseDataMatrix = false,
                 NumbersAlignment = "Center",
                 NumbersFontSize = 20,
-                NumbersAngle = 45,
+                NumbersAngle = 0,
                 BarcodeAlignment = "Center",
                 BarcodeFontSize = 20,
-                BarcodeAngle = 45
+                BarcodeAngle = 0
             },
             Items = new List<PrintRequestMessageV1.Item>
                 {
-                    new() { Header = "Atemy 1", Barcode = "1234567890", Figures = "Atem 1" }
+                    new() { Header = "12 32", Barcode = "1234567890", Figures = "Atem 1" }
                 }
         };
     }

@@ -92,9 +92,17 @@ public class Host
                 break;
             case PrintRequestMessageV1 printRequestMessageV1:
                 var barcodeImageGenerator = new BarcodeImageGeneratorV1(printRequestMessageV1);
-                var printService = new PrintService(barcodeImageGenerator, PlatformPrintingService);
+
+                var paperSettings = new PaperSettings()
+                {
+                    Height = printRequestMessageV1.Profile.PaperHeight,
+                    Width = printRequestMessageV1.Profile.PaperWidth,
+                    LabelsPerColumn = printRequestMessageV1.Profile.LabelsPerColumn,
+                    LabelsPerRow = printRequestMessageV1.Profile.LabelsPerRow
+                };
+
+                var printService = new PrintService(barcodeImageGenerator, PlatformPrintingService, paperSettings);
                 printService.Print(printRequestMessageV1.Profile.PrinterName);
-                //printService.PrintRequestMessageV1((message as PrintRequestMessageV1)!);
                 break;
             case GetPrintStatusRequestMessageV1:
                 // TODO: Add handling for GetPrintStatusRequestMessageV1
@@ -119,7 +127,7 @@ public class Host
 
     /// <summary>
     /// Register all supported Browsers (Chrome and Explorer in this version of application).
-    /// </summary>
+    /// </summary>;
     public void RegisterAllSupportedBrowsers()
     {
         SupportedBrowsers.Add(BrowserCreator.GoogleChrome);

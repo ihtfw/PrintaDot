@@ -1,8 +1,9 @@
-﻿using SixLabors.ImageSharp;
+﻿using PrintaDot.Shared.Printing;
+using SixLabors.ImageSharp;
 
 namespace PrintaDot.Shared.Platform;
 
 public interface IPlatformPrintingService
 {
-    void Print(string printerName, Image image);
+    void Print(string printerName, List<Image> images, PaperSettings paperSettings);
 }

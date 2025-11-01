@@ -4,5 +4,5 @@ namespace PrintaDot.Shared.ImageGeneration;
 
 public interface IPrintaDotImageGenerator
 {
-    public List<Image> GenerateImage();
+    public List<Image> GenerateImages();
 }
