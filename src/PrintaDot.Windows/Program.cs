@@ -1,8 +1,6 @@
 ﻿using PrintaDot.Shared.Common;
 using PrintaDot.Shared.NativeMessaging;
-using PrintaDot.Shared.Platform;
-
-namespace PrintaDot;
+using PrintaDot.Windows;
 
 class Program
 {
@@ -14,7 +12,7 @@ class Program
 
         Host = new Host()
         {
-            PlatformPrintingService = ResolvePlatformPrintingService()
+            PlatformPrintingService = new WindowsPrintingService()
         };
 
         Host.GenerateManifest();
@@ -29,14 +27,5 @@ class Program
         {
             Host.Listen();
         }
-    }
-
-    private static IPlatformPrintingService ResolvePlatformPrintingService()
-    {
-#if BUILD_FOR_WINDOWS
-        return new PrintaDot.Windows.WindowsPrintingService();
-#else
-        throw new InvalidOperationException("Only Windows currently is supported");
-#endif
     }
 }

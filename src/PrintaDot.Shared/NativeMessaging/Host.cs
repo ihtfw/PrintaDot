@@ -30,7 +30,7 @@ public class Host
     {
         SupportedBrowsers = new List<Browser>(2);
 
-        _sendConfirmationReceipt = sendConfirmationReceipt;       
+        _sendConfirmationReceipt = sendConfirmationReceipt;
     }
 
     public required IPlatformPrintingService PlatformPrintingService { get; init; }

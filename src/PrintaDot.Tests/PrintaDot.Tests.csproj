@@ -9,10 +9,6 @@
     <TargetFramework>net9.0-windows</TargetFramework>
   </PropertyGroup>
 
-  <ItemGroup Condition=" '$(BuildForPlatform)' == 'WINDOWS'">
-    <ProjectReference Include="..\PrintaDot.Windows\PrintaDot.Windows.csproj" />
-  </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\PrintaDot.Shared\PrintaDot.Shared.csproj" />
   </ItemGroup>

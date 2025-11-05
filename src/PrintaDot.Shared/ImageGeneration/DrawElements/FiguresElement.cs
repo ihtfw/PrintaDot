@@ -1,13 +1,18 @@
 ﻿using PrintaDot.Shared.ImageGeneration.V1;
 using SixLabors.Fonts;
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 
 
 namespace PrintaDot.Shared.ImageGeneration.DrawElements;
 internal class FiguresElement : TextElement
 {
-    public FiguresElement(PixelImageProfileV1 profile, string text, PointF barcodeTopLeft, float barcodeHeight)
+    public FiguresElement(PixelImageProfileV1 profile, string? text, PointF barcodeTopLeft, float barcodeHeight)
     {
+        if (string.IsNullOrEmpty(text)) {
+            return;
+        }
+
         Text = text;
         Rotation = profile.NumbersAngle;
         Offset = new PointF(profile.OffsetX, profile.OffsetY);
@@ -30,5 +35,13 @@ internal class FiguresElement : TextElement
         TopLeft = ImageGenerationHelper.CalculateTopLeftFromCenter(Center, TextBbox.Width, TextBbox.Height);
         TopLeft += new PointF(0, ImageGenerationHelper.MARGIM_FROM_BARCODE);
         TopLeft = new PointF(GetHorizontalAligment(profile.NumbersAlignment, profile.LabelWidth, TextBbox.Width, TopLeft.X), TopLeft.Y);
+    }
+
+    public override void Draw(Image<Rgba32> image)
+    {
+        if (!string.IsNullOrEmpty(Text))
+        {
+            base.Draw(image);
+        }
     }
 }

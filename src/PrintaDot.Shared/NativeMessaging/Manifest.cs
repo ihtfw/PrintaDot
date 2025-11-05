@@ -16,7 +16,7 @@ public static class Manifest
     public static string Description => "PrintaDot host application";
 
     [JsonPropertyName("path")]
-    public static string ExecuteablePath => Path.Combine(Utils.TargetApplicationDirectory, "PrintaDot.exe");
+    public static string ExecuteablePath => Path.Combine(Utils.TargetApplicationDirectory, "PrintaDot.Windows.exe");
 
     [JsonPropertyName("type")]
     public static string Type => "stdio";

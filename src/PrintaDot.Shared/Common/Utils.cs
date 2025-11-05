@@ -79,7 +79,7 @@ public static class Utils
             Directory.CreateDirectory(TargetApplicationDirectory);
 
 #if DEBUG
-           var isFilesMoved =  CopyAllFiles(currentDirectory, TargetApplicationDirectory);
+            var isFilesMoved =  CopyAllFiles(currentDirectory, TargetApplicationDirectory);
 #else
             var isFilesMoved = CopyReleaseFiles(currentDirectory, TargetApplicationDirectory);
 #endif
@@ -114,8 +114,8 @@ public static class Utils
         {
             var publishFiles = new[]
             {
-                "PrintaDot.exe",
-                "PrintaDot.pdb",
+                "PrintaDot.Windows.exe",
+                "PrintaDot.Windows.pdb",
                 "PrintaDot.Shared.pdb",
                 Manifest.ManifestFileName,
             };
@@ -137,7 +137,7 @@ public static class Utils
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error copying publish files: {ex.Message}");
+            //Console.WriteLine($"Error copying publish files: {ex.Message}");
 
             return false;
         }
@@ -177,7 +177,7 @@ public static class Utils
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error moving files");
+            //Console.WriteLine($"Error moving files");
 
             return false;
         }
@@ -196,7 +196,7 @@ public static class Utils
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Directory cannot be removed: {ex.Message}");
+            //Console.WriteLine($"Directory cannot be removed: {ex.Message}");
         }
     }
 }

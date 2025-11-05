@@ -59,7 +59,7 @@ namespace PrintaDot.Windows
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Ошибка печати: {ex.Message}");
+                //Handle exception
             }
         }
 

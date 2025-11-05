@@ -30,7 +30,7 @@ public static class StreamHandler
 
         var jsonString = new string(buffer);
 
-        Log.LogMessage(jsonString);
+        Log.LogMessage(jsonString, nameof(StreamHandler));
 
         return jsonString.FromJsonToMessage();
     }

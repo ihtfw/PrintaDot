@@ -13,7 +13,7 @@ internal class TextElement : Element, IDrawElement
     public FontRectangle TextBbox { get; set; }
     public Font Font { get; set; }
 
-    public void Draw(Image<Rgba32> image)
+    public virtual void Draw(Image<Rgba32> image)
     {
         var textImage = new Image<Rgba32>((int)TextBbox.Width, (int)TextBbox.Height);
 

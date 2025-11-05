@@ -41,7 +41,7 @@ internal class MessageV1Creator
             },
             Items = new List<PrintRequestMessageV1.Item>
                 {
-                    new() { Header = "12 32", Barcode = "1234567890", Figures = "Atem 1" }
+                    new() { Header = "12 32", Barcode = "1234567890"}
                 }
         };
     }

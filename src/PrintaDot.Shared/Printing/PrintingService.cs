@@ -5,7 +5,6 @@ using SixLabors.ImageSharp;
 using PrintaDot.Shared.Platform;
 
 using Image = SixLabors.ImageSharp.Image;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace PrintaDot.Shared.Printing;
 
