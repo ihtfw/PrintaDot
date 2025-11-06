@@ -21,7 +21,7 @@ public static class Manifest
     [JsonPropertyName("type")]
     public static string Type => "stdio";
     [JsonPropertyName("allowed_origins")]
-    public static string[] AllowedOrigins { get; set; } = ["chrome-extension://ncpdldoackcgjeocgpkjbfimpdjkolpg/"];
+    public static string[] AllowedOrigins { get; set; } = ["chrome-extension://mafhdhphilplnoldeghpeaafffeibaej/"];
 
     [JsonIgnore]
     public static string ManifestPath => Path.Combine(Utils.TargetApplicationDirectory, ManifestFileName);
