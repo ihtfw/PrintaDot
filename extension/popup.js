@@ -171,9 +171,46 @@ function handlePrint() {
     });
 }
 
-function downloadNativeApp() {
-    //TODO: Change to download link
-    chrome.runtime.openOptionsPage();
+async function downloadNativeApp() {
+    try {
+        const apiUrl = 'https://api.github.com/repos/ihtfw/PrintaDot/releases/latest';
+        const response = await fetch(apiUrl);
+        
+        if (!response.ok) {
+            throw new Error('Failed to fetch release info');
+        }
+        
+        const releaseData = await response.json();
+        const latestVersion = releaseData.tag_name;
+        
+        const windowsAsset = releaseData.assets.find(asset => 
+            asset.name === 'PrintaDot.Windows.exe' || 
+            asset.name.includes('PrintaDot.Windows')
+        );
+        
+        if (windowsAsset) {
+            const downloadUrl = windowsAsset.browser_download_url;
+            
+            const a = document.createElement('a');
+            a.href = downloadUrl;
+            a.download = windowsAsset.name;
+            a.style.display = 'none';
+            
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        } else {
+            chrome.tabs.create({
+                url: releaseData.html_url
+            });
+        }
+        
+    } catch (error) {
+        console.error('Error fetching latest release:', error);
+        chrome.tabs.create({
+            url: 'https://github.com/ihtfw/PrintaDot/releases'
+        });
+    }
 }
 
 function checkNativeAppConnection() {
