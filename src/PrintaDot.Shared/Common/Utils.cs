@@ -85,7 +85,9 @@ public static class Utils
 #endif
             if (isFilesMoved)
             {
-                Environment.Exit(0);
+                Console.WriteLine($"All files are copied. Application ready to work. Close this window.");
+
+                Console.ReadKey();
             }   
         }
         catch (Exception ex)
@@ -137,7 +139,7 @@ public static class Utils
         }
         catch (Exception ex)
         {
-            //Console.WriteLine($"Error copying publish files: {ex.Message}");
+            Console.WriteLine($"Error copying publish files: {ex.Message}");
 
             return false;
         }
