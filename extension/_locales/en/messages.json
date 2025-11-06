@@ -11,6 +11,9 @@
   "headerPlaceholder": {
     "message": "Enter header"
   },
+  "profileLabel": {
+    "message": "Profile"
+  },
   "barcodeLabel": {
     "message": "Barcode:"
   },

@@ -15,7 +15,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     } else {
       sendResponse({ success: false, error: "Printing API not available" });
     }
-    return true; // Важно для асинхронного response
+    return true;
   }
 });
 

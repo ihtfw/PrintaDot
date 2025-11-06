@@ -41,6 +41,9 @@
   "textSettingsGroup": {
     "message": "Текст"
   },
+  "profileLabel": {
+    "message": "Профиль печати"
+  },
   "barcodeTypeGroup": {
     "message": "Тип штрих-кода"
   },

@@ -49,6 +49,7 @@ async function showNormalView() {
     const headerPlaceholder = await getMessage('headerPlaceholder');
     const barcodeLabel = await getMessage('barcodeLabel');
     const barcodePlaceholder = await getMessage('barcodePlaceholder');
+    const profileLabel = await getMessage('profileLabel') || 'Profile';
     const printButton = await getMessage('printButton');
     const settingsButton = await getMessage('settingsButton');
     const settingsTitle = await getMessage('settingsTitle');
@@ -64,6 +65,11 @@ async function showNormalView() {
             <input type="text" id="barcodeInput" placeholder="${barcodePlaceholder}">
         </div>
 
+        <div class="input-group">
+            <label for="profileSelect">${profileLabel}</label>
+            <select id="profileSelect"></select>
+        </div>
+
         <div class="button-group">
             <button id="printBtn" class="main-btn">${printButton}</button>
             <button id="settingsBtn" class="main-btn btn-secondary"
@@ -71,7 +77,35 @@ async function showNormalView() {
         </div>
     `;
 
+    await loadProfilesForPopup();
     initNormalViewHandlers();
+}
+
+async function loadProfilesForPopup() {
+    return new Promise((resolve) => {
+        chrome.storage.local.get(['profiles', 'currentProfileName'], (result) => {
+            const profiles = result.profiles || {
+                'A4': Profile.getA4Profile().toStorageObject(),
+                'Thermo': Profile.getThermoProfile().toStorageObject(),
+            };
+            
+            const currentProfileName = result.currentProfileName || 'Thermo';
+            const profileSelect = document.getElementById('profileSelect');
+            
+            profileSelect.innerHTML = '';
+            
+            Object.keys(profiles).forEach(profileName => {
+                const option = document.createElement('option');
+                option.value = profileName;
+                option.textContent = profileName;
+                profileSelect.appendChild(option);
+            });
+            
+            profileSelect.value = currentProfileName;
+            
+            resolve(profiles);
+        });
+    });
 }
 
 function initNormalViewHandlers() {
@@ -79,6 +113,7 @@ function initNormalViewHandlers() {
     const settingsBtn = document.getElementById('settingsBtn');
     const headerInput = document.getElementById('headerInput');
     const barcodeInput = document.getElementById('barcodeInput');
+    const profileSelect = document.getElementById('profileSelect');
 
     printBtn.addEventListener('click', handlePrint);
     settingsBtn.addEventListener('click', function() {
@@ -99,15 +134,22 @@ function initNormalViewHandlers() {
         }
     });
 
+    // Сохраняем выбранный профиль при изменении
+    profileSelect.addEventListener('change', function() {
+        chrome.storage.local.set({ currentProfileName: this.value });
+    });
+
     headerInput.focus();
 }
 
 function handlePrint() {
     const headerInput = document.getElementById('headerInput');
     const barcodeInput = document.getElementById('barcodeInput');
+    const profileSelect = document.getElementById('profileSelect');
     
     const header = headerInput.value.trim();
     const barcode = barcodeInput.value.trim();
+    const profile = profileSelect.value;
 
     if (!barcode) {
         barcodeInput.focus();
@@ -118,7 +160,7 @@ function handlePrint() {
     chrome.runtime.sendMessage({
         type: "PrintRequest",
         version: 1,
-        profile: "Thermo",
+        profile: profile,
         isFromExtension: true,
         items: [
             {
@@ -149,7 +191,6 @@ function checkNativeAppConnection() {
     });
 }
 
-
 async function getMessage(key) {
     return new Promise((resolve) => {
         if (window.currentMessages && window.currentMessages[key]) {
@@ -177,7 +218,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     const errorCloseBtn = document.getElementById('errorCloseBtn');
     errorCloseBtn.addEventListener('click', hideError);
 
-        const isConnected = await checkNativeAppConnection();
+    const isConnected = await checkNativeAppConnection();
     
     if (!isConnected) {
         await showNativeAppNotInstalledView();
