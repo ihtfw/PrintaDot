@@ -117,8 +117,6 @@ public static class Utils
             var publishFiles = new[]
             {
                 "PrintaDot.Windows.exe",
-                "PrintaDot.Windows.pdb",
-                "PrintaDot.Shared.pdb",
                 Manifest.ManifestFileName,
             };
 
