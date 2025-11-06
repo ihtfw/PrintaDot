@@ -7,5 +7,7 @@ public enum MessageType
     GetPrintStatusResponse,
     Profile,
     Profiles,
-    Exception
+    Exception,
+    GetPrintersRequest,
+    GetPrintersResponse
 }

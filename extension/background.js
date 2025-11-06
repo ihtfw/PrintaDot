@@ -6,12 +6,30 @@ const PROFILES_KEY = "profiles";
 
 connect();
 
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  if (request.type === "GET_PRINTERS") {
+    if (chrome.printing && chrome.printing.getPrinters) {
+      chrome.printing.getPrinters()
+        .then(printers => sendResponse({ success: true, printers }))
+        .catch(error => sendResponse({ success: false, error: error.message }));
+    } else {
+      sendResponse({ success: false, error: "Printing API not available" });
+    }
+    return true; // Важно для асинхронного response
+  }
+});
+
 chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
     if (request.type == "CheckConnetcionToNativeApp") {
         sendResponse({
             type: "CheckConnetcionToNativeAppResponse",
             isConnected: isConnected
         });
+    }
+
+    if (request.type == "GetPrintersRequest"){
+        sendMessage(request);
+        return;
     }
 
     if (request.type !== "PrintRequest")
@@ -93,7 +111,6 @@ async function handleMessageFromExtension(message) {
         profile: message.profile,
         items: message.items
     };
-
 }
 
 function onNativeMessage(message) {

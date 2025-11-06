@@ -1,11 +1,24 @@
 document.addEventListener('DOMContentLoaded', async function () {   
     await initLocalization();
     await initializeOptionsPage();
+
+    await getPrinters();
 });
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.type === "Exception" && request.messageText) {
         showError(request.messageText);
+    }
+
+    if (request.type === "GetPrintersResponse" && request.printers) {
+        const printerSelect = document.getElementById('printerName');
+
+        request.printers.forEach(printer => {
+            const option = document.createElement('option');
+            option.value = printer;
+            option.textContent = printer;
+            printerSelect.appendChild(option);
+        });
     }
 });
 
@@ -58,6 +71,7 @@ function initAutoSaveHandlers() {
         #marginX, #marginY, #offsetX, #offsetY,
         #labelsPerRow, #labelsPerColumn,
         #textAlignment, #textMaxLength, #textTrimLength, #textFontSize, #textAngle,
+        #printerName,
         #useDataMatrix,
         #numbersAlignment, #numbersFontSize, #numbersAngle,
         #barcodeAlignment, #barcodeFontSize, #barcodeAngle
@@ -194,6 +208,9 @@ function applyProfile(profile) {
     document.getElementById('textFontSize').value = profile.textFontSize;
     document.getElementById('textAngle').value = profile.textAngle;
 
+    // Printer settings
+    document.getElementById('printerName').value = profile.printerName || "default";
+
     // Barcode type
     document.getElementById('useDataMatrix').checked = profile.useDataMatrix;
 
@@ -235,6 +252,8 @@ function getCurrentProfileFromForm() {
             textTrimLength: parseInt(document.getElementById('textTrimLength').value),
             textFontSize: parseInt(document.getElementById('textFontSize').value),
             textAngle: parseInt(document.getElementById('textAngle').value),
+
+            printerName: document.getElementById('printerName').value,
 
             // Barcode type
             useDataMatrix: document.getElementById('useDataMatrix').checked,
@@ -348,14 +367,16 @@ async function resetToThermo() {
     }
 }
 
+async function loadPrinters() {
+   
+}
 
-function loadPrinters() {
+function showPrinterError(message) {
     const printerSelect = document.getElementById('printerName');
-    printerSelect.innerHTML = '<option value="default">Default Printer</option>';
-
     const option = document.createElement('option');
-    option.value = "custom";
-    option.textContent = "Custom printer...";
+    option.value = "error";
+    option.textContent = message;
+    option.disabled = true;
     printerSelect.appendChild(option);
 }
 
@@ -397,6 +418,13 @@ function handlePrint() {
                 barcode: barcode
             }
         ]
+    });
+}
+
+async function getPrinters() {
+    chrome.runtime.sendMessage({
+        type: "GetPrintersRequest",
+        version: 1,
     });
 }
 

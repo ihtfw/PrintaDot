@@ -4,6 +4,8 @@ using PrintaDot.Shared.Platform;
 using SixLabors.ImageSharp.Formats.Bmp;
 using PrintaDot.Shared.ImageGeneration;
 using PrintaDot.Shared.Printing;
+using PrintaDot.Shared.CommunicationProtocol;
+using PrintaDot.Shared.Common;
 
 namespace PrintaDot.Windows
 {
@@ -83,6 +85,22 @@ namespace PrintaDot.Windows
             printDocument.DefaultPageSettings.Margins = new Margins(0, 0, 0, 0);
 
             return printDocument;
+        }
+
+        public GetPrintersResponse GetInstalledPrinters()
+        {
+            var printers = new List<string>();
+            foreach (string printer in PrinterSettings.InstalledPrinters)
+            {
+                printers.Add(printer);
+            }
+
+            return new GetPrintersResponse()
+            {
+                Type = MessageType.GetPrintersResponse,
+                Version = 1,
+                Printers = printers
+            };
         }
     }
 }

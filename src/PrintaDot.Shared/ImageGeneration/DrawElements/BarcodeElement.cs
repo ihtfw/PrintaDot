@@ -7,7 +7,6 @@ using ZXing.ImageSharp.Rendering;
 using ZXing;
 using SixLabors.ImageSharp.Processing;
 using PrintaDot.Shared.ImageGeneration.V1;
-using PrintaDot.Shared.Common;
 
 namespace PrintaDot.Shared.ImageGeneration.DrawElements;
 

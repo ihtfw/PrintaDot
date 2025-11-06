@@ -24,22 +24,17 @@ public class PrintService
 
     public void Print(string printerName)
     {
-        var zebra = "ZDesigner ZD411-203dpi ZPL";
-        var microsoftToPdf = "Microsoft Print To PDF";
-
         var images = _imageGenerator.GenerateImages();
 #if DEBUG
         SaveImageToDesktop(images);
 #endif
-        _platformPrintingService.Print(microsoftToPdf, images, _paperSettings);
+        _platformPrintingService.Print(printerName, images, _paperSettings);
     }
 
     private void SaveImageToDesktop(List<Image> images)
     {
         foreach (var image in images)
         {
-
-
             try
             {
                 string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);

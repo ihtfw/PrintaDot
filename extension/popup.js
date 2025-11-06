@@ -71,7 +71,6 @@ async function showNormalView() {
         </div>
     `;
 
-    // Инициализируем обработчики для нормального вида
     initNormalViewHandlers();
 }
 
@@ -119,7 +118,7 @@ function handlePrint() {
     chrome.runtime.sendMessage({
         type: "PrintRequest",
         version: 1,
-        profile: "A4",
+        profile: "Thermo",
         isFromExtension: true,
         items: [
             {

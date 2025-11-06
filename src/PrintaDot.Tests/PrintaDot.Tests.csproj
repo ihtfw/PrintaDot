@@ -11,5 +11,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\PrintaDot.Shared\PrintaDot.Shared.csproj" />
+    <ProjectReference Include="..\PrintaDot.Windows\PrintaDot.Windows.csproj" />
   </ItemGroup>
 </Project>

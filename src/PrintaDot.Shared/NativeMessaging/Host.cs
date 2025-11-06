@@ -85,6 +85,11 @@ public class Host
     {
         switch (message)
         {
+            case GetPrintersRequest getPrintersRequest:
+                var printersResponse = PlatformPrintingService.GetInstalledPrinters();
+
+                StreamHandler.Write(printersResponse);
+                break;
             case ExceptionMessageV1 exceptionMessageV1:
                 Log.LogMessage(exceptionMessageV1!.MessageText);
 
