@@ -2,7 +2,7 @@
 
 A Chrome extension for printing barcodes with customizable printing profiles and settings.
 
-⚠️ WARNING - Native application required for correct work of extension.
+⚠️ WARNING - Native application required for correct work of extension. Latest version of exe you can find [here.](https://github.com/yourusername/barcode-printer-extension/releases/latest)
 
 ## Features
 
