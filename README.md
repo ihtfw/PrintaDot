@@ -64,44 +64,20 @@ function sendPrintRequest(jsonData) {
 
 ### Print Request Json Format
 
+Print type field by default will map with A4 printing profile but you can change it in extension options. All json fields are required exept item figures. If you send empty or null items list to extensions it will print nothing.
+
 ```json
 {
   "version": 1,
   "type": "PrintRequest",
-  "profile": {
-    "id": 1,
-    "profileName": "Standard Label",
-    "paperHeight": 297,
-    "paperWidth": 210,
-    "labelHeight": 50,
-    "labelWidth": 80,
-    "marginX": 5,
-    "marginY": 5,
-    "offsetX": 0,
-    "offsetY": 0,
-    "labelsPerRow": 2,
-    "labelsPerColumn": 5,
-    "textAlignment": "center",
-    "textMaxLength": 50,
-    "textTrimLength": 45,
-    "textFontSize": 12,
-    "textAngle": 0,
-    "printerName": "Default Printer",
-    "useDataMatrix": false,
-    "numbersAlignment": "center",
-    "numbersFontSize": 10,
-    "numbersAngle": 0,
-    "barcodeAlignment": "center",
-    "barcodeFontSize": 8,
-    "barcodeAngle": 0
-  },
+  "printType": "*your print type*",
   "items": [
     {
-      "header": "Product SKU", //required
-      "barcode": "123456789012", //required
-      "figures": "001" //nullable
+      "header": "item header",
+      "barcode": "123456789012",
+      "figures": "text below barcode" //nullable
     }
-  ]
+  ] // nullable
 }
 ```
 
