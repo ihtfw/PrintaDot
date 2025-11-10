@@ -25,6 +25,8 @@ class Program
         }
         else
         {
+            var updater = new Updater();
+
             Host.Listen();
         }
     }

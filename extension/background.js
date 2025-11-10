@@ -6,19 +6,6 @@ const PROFILES_KEY = "profiles";
 
 connect();
 
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if (request.type === "GET_PRINTERS") {
-    if (chrome.printing && chrome.printing.getPrinters) {
-      chrome.printing.getPrinters()
-        .then(printers => sendResponse({ success: true, printers }))
-        .catch(error => sendResponse({ success: false, error: error.message }));
-    } else {
-      sendResponse({ success: false, error: "Printing API not available" });
-    }
-    return true;
-  }
-});
-
 chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
     if (request.type == "CheckConnetcionToNativeApp") {
         sendResponse({
@@ -113,21 +100,28 @@ async function handleMessageFromExtension(message) {
     };
 }
 
-function onNativeMessage(message) {
+async function onNativeMessage(message) {
     if (!message?.type) return;
 
+     console.log("Native message:", message);
+
+    if (message.type == "UpdateNativeApp") {
+        onDisconnected();
+
+        await connect();
+        return;
+    }
+
     chrome.runtime.sendMessage(message).catch(() => { });
-    console.log("Native message:", message);
+   
 }
 
-function onDisconnected() {
-    console.log("Disconnected");
+async function onDisconnected() {
     port = null;
     isConnected = false;
 
-    chrome.runtime.sendMessage({
-        type: "NativeAppDisconnected"
-    }).catch(() => { });
+    //await connect();
+    // TODO: if lost connection try to reconnect...
 }
 
 async function connect() {
