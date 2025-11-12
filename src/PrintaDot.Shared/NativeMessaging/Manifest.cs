@@ -1,4 +1,5 @@
 ﻿using PrintaDot.Shared.Common;
+using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -16,7 +17,7 @@ public static class Manifest
     public static string Description => "PrintaDot host application";
 
     [JsonPropertyName("path")]
-    public static string ExecuteablePath => Path.Combine(Utils.TargetApplicationDirectory, "PrintaDot.Windows.exe");
+    public static string ExecuteablePath => Path.Combine(Utils.TargetApplicationDirectory, Utils.GetExecutableFileName());
 
     [JsonPropertyName("type")]
     public static string Type => "stdio";

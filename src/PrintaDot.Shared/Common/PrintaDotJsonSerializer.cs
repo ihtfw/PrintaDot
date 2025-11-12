@@ -17,23 +17,30 @@ public static class PrintaDotJsonSerializer
         ApplyDefaultJsonSerializerOptions(DefaultOptions);
     }
 
-    public static T FromJson<T>(this string self, bool safe = true)
+    public static T? FromJson<T>(this string self, bool safe = true, bool isSkip = false)
     {
-        return (T)self.FromJson(typeof(T), safe);
+        return (T?)self.FromJson(typeof(T), safe, isSkip);
     }
 
-    public static object FromJson(this string self, Type type, bool safe)
+    public static object? FromJson(this string self, Type type, bool safe, bool isSkip)
     {
-        return Deserialize(self, type, safe);
+        return Deserialize(self, type, safe, isSkip);
     }
 
-    public static string ToJson(this object self)
+    public static string? ToJson(this object self)
     {
         return self == null ? null : Serialize(self);
     }
 
-    public static object Deserialize(string value, Type type, bool safe = false)
+    public static object? Deserialize(string value, Type type, bool safe = false, bool isSkip = false)
     {
+        var options = new JsonSerializerOptions(DefaultOptions);
+        
+        if (isSkip)
+        {
+            options.UnmappedMemberHandling = JsonUnmappedMemberHandling.Skip;
+        }
+
         if (value == null)
             return null;
 
@@ -41,7 +48,7 @@ public static class PrintaDotJsonSerializer
         {
             try
             {
-                var json = JsonSerializer.Deserialize(value, type, DefaultOptions);
+                var json = JsonSerializer.Deserialize(value, type, options);
 
                 return json;
             }
@@ -53,7 +60,7 @@ public static class PrintaDotJsonSerializer
             }
         }
 
-        return JsonSerializer.Deserialize(value, type, DefaultOptions);
+        return JsonSerializer.Deserialize(value, type, options);
     }
 
     public static TBase DeserializeAbstract<TBase>(string value, JsonConverter converter) where TBase : class
@@ -163,7 +170,6 @@ public static class PrintaDotJsonSerializer
         target.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
         target.UnmappedMemberHandling = JsonUnmappedMemberHandling.Disallow;
         target.Converters.Add(new JsonStringEnumConverter());
-        target.TypeInfoResolver = new DefaultJsonTypeInfoResolver();
 
         target.TypeInfoResolver = JsonTypeInfoResolver.Combine(
             PrintaDotJsonContext.Default,

@@ -13,6 +13,7 @@ namespace PrintaDot.Shared.Common;
 [JsonSerializable(typeof(ExceptionMessageV1))]
 [JsonSerializable(typeof(GetPrintersRequest))]
 [JsonSerializable(typeof(GetPrintersResponse))]
+[JsonSerializable(typeof(UpdateResponseDto))]
 public partial class PrintaDotJsonContext : JsonSerializerContext
 {
 }

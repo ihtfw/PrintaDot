@@ -9,5 +9,6 @@ public enum MessageType
     Profiles,
     Exception,
     GetPrintersRequest,
-    GetPrintersResponse
+    GetPrintersResponse,
+    UpdateNativeApp
 }
