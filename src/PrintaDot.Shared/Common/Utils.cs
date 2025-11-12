@@ -1,4 +1,5 @@
 ﻿using PrintaDot.Shared.NativeMessaging;
+using System.Collections.Concurrent;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
@@ -71,7 +72,7 @@ public static class Utils
     /// Moving application to %LocalAppData%/PrintaDot/ directory.
     /// </summary>
     /// <returns></returns>
-    public static bool MoveApplicationToLocalAppData()
+    public static bool MoveApplicationToLocalAppData(string currentDictionary)
     {
         var currentDirectory = AssemblyLoadDirectory();
 

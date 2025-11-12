@@ -1,5 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 using System.Diagnostics;
+using System.Reflection;
 
 namespace PrintaDot.Shared.Common;
 
@@ -23,11 +24,6 @@ public class UpdateResponseDto
 
 public class Updater : IDisposable
 {
-    /// <summary>
-    /// Version of application for auto updating.
-    /// </summary>
-    public static readonly string PrintaDotVersion = "v1.0"; //add to solution version
-
     public static string TempExePath => Path.Combine(Utils.TargetApplicationDirectory, $"PrintaDot_tmp.exe");
 
     /// <summary>
@@ -109,7 +105,6 @@ public class Updater : IDisposable
             if (File.Exists(MainExePath))
             {
                 File.Delete(MainExePath);
-                Console.WriteLine("file deleted");
             }
 
             File.Copy(TempExePath, MainExePath, true);
@@ -152,19 +147,13 @@ public class Updater : IDisposable
     {
         if (!string.IsNullOrWhiteSpace(latest)) return false;
 
-        var latestParts = latest.TrimStart('v', 'V').Split('.');
-        var currentParts = PrintaDotVersion.TrimStart('v', 'V').Split('.');
+        var assembly = Assembly.GetEntryAssembly() ?? Assembly.GetExecutingAssembly();
 
-        for (int i = 0; i < 2; i++)
-        {
-            var latestPart = int.Parse(latestParts[i]);
-            var currentPart = int.Parse(currentParts[i]);
+        var assemblyVersion = assembly.GetName().Version!;
+        var currentAppVersion = Convert.ToInt32($"{assemblyVersion.Major}{assemblyVersion.Minor}{assemblyVersion.Build}");
+        var latestAppVersion = Convert.ToInt32(latest.TrimStart('v', '.'));
 
-            if (latestPart > currentPart) return true;
-            if (latestPart < currentPart) return false;
-        }
-
-        return false;
+        return latestAppVersion > currentAppVersion;
     }
 
     public void Dispose()

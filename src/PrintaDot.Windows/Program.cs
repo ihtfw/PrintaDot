@@ -23,9 +23,14 @@ class Program
             PlatformPrintingService = new WindowsPrintingService()
         };
 
-        Host.GenerateManifest();
-        Host.RegisterAllSupportedBrowsers();
-        Host.MoveHostToLocalAppData(); 
+        var currentDirectory = Utils.AssemblyLoadDirectory();
+
+        if (Utils.IsLocalAppDataDirectory(currentDirectory))
+        {
+            Host.GenerateManifest();
+            Host.RegisterAllSupportedBrowsers();
+            Host.MoveHostToLocalAppData(currentDirectory);
+        }
 
         if (args.Contains("--unregister"))
         {
