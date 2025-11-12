@@ -120,12 +120,13 @@ async function onDisconnected() {
     port = null;
     isConnected = false;
 
-    //await connect();
-    // TODO: if lost connection try to reconnect...
+   await new Promise(resolve => setTimeout(resolve, 1000));
+
+    await connect();
 }
 
 async function connect() {
-    const hostName = "com.printadot";
+    const hostName = "com.printadot"; // com узнать!! (если домен то ru)
     try {
         port = chrome.runtime.connectNative(hostName);
         port.onMessage.addListener(onNativeMessage);

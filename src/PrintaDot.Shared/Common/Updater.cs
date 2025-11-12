@@ -1,23 +1,41 @@
-﻿using PrintaDot.Shared.NativeMessaging;
-using System.Text.Json;
+﻿using System.Text.Json.Serialization;
+using System.Diagnostics;
 
 namespace PrintaDot.Shared.Common;
+
+public class UpdateResponseDto
+{
+    [JsonPropertyName("tag_name")]
+    public required string LatestVersion { get; set; }
+
+    [JsonPropertyName("assets")]
+    public List<Asset>? Assets { get; set; }
+
+    public class Asset
+    {
+        [JsonPropertyName("name")]
+        public required string Name { get; set; }
+
+        [JsonPropertyName("browser_download_url")]
+        public required string DownloadUrl { get; set; }
+    }
+}
 
 public class Updater : IDisposable
 {
     /// <summary>
     /// Version of application for auto updating.
     /// </summary>
-    public static readonly string PrintaDotVersion = "v1.0";
+    public static readonly string PrintaDotVersion = "v1.0"; //add to solution version
+
+    public static string TempExePath => Path.Combine(Utils.TargetApplicationDirectory, $"PrintaDot_tmp.exe");
 
     /// <summary>
-    /// Name of the file.
+    /// Main executable file path
     /// </summary>
-    public static readonly string ExeName = "PrintaDot.Windows"; //TODO: must be depends on system (Linux and Windows).
+    public static string MainExePath => Path.Combine(Utils.TargetApplicationDirectory, "PrintaDot.exe");
 
-    public static readonly string Path = "C:\\Users\\user\\AppData\\Local\\PrintaDot\\";
-    public static string UpdatedExePath(string newVersion) => Path + $"PrintaDot.Windows.{newVersion}.exe";
-    /// <summary>;
+    /// <summary>
     /// Url of repo with latest release.
     /// </summary>
     public static readonly string RepoUrl = "https://api.github.com/repos/ihtfw/PrintaDot/releases/latest";
@@ -43,61 +61,91 @@ public class Updater : IDisposable
 
     public async Task Update()
     {
-        var version = await DownloadUpdate();
-
-        Manifest.GenerateManifestWithCustomPath(UpdatedExePath(version));
-
-        StreamHandler.Write(new CommunicationProtocol.Message { 
-            Type = MessageType.UpdateNativeApp, 
-            Version = 1
-        });
+        await DownloadUpdate(); 
     }
 
-    private async Task<string?> DownloadUpdate()
+    private async Task DownloadUpdate()
     {
         try
         {
-            using var httpClient = new HttpClient();
-            var urlWithVersion = await GetLatestUpdateUrl(httpClient);
-           
-            var exeBytes = await httpClient.GetByteArrayAsync(urlWithVersion.Url);
-            await File.WriteAllBytesAsync(UpdatedExePath(urlWithVersion.VersionToUpdate), exeBytes);
+            using var httpClient = new HttpClient(); // создаем 1 раз (factory)
+            var url = await GetLatestUpdateUrl(httpClient);
 
-           return urlWithVersion.VersionToUpdate;
+            if (url != null)
+            {
+                var exeBytes = await httpClient.GetByteArrayAsync(url);
+                await File.WriteAllBytesAsync(TempExePath, exeBytes);
+
+                StartUpdateProcess();
+            }
         }
         catch (Exception ex)
         {
             Log.LogMessage(ex.Message);
         }
-
-        return null;
     }
 
-    public async Task<(string? Url, string VersionToUpdate)> GetLatestUpdateUrl(HttpClient httpClient)
-    { 
+    private void StartUpdateProcess()
+    {
+        try
+        {
+            Process.Start(TempExePath, "--update");
+
+            Environment.Exit(0); //Closing main process...                           
+        }
+        catch (Exception ex)
+        {
+            Log.LogMessage($"Failed to start update process: {ex.Message}");
+        }
+    }
+
+    public void PerformUpdate()
+    {
+        try
+        {
+            //Waiting for main procces is closed..
+            Thread.Sleep(2000);
+
+            if (File.Exists(MainExePath))
+            {
+                File.Delete(MainExePath);
+                Console.WriteLine("file deleted");
+            }
+
+            File.Copy(TempExePath, MainExePath, true);
+
+            Environment.Exit(0);
+        }
+        catch (Exception ex)
+        {
+            Log.LogMessage($"Update failed: {ex.Message}");
+        }
+    }
+
+    public async Task<string?> GetLatestUpdateUrl(HttpClient httpClient)
+    {
         httpClient.DefaultRequestHeaders.Add("User-Agent", "PrintaDot-Updater");
 
         var response = await httpClient.GetStringAsync(RepoUrl);
-        var jsonDoc = JsonDocument.Parse(response);
+        var updateResponse = response.FromJson<UpdateResponseDto>(isSkip: true);
 
-        string downloadUrl = null!;
-        var latestVersion = jsonDoc.RootElement.GetProperty("tag_name").GetString();
-
-        if (IsNewerVersionExists(latestVersion))
+        if (updateResponse is null)
         {
-            var assets = jsonDoc.RootElement.GetProperty("assets");
+            return null;
+        }
 
-            foreach (var asset in assets.EnumerateArray())
+        if (IsNewerVersionExists(updateResponse.LatestVersion))
+        {
+            foreach (var asset in updateResponse.Assets)
             {
-                if (asset.GetProperty("name").GetString().Contains(ExeName))
+                if (asset.Name == Utils.GetExecutableFileName())
                 {
-                    downloadUrl = asset.GetProperty("browser_download_url").GetString();
-                    break;
+                    return asset.DownloadUrl;
                 }
             }
         }
 
-        return (downloadUrl, latestVersion);
+        return null;
     }
 
     private static bool IsNewerVersionExists(string? latest)

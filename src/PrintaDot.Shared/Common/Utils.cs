@@ -1,5 +1,6 @@
 ﻿using PrintaDot.Shared.NativeMessaging;
 using System.Reflection;
+using System.Runtime.InteropServices;
 
 namespace PrintaDot.Shared.Common;
 
@@ -21,6 +22,16 @@ public static class Utils
     /// Target application path.
     /// </summary>
     public static string TargetApplicationDirectory => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "PrintaDot");
+
+    public static string GetExecutableFileName()
+    {
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        {
+            return "PrintaDot.exe";
+        }
+
+        return "PrintaDot";
+    }
 
     public static string AssemblyLoadDirectory()
     {
@@ -116,7 +127,7 @@ public static class Utils
         {
             var publishFiles = new[]
             {
-                "PrintaDot.Windows.exe",
+                "PrintaDot.exe",
                 Manifest.ManifestFileName,
             };
 

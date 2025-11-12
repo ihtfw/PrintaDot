@@ -17,7 +17,7 @@ public static class Manifest
     public static string Description => "PrintaDot host application";
 
     [JsonPropertyName("path")]
-    public static string ExecuteablePath => Path.Combine(Utils.TargetApplicationDirectory, Process.GetCurrentProcess().ProcessName) + ".exe";
+    public static string ExecuteablePath => Path.Combine(Utils.TargetApplicationDirectory, Utils.GetExecutableFileName());
 
     [JsonPropertyName("type")]
     public static string Type => "stdio";
@@ -30,16 +30,11 @@ public static class Manifest
     public static string ManifestFileName => HostName + "-manifest.json";
     public static void GenerateManifest()
     {
-        GenerateManifestWithCustomPath(ExecuteablePath);
-    }
-
-    public static void GenerateManifestWithCustomPath(string path)
-    {
         var manifest = new Dictionary<string, object>
         {
             ["name"] = HostName,
             ["description"] = Description,
-            ["path"] = path,
+            ["path"] = ExecuteablePath,
             ["type"] = Type,
             ["allowed_origins"] = AllowedOrigins
         };
