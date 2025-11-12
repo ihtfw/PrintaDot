@@ -43,7 +43,7 @@ The extension provides comprehensive printing configuration:
 1. Open Chrome browser and navigate to: **Extensions** → **Enable Developer Mode**
 2. Click **"Load unpacked extension"**, select the extension folder from the project, and click **"OK"**
 3. Copy the extension identifier
-4. Open `PrintLink.sln` file in Visual Studio
+4. Open `PrintaDot.sln` file in Visual Studio
 5. Go to `Manifest.cs` file and paste your extension identifier into `AllowedOrigins` in the format: `chrome-extension://Your_Identifier/`
 6. Build the solution and run `PrintaDot.Windows` project
 7. Once the manifest is generated and you see "application ready to work" in console, you can close it
