@@ -95,6 +95,14 @@ public class Updater : IDisposable
         }
     }
 
+    public void DeleteTempFile()
+    {
+        if (File.Exists(TempExePath))
+        {
+            File.Delete(TempExePath);
+        }
+    }
+
     public void PerformUpdate()
     {
         try

@@ -12,6 +12,7 @@ class Program
         Log.Active = true;
 
         Updater = new Updater();
+        Updater.DeleteTempFile();
 
         if (args.Contains("--update"))
         {

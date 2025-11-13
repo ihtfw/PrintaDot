@@ -85,7 +85,7 @@ public static class Utils
         {
             if (Directory.Exists(TargetApplicationDirectory))
             {
-                RemoveDirectory(TargetApplicationDirectory);
+                Directory.Delete(TargetApplicationDirectory, true);
             }
 
             Directory.CreateDirectory(TargetApplicationDirectory);
@@ -102,7 +102,7 @@ public static class Utils
                 Console.ReadKey();
             }   
         }
-        catch (Exception ex)
+        catch
         {
             return false;
         }
@@ -195,20 +195,5 @@ public static class Utils
         }
 
         return true;
-    }
-
-    /// <summary>
-    /// Used for removing directory with files.
-    /// </summary>
-    private static void RemoveDirectory(string directoryPath)
-    {
-        try
-        {
-            Directory.Delete(directoryPath, true);
-        }
-        catch (Exception ex)
-        {
-            //Console.WriteLine($"Directory cannot be removed: {ex.Message}");
-        }
     }
 }
