@@ -7,16 +7,15 @@ class Program
     static Host Host = null!;
     static Updater Updater = null!;
 
-    static void Main(string[] args)
+    static async Task Main(string[] args)
     {
         Log.Active = true;
 
         Updater = new Updater();
         Updater.DeleteTempFile();
-
         if (args.Contains("--update"))
         {
-            Updater.PerformUpdate();
+            Updater.PerformUpdate(int.Parse(args[1]));
         }
 
         Host = new Host()
@@ -26,12 +25,14 @@ class Program
 
         var currentDirectory = Utils.AssemblyLoadDirectory();
 
-        if (Utils.IsLocalAppDataDirectory(currentDirectory))
+        if (!Utils.IsLocalAppDataDirectory(currentDirectory))
         {
             Host.GenerateManifest();
             Host.RegisterAllSupportedBrowsers();
             Host.MoveHostToLocalAppData(currentDirectory);
         }
+
+        await Updater.Update();
 
         if (args.Contains("--unregister"))
         {

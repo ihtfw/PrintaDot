@@ -27,7 +27,7 @@ public class Host
     /// <param name="sendConfirmationReceipt"><see langword="true" /> for the host to automatically send message confirmation receipt.</param>
     public Host(bool sendConfirmationReceipt = true)
     {
-        SupportedBrowsers = new List<Browser>(2);
+        SupportedBrowsers = [BrowserCreator.GoogleChrome, BrowserCreator.MicrosoftEdge];
 
         _sendConfirmationReceipt = sendConfirmationReceipt;
     }
@@ -134,9 +134,6 @@ public class Host
     /// </summary>;
     public void RegisterAllSupportedBrowsers()
     {
-        SupportedBrowsers.Add(BrowserCreator.GoogleChrome);
-        SupportedBrowsers.Add(BrowserCreator.MicrosoftEdge);
-
         SupportedBrowsers.Register(Manifest.HostName, Manifest.ManifestPath);
     }
 

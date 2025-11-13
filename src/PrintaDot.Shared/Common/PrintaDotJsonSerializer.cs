@@ -176,4 +176,14 @@ public static class PrintaDotJsonSerializer
             new DefaultJsonTypeInfoResolver()
         );
     }
+
+    public static JsonSerializerOptions GetOptionsWithSkip()
+    {
+        var options = new JsonSerializerOptions();
+        ApplyDefaultJsonSerializerOptions(options);
+
+        options.UnmappedMemberHandling = JsonUnmappedMemberHandling.Skip;
+
+        return options;
+    }
 }

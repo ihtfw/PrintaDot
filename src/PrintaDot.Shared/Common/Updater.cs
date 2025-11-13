@@ -1,6 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 using System.Diagnostics;
 using System.Reflection;
+using System.Net.Http.Json;
 
 namespace PrintaDot.Shared.Common;
 
@@ -42,8 +43,6 @@ public class Updater : IDisposable
 
     public Updater()
     {
-        _ = Update();
-
         _checkTimer = new Timer(OnTimerElapsed, null, _checkInterval, _checkInterval);
     }
 
@@ -64,20 +63,23 @@ public class Updater : IDisposable
     {
         try
         {
-            using var httpClient = new HttpClient(); // создаем 1 раз (factory)
+            using var httpClient = new HttpClient();
             var url = await GetLatestUpdateUrl(httpClient);
 
             if (url != null)
             {
-                var exeBytes = await httpClient.GetByteArrayAsync(url);
-                await File.WriteAllBytesAsync(TempExePath, exeBytes);
+                using var stream = await httpClient.GetStreamAsync(url);
+                await using var fileStream = File.Create(TempExePath);
+                await stream.CopyToAsync(fileStream);
+
+                fileStream.Close();
 
                 StartUpdateProcess();
             }
         }
         catch (Exception ex)
         {
-            Log.LogMessage(ex.Message);
+            Log.LogMessage(ex.Message, nameof(Updater));
         }
     }
 
@@ -85,7 +87,8 @@ public class Updater : IDisposable
     {
         try
         {
-            Process.Start(TempExePath, "--update");
+            int pid = Process.GetCurrentProcess().Id;
+            Process.Start(TempExePath, $"--update {pid}");
 
             Environment.Exit(0); //Closing main process...                           
         }
@@ -97,40 +100,63 @@ public class Updater : IDisposable
 
     public void DeleteTempFile()
     {
-        if (File.Exists(TempExePath))
+        try
         {
-            File.Delete(TempExePath);
+            if (File.Exists(TempExePath))
+            {
+                File.Delete(TempExePath);
+            }
+        }
+        catch (Exception ex)
+        {
+            Log.LogMessage(ex.Message, nameof(Updater));
         }
     }
 
-    public void PerformUpdate()
+    public void PerformUpdate(int pid)
     {
         try
         {
-            //Waiting for main procces is closed..
-            Thread.Sleep(2000);
-
-            if (File.Exists(MainExePath))
+            Process? process = null;
+            try
             {
-                File.Delete(MainExePath);
+                process = Process.GetProcessById(pid);
+            }
+            catch (ArgumentException)
+            {
+                //If process already closed do nothing
             }
 
+            if (process != null)
+            {
+                using (process)
+                {
+                    if (!process.HasExited)
+                    {
+                        process.WaitForExit();
+                    }
+                }
+            }
+            Log.LogMessage("Copy started", nameof(Updater));
             File.Copy(TempExePath, MainExePath, true);
 
-            Environment.Exit(0);
+            Log.LogMessage("Updated successfully", nameof(Updater));
         }
         catch (Exception ex)
         {
             Log.LogMessage($"Update failed: {ex.Message}");
         }
+        finally
+        {
+            Environment.Exit(0);
+        } 
     }
 
     public async Task<string?> GetLatestUpdateUrl(HttpClient httpClient)
     {
         httpClient.DefaultRequestHeaders.Add("User-Agent", "PrintaDot-Updater");
 
-        var response = await httpClient.GetStringAsync(RepoUrl);
-        var updateResponse = response.FromJson<UpdateResponseDto>(isSkip: true);
+        var updateResponse = await httpClient.GetFromJsonAsync<UpdateResponseDto>(RepoUrl, PrintaDotJsonSerializer.GetOptionsWithSkip());
 
         if (updateResponse is null)
         {
@@ -153,6 +179,8 @@ public class Updater : IDisposable
 
     private static bool IsNewerVersionExists(string? latest)
     {
+        return true;
+        
         if (!string.IsNullOrWhiteSpace(latest)) return false;
 
         var assembly = Assembly.GetEntryAssembly() ?? Assembly.GetExecutingAssembly();
