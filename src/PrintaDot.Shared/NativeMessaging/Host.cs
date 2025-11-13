@@ -15,7 +15,6 @@ public class Host
 {
     
     private bool _sendConfirmationReceipt;
-    private readonly PrintService _printService;
 
     /// <summary>
     /// List of supported browsers.

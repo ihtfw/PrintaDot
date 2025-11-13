@@ -137,7 +137,7 @@ public class Updater : IDisposable
             return null;
         }
 
-        if (IsNewerVersionExists(updateResponse.LatestVersion))
+        if (IsNewerVersionExists(updateResponse.LatestVersion) && updateResponse.Assets is not null)
         {
             foreach (var asset in updateResponse.Assets)
             {

@@ -11,7 +11,7 @@ internal class TextElement : Element, IDrawElement
 {
     public string? Text { get; set; }
     public FontRectangle TextBbox { get; set; }
-    public Font Font { get; set; }
+    public Font Font { get; set; } = SystemFonts.CreateFont(ImageGenerationHelper.DEFAULT_FONT, 10);
 
     public virtual void Draw(Image<Rgba32> image)
     {

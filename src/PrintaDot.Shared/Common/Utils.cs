@@ -1,5 +1,4 @@
 ﻿using PrintaDot.Shared.NativeMessaging;
-using System.Collections.Concurrent;
 using System.Reflection;
 using System.Runtime.InteropServices;
 

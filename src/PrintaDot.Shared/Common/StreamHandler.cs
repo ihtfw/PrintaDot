@@ -43,7 +43,7 @@ public static class StreamHandler
     {
         Log.LogMessage("Sending..." + message.ToJson());
 
-        byte[] bytes = Encoding.UTF8.GetBytes(message.ToJson());
+        byte[] bytes = Encoding.UTF8.GetBytes(message.ToJson()!);
         Stream stdout = Console.OpenStandardOutput();
 
         stdout.WriteByte((byte)(bytes.Length >> 0 & 0xFF));
