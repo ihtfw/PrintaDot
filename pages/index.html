@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Extension Testing Page</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-header">
+        <h1>PrintaDot Testing Page</h1>
+    </div>
+
+    <div class="content">
+        <div class="input-group">
+            <label for="printType">Print Type (printType)</label>
+            <input type="text" id="printType" placeholder="Enter print type">
+        </div>
+
+        <div class="input-group">
+            <label for="duplicateBarcode">Duplicate barcode in figures</label>
+            <div class="checkbox-group">
+                <input type="checkbox" id="duplicateBarcode">
+                <span>Enable barcode duplication in figures field</span>
+            </div>
+        </div>
+
+        <div class="items-section">
+            <div class="items-header">
+                <h2>Print Items</h2>
+                <div class="item-controls">
+                    <button id="addItem" class="main-btn" style="padding: 8px 12px; font-size: 14px;">Add Item</button>
+                    <select id="itemCount">
+                        <option value="1">1 item</option>
+                        <option value="2">2 items</option>
+                        <option value="3">3 items</option>
+                        <option value="5">5 items</option>
+                        <option value="10">10 items</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="itemsContainer">
+                <!-- Items will be added here -->
+            </div>
+        </div>
+
+        <div class="button-group">
+            <button id="sendBtn" class="main-btn">Send Data</button>
+            <button id="clearBtn" class="main-btn">Clear Form</button>
+        </div>
+
+        <div class="output-section">
+            <h2>JSON Output</h2>
+            <pre id="jsonOutput">Data will appear here after filling the form</pre>
+            
+            <div id="message" class="message"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
