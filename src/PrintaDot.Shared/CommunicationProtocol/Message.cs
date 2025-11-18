@@ -7,6 +7,7 @@ namespace PrintaDot.Shared.CommunicationProtocol;
 /// </summary>
 public class Message
 {
+    public Guid Id { get; set; }
     public required MessageType Type { get; set; }
     public required int Version { get; set; }
 }

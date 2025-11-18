@@ -1,4 +1,5 @@
-document.addEventListener('DOMContentLoaded', async function () {
+document.addEventListener("DOMContentLoaded", async () => {
+
     const printTypeInput = document.getElementById('printType');
     const duplicateBarcodeCheckbox = document.getElementById('duplicateBarcode');
     const itemsContainer = document.getElementById('itemsContainer');
@@ -9,231 +10,162 @@ document.addEventListener('DOMContentLoaded', async function () {
     const jsonOutput = document.getElementById('jsonOutput');
     const messageDiv = document.getElementById('message');
 
-    function createItemElement(index) {
-        const itemDiv = document.createElement('div');
-        itemDiv.className = 'item';
-        itemDiv.innerHTML = `
-                <div class="item-header">
-                    <span class="item-number">Item ${index}</span>
-                    <button class="remove-item" type="button">×</button>
-                </div>
-                <div class="input-group">
-                    <label for="header${index}">Header</label>
-                    <input type="text" id="header${index}" placeholder="Enter header">
-                </div>
-                <div class="input-group">
-                    <label for="barcode${index}">Barcode</label>
-                    <input type="text" id="barcode${index}" placeholder="Enter barcode">
-                </div>
-                <div class="input-group">
-                    <label for="figures${index}">Figures (text below barcode)</label>
-                    <input type="text" id="figures${index}" placeholder="Enter text (optional)">
-                </div>
-            `;
+    const client = new PrintaDotClient();
 
-        const removeButton = itemDiv.querySelector('.remove-item');
-        removeButton.addEventListener('click', function () {
-            itemDiv.remove();
+    function createItemElement(index) {
+        const div = document.createElement("div");
+        div.className = "item";
+
+        const defaultHeader = `Item ${index}`;
+        const defaultBarcode = `1234567890${index}`;
+        const defaultFigures = "";
+
+        div.innerHTML = `
+            <div class="item-header">
+                <span class="item-number">Item ${index}</span>
+                <button class="remove-item" type="button">×</button>
+            </div>
+
+            <div class="input-group">
+                <label for="header${index}">Header</label>
+                <input type="text" id="header${index}" placeholder="Enter header" value="${defaultHeader}">
+            </div>
+
+            <div class="input-group">
+                <label for="barcode${index}">Barcode</label>
+                <input type="text" id="barcode${index}" placeholder="Enter barcode" value="${defaultBarcode}">
+            </div>
+
+            <div class="input-group">
+                <label for="figures${index}">Figures</label>
+                <input type="text" id="figures${index}" placeholder="Enter text (optional)" value="${defaultFigures}">
+            </div>
+        `;
+
+        div.querySelector(".remove-item").addEventListener("click", () => {
+            div.remove();
             updateItemNumbers();
             updateJSON();
         });
 
-        const inputs = itemDiv.querySelectorAll('input');
-        inputs.forEach(input => {
-            input.addEventListener('input', updateJSON);
-        });
+        div.querySelectorAll("input").forEach(i => i.addEventListener("input", updateJSON));
 
-        return itemDiv;
+        return div;
     }
 
     function updateItemNumbers() {
-        const items = itemsContainer.querySelectorAll('.item');
-        items.forEach((item, index) => {
-            const numberSpan = item.querySelector('.item-number');
-            numberSpan.textContent = `Item ${index + 1}`;
+        document.querySelectorAll(".item").forEach((item, i) => {
+            item.querySelector(".item-number").textContent = `Item ${i + 1}`;
         });
     }
 
     function addItem() {
-        const itemCount = itemsContainer.querySelectorAll('.item').length;
-        const newItem = createItemElement(itemCount + 1);
-        itemsContainer.appendChild(newItem);
+        const count = document.querySelectorAll(".item").length + 1;
+        itemsContainer.appendChild(createItemElement(count));
         updateJSON();
     }
 
-    addItemButton.addEventListener('click', addItem);
+    function defineMessage(connection) {
+        if (!connection.isExtensionConnected){
+            return "Extension is not connected";
+        } else if (connection.isNativeAppConnected){
+            return "Native app is not installed or working properetly";
+        } 
 
-    itemCountSelect.addEventListener('change', function () {
-        const targetCount = parseInt(this.value);
-        const currentCount = itemsContainer.querySelectorAll('.item').length;
+        return "Print request send successfully";
+    }
 
-        if (targetCount > currentCount) {
-            for (let i = currentCount; i < targetCount; i++) {
-                addItem();
-            }
-        } else if (targetCount < currentCount) {
-            const items = itemsContainer.querySelectorAll('.item');
-            for (let i = currentCount - 1; i >= targetCount; i--) {
-                items[i].remove();
-            }
-            updateItemNumbers();
-        }
+    function updateJSON() {
+        const request = fromDOM(
+            printTypeInput, 
+            duplicateBarcodeCheckbox, 
+            itemsContainer
+        );
 
-        updateJSON();
-    });
+        jsonOutput.textContent = request.toJSON(true);
+    }
 
-    function generateData() {
-        const printType = printTypeInput.value.trim();
+    function  fromDOM(printTypeInput, duplicateBarcodeCheckbox, itemsContainer) {
+        const printType = printTypeInput.value.trim() || "default";
         const duplicateBarcode = duplicateBarcodeCheckbox.checked;
 
         const items = [];
-        const itemElements = itemsContainer.querySelectorAll('.item');
+        const itemElements = itemsContainer.querySelectorAll(".item");
 
-        itemElements.forEach((itemElement, index) => {
-            const header = itemElement.querySelector(`#header${index + 1}`).value.trim();
-            const barcode = itemElement.querySelector(`#barcode${index + 1}`).value.trim();
-            let figures = itemElement.querySelector(`#figures${index + 1}`).value.trim();
+        itemElements.forEach((itemEl, index) => {
+            const i = index + 1;
+
+            const header = itemEl.querySelector(`#header${i}`).value.trim() || `Item Header ${i}`;
+            const barcode = itemEl.querySelector(`#barcode${i}`).value.trim() || `1234567890${i}`;
+            let figures = itemEl.querySelector(`#figures${i}`).value.trim();
 
             if (duplicateBarcode && !figures) {
                 figures = barcode;
             }
 
-            items.push({
-                header: header || `Item Header ${index + 1}`,
-                barcode: barcode || `1234567890${index + 1}`,
-                figures: figures || null
-            });
+            items.push(new PrintItem(header, barcode, figures || null));
         });
 
-        return {
-            version: 1,
-            type: "PrintRequest",
-            printType: printType || "default",
-            items: items
-        };
+        return new PrintRequest(printType, items);
     }
 
-    function updateJSON() {
-        const data = generateData();
-        jsonOutput.textContent = JSON.stringify(data, null, 2);
+    function showMessage(text, type = "success") {
+        messageDiv.textContent = text;
+        messageDiv.className = "message " + type;
+        messageDiv.style.display = "block";
+        setTimeout(() => { messageDiv.style.display = "none"; }, 2500);
     }
 
-  async function checkConnectionToExtension() {
-        await new Promise(resolve => setTimeout(resolve, 100));
+    addItemButton.addEventListener("click", addItem);
 
-        var isExtensionInstalled = await checkExtensionConnection();
-        var isNativeAppConnected = await checkNativeAppConnection();
+    itemCountSelect.addEventListener("change", () => {
+        const target = Number(itemCountSelect.value);
+        let current = itemsContainer.querySelectorAll(".item").length;
 
-        if (!isExtensionInstalled) {
-            messageDiv.textContent = 'Extension is not installed';
-            messageDiv.className = 'message error';
-            messageDiv.style.display = 'block';
-        } else if (!isNativeAppConnected) {
-            messageDiv.textContent = 'Native app is not connected';
-            messageDiv.className = 'message error';
-            messageDiv.style.display = 'block';
-        } else {
-            messageDiv.textContent = 'Extension and native app are connected';
-            messageDiv.className = 'message success';
-            messageDiv.style.display = 'block';
+        while (current < target) { addItem(); current++; }
+        while (current > target) {
+            itemsContainer.lastElementChild.remove();
+            current--;
         }
-
-        setTimeout(() => {
-            messageDiv.style.display = 'none';
-        }, 3000);
-
-        return isExtensionInstalled && isNativeAppConnected;
-    }
-
-    function checkExtensionConnection() {
-        return new Promise((resolve) => {
-            const timeout = setTimeout(() => {
-                console.log(false);
-                resolve(false);
-            }, 1000);
-
-            window.postMessage({
-                type: "CheckExtensionInstalled"
-            }, '*');
-
-            function handleResponse(event) {
-                if (event.data && event.data.type === "CheckExtensionInstalledResponse") {
-                    clearTimeout(timeout);
-                    window.removeEventListener('message', handleResponse);
-                    resolve(event.data.installed || false);
-                }
-            }
-
-            window.addEventListener('message', handleResponse);
-        });
-    }
-    
-    function checkNativeAppConnection() {
-        return new Promise((resolve) => {
-            const timeout = setTimeout(() => {
-                resolve(false);
-            }, 2000);
-
-            window.postMessage({
-                type: "CheckConnetcionToNativeApp"
-            }, '*');
-
-            function handleResponse(event) {
-                if (event.data && event.data.type === "CheckConnetcionToNativeAppResponse") {
-                    clearTimeout(timeout);
-                    console.log(event.data.type);
-                    window.removeEventListener('message', handleResponse);
-                    resolve(event.data.isConnected || false);
-                }
-            }
-
-            window.addEventListener('message', handleResponse);
-        });
-    }
-
-    function sendData() {
-        const data = generateData();
-
-        try {
-            window.postMessage(data, '*');
-
-            messageDiv.textContent = 'Data successfully sent via window.postMessage';
-            messageDiv.className = 'message success';
-            messageDiv.style.display = 'block';
-
-            setTimeout(() => {
-                messageDiv.style.display = 'none';
-            }, 3000);
-        } catch (error) {
-            messageDiv.textContent = 'Error sending data: ' + error.message;
-            messageDiv.className = 'message error';
-            messageDiv.style.display = 'block';
-        }
-    }
-
-    function clearForm() {
-        printTypeInput.value = '';
-        duplicateBarcodeCheckbox.checked = false;
-
-        const items = itemsContainer.querySelectorAll('.item');
-        items.forEach(item => item.remove());
-
-        addItem();
-
-        itemCountSelect.value = '1';
-
+        updateItemNumbers();
         updateJSON();
+    });
 
-        messageDiv.style.display = 'none';
-    }
+    sendButton.addEventListener("click", async () =>  {
+        var connection = await client.checkAllConnections();
 
-    sendButton.addEventListener('click', sendData);
-    clearButton.addEventListener('click', clearForm);
+        console.log(connection);
 
-    printTypeInput.addEventListener('input', updateJSON);
-    duplicateBarcodeCheckbox.addEventListener('change', updateJSON);
+        if (!connection.isExtensionConnected || !connection.isNativeAppConnected) {
+            var message = defineMessage(connection);
+            showMessage(message);
 
+            return;
+        }
+
+        const request = fromDOM(
+            printTypeInput,
+            duplicateBarcodeCheckbox,
+            itemsContainer
+        );
+        
+        client.sendPrintRequest(request);
+
+        showMessage("Print request send successfully");
+    });
+
+    clearButton.addEventListener("click", () => {
+        printTypeInput.value = "default";
+        duplicateBarcodeCheckbox.checked = false;
+        itemsContainer.innerHTML = "";
+        addItem();
+        itemCountSelect.value = 1;
+        updateJSON();
+    });
+
+    printTypeInput.addEventListener("input", updateJSON);
+    duplicateBarcodeCheckbox.addEventListener("change", updateJSON);
+
+    printTypeInput.value = "default";
     addItem();
-
-    var checkConnection = await checkConnectionToExtension();
 });

@@ -18,7 +18,7 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
         chrome.tabs.sendMessage(tabs[0].id, {
             type: "CheckExtensionInstalledResponse",
-            installed: true
+            isConnected: true
         });
     });
 
