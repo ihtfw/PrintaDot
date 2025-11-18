@@ -7,11 +7,37 @@ const PROFILES_KEY = "profiles";
 connect();
 
 chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
+    console.log(request);
+
+    if (request.type === "CheckExtensionInstalled") {
+    sendResponse({
+        type: "CheckExtensionInstalledResponse",
+        installed: true
+    });
+
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        chrome.tabs.sendMessage(tabs[0].id, {
+            type: "CheckExtensionInstalledResponse",
+            installed: true
+        });
+    });
+
+    return true;
+}
     if (request.type == "CheckConnetcionToNativeApp") {
         sendResponse({
             type: "CheckConnetcionToNativeAppResponse",
             isConnected: isConnected
         });
+
+        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+            chrome.tabs.sendMessage(tabs[0].id, {
+                type: "CheckConnetcionToNativeAppResponse",
+                isConnected: isConnected
+            });
+        });
+
+        return true;
     }
 
     if (request.type == "GetPrintersRequest"){
@@ -40,6 +66,10 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
     console.log(request);
     sendMessage(request);
 });
+
+function checkConnection(request, sendResponse) {
+
+}
 
 function sendMessage(message) {
     if (port && isConnected) {

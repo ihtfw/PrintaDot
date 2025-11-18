@@ -134,7 +134,6 @@ function initNormalViewHandlers() {
         }
     });
 
-    // Сохраняем выбранный профиль при изменении
     profileSelect.addEventListener('change', function() {
         chrome.storage.local.set({ currentProfileName: this.value });
     });
