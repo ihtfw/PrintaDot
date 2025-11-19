@@ -178,9 +178,7 @@ public class Updater : IDisposable
     }
 
     private static bool IsNewerVersionExists(string? latest)
-    {
-        return true;
-        
+    {        
         if (!string.IsNullOrWhiteSpace(latest)) return false;
 
         var assembly = Assembly.GetEntryAssembly() ?? Assembly.GetExecutingAssembly();
