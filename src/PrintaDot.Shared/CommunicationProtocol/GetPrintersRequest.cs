@@ -1,6 +1,3 @@
 ﻿namespace PrintaDot.Shared.CommunicationProtocol;
 
-public class GetPrintersRequest : Message
-{
-
-}
+public class GetPrintersRequest : Message { }

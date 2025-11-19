@@ -1,6 +1,6 @@
 ﻿namespace PrintaDot.Shared.CommunicationProtocol;
 
-public class GetPrintersResponse : Message
+public class GetPrintersResponse : Response
 {
     public List<string>? Printers { get; set; }
 }

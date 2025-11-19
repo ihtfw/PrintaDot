@@ -1,9 +1,9 @@
 ﻿using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
-using PrintaDot.Shared.CommunicationProtocol.V1;
 using PrintaDot.Shared.ImageGeneration.DrawElements;
 using PrintaDot.Shared.Common;
+using PrintaDot.Shared.CommunicationProtocol.V1.Requests;
 
 namespace PrintaDot.Shared.ImageGeneration.V1;
 

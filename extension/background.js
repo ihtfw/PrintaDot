@@ -4,45 +4,45 @@ var isConnected = false;
 const PRINT_TYPE_KEY = "printTypeMapping";
 const PROFILES_KEY = "profiles";
 
+const pendingMessages = new Map();
+const DEFAULT_TIMEOUT = 30000;
+
 connect();
 
 chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
     console.log(request);
 
     if (request.type === "CheckExtensionInstalled") {
-    sendResponse({
-        type: "CheckExtensionInstalledResponse",
-        installed: true
-    });
+        sendResponseFromExtension(
+            {
+                type: "CheckExtensionInstalledResponse",
+                isConnected: true,
+                messageIdToResponse: request.id
+            }, sendResponse
+        );
+        
+        return true;
+    }
 
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-        chrome.tabs.sendMessage(tabs[0].id, {
-            type: "CheckExtensionInstalledResponse",
-            isConnected: true
-        });
-    });
-
-    return true;
-}
     if (request.type == "CheckConnetcionToNativeApp") {
-        sendResponse({
-            type: "CheckConnetcionToNativeAppResponse",
-            isConnected: isConnected
-        });
-
-        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-            chrome.tabs.sendMessage(tabs[0].id, {
+        sendResponseFromExtension(
+            {
                 type: "CheckConnetcionToNativeAppResponse",
-                isConnected: isConnected
-            });
-        });
+                isConnected: isConnected,
+                messageIdToResponse: request.id
+            }, sendResponse
+        );
 
         return true;
     }
 
-    if (request.type == "GetPrintersRequest"){
-        sendMessage(request);
-        return;
+    if (request.type == "GetPrintersRequest") {
+        const response = await sendMessageWithResponse(request);
+        sendResponse({
+            ...response,
+            messageIdToResponse: request.id
+        });
+        return true;
     }
 
     if (request.type !== "PrintRequest")
@@ -51,7 +51,8 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
     if (!isConnected) {
         chrome.runtime.sendMessage({
             type: "Exception",
-            messageText: "Native app is not connected. Application is not installed or have errors in installed version."
+            messageText: "Native app is not connected. Application is not installed or have errors in installed version.",
+            messageIdToResponse: request.id
         }).catch(() => { });
         return;
     }
@@ -64,11 +65,73 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
     request = await addProfile(request);
 
     console.log(request);
-    sendMessage(request);
+    
+    const response = await sendMessageWithResponse(request);
+    if (response && response.type === "Exception") {
+        chrome.runtime.sendMessage({
+            ...response,
+            messageIdToResponse: request.id
+        }).catch(() => { });
+    }
 });
 
-function checkConnection(request, sendResponse) {
+function sendResponseFromExtension(response, sendResponse) {
+    sendResponse(response);
 
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        chrome.tabs.sendMessage(tabs[0].id, response);
+    });
+}
+
+function sendMessageWithResponse(message, timeoutMs = DEFAULT_TIMEOUT) {
+    return new Promise((resolve, reject) => {
+        if (!port || !isConnected) {
+            resolve({
+                type: "Exception",
+                messageText: "Native application is not connected. Please make sure the native app is installed and running.",
+                messageIdToResponse: message.messageId
+            });
+            return;
+        }
+
+        const messageId = message.id;
+        if (!messageId) {
+            resolve({
+                type: "Exception",
+                messageText: "Message ID is missing in the request",
+                messageIdToResponse: null
+            });
+            return;
+        }
+
+        const timeoutId = setTimeout(() => {
+            pendingMessages.delete(messageId);
+            resolve({
+                type: "Exception",
+                messageIdToResponse: messageId,
+                messageText: `Request timeout after ${timeoutMs}ms`
+            });
+        }, timeoutMs);
+
+        pendingMessages.set(messageId, {
+            resolve,
+            timeoutId,
+            timestamp: Date.now()
+        });
+
+        try {
+            port.postMessage(message);
+            console.log("Sent message with ID:", messageId);
+        } catch (error) {
+            clearTimeout(timeoutId);
+            pendingMessages.delete(messageId);
+            resolve({
+                type: "Exception",
+                messageIdToResponse: messageId,
+                messageText: `Failed to send message: ${error.message}`
+            });
+        }
+    });
 }
 
 function sendMessage(message) {
@@ -77,7 +140,8 @@ function sendMessage(message) {
     } else {
         chrome.runtime.sendMessage({
             type: "Exception",
-            messageText: "Native application is not connected. Please make sure the native app is installed and running."
+            messageText: "Native application is not connected. Please make sure the native app is installed and running.",
+            messageIdToResponse: message.id
         }).catch(() => { });
     }
 }
@@ -112,51 +176,95 @@ async function handleMessageFromSite(message) {
             type: message.type,
             version: message.version,
             profile: mapping[printType],
-            items: message.items
+            items: message.items,
+            id: message.id
         };
     } catch (error) {
         console.error("Error in handleMessageFromSite:", error);
-        return message;
+        return {
+            ...message,
+            type: "Exception",
+            messageText: error.message,
+            messageIdToResponse: message.id
+        };
     }
 }
 
 async function handleMessageFromExtension(message) {
-
-    return {
-        type: message.type,
-        version: message.version,
-        profile: message.profile,
-        items: message.items
-    };
+    try {
+        return {
+            type: message.type,
+            version: message.version,
+            profile: message.profile,
+            items: message.items,
+            id: message.id
+        };
+    } catch (error) {
+        console.error("Error in handleMessageFromExtension:", error);
+        return {
+            ...message,
+            type: "Exception",
+            messageText: error.message,
+            messageIdToResponse: message.id
+        };
+    }
 }
 
 async function onNativeMessage(message) {
     if (!message?.type) return;
 
-     console.log("Native message:", message);
+    console.log("Native message:", message);
+
+    // Обработка ответов на наши сообщения
+    if (message.messageIdToResponse) {
+        const pendingMessage = pendingMessages.get(message.messageIdToResponse);
+
+        console.log(pendingMessages);
+
+        if (pendingMessage) {
+            clearTimeout(pendingMessage.timeoutId);
+            pendingMessages.delete(message.messageIdToResponse);
+            pendingMessage.resolve(message);
+        }
+    }
 
     if (message.type == "UpdateNativeApp") {
         onDisconnected();
-
         await connect();
         return;
     }
 
-    chrome.runtime.sendMessage(message).catch(() => { });
-   
+    console.log("Sending message to content script:", message);
+    chrome.runtime.sendMessage(message).catch((error) => {
+        console.error("Failed to send message to content script:", error);
+    });
+
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        chrome.tabs.sendMessage(tabs[0].id, message);
+    });
+    
 }
 
 async function onDisconnected() {
+    for (const [messageId, pendingMessage] of pendingMessages.entries()) {
+        clearTimeout(pendingMessage.timeoutId);
+        pendingMessage.resolve({
+            type: "Exception",
+            messageIdToResponse: messageId,
+            messageText: "Connection to native app was lost"
+        });
+    }
+    pendingMessages.clear();
+
     port = null;
     isConnected = false;
 
-   await new Promise(resolve => setTimeout(resolve, 1000));
-
+    await new Promise(resolve => setTimeout(resolve, 1000));
     await connect();
 }
 
 async function connect() {
-    const hostName = "com.printadot"; // com узнать!! (если домен то ru)
+    const hostName = "com.printadot";
     try {
         port = chrome.runtime.connectNative(hostName);
         port.onMessage.addListener(onNativeMessage);
@@ -170,5 +278,30 @@ async function connect() {
     } catch (error) {
         console.error("Connection failed:", error);
         isConnected = false;
+        
+        // Уведомляем об ошибке соединения все ожидающие сообщения
+        for (const [messageId, pendingMessage] of pendingMessages.entries()) {
+            clearTimeout(pendingMessage.timeoutId);
+            pendingMessage.resolve({
+                type: "Exception",
+                messageIdToResponse: messageId,
+                messageText: `Failed to connect to native app: ${error.message}`
+            });
+        }
+        pendingMessages.clear();
     }
 }
+
+// // Очистка старых сообщений (на случай утечек)
+// setInterval(() => {
+//     const now = Date.now();
+//     const timeout = DEFAULT_TIMEOUT + 5000; // +5 секунд сверх обычного таймаута
+    
+//     for (const [messageId, pendingMessage] of pendingMessages.entries()) {
+//         if (now - pendingMessage.timestamp > timeout) {
+//             console.warn("Cleaning up stale message:", messageId);
+//             clearTimeout(pendingMessage.timeoutId);
+//             pendingMessages.delete(messageId);
+//         }
+//     }
+// }, 60000); // Проверка каждую минуту

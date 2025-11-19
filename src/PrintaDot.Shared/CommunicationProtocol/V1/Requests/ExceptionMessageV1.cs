@@ -1,7 +1,6 @@
 ﻿using PrintaDot.Shared.Common;
 
-namespace PrintaDot.Shared.CommunicationProtocol.V1;
-
+namespace PrintaDot.Shared.CommunicationProtocol.V1.Requests;
 public class ExceptionMessageV1 : Message
 {
     public static ExceptionMessageV1 Create(string text) => new()

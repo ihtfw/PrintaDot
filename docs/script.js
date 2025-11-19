@@ -131,15 +131,14 @@ document.addEventListener("DOMContentLoaded", async () => {
         updateJSON();
     });
 
-    sendButton.addEventListener("click", async () =>  {
+sendButton.addEventListener("click", async () =>  {
         var connection = await client.checkAllConnections();
 
         console.log(connection);
 
         if (!connection.isExtensionConnected || !connection.isNativeAppConnected) {
             var message = defineMessage(connection);
-            showMessage(message);
-
+            showMessage(message, "error");
             return;
         }
 
@@ -149,9 +148,21 @@ document.addEventListener("DOMContentLoaded", async () => {
             itemsContainer
         );
         
-        client.sendPrintRequest(request);
-
-        showMessage("Print request send successfully");
+        try {
+            const response = await client.sendPrintRequest(request);
+            
+            if (response.type === "Exception") {
+                showMessage(`Error: ${response.messageText}`, "error");
+            } else {
+                showMessage("Print request completed successfully!", "success");
+            }
+            
+            console.log("Print response:", response);
+            
+        } catch (error) {
+            showMessage(`Error: ${error.message}`, "error");
+            console.error("Print request failed:", error);
+        }
     });
 
     clearButton.addEventListener("click", () => {

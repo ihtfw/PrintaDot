@@ -1,4 +1,4 @@
-﻿using PrintaDot.Shared.CommunicationProtocol.V1;
+﻿using PrintaDot.Shared.CommunicationProtocol.V1.Requests;
 
 namespace PrintaDot.Shared.ImageGeneration.V1;
 

@@ -1,6 +1,6 @@
 ﻿using Microsoft.JSInterop;
 using PrintaDot.Shared.Common;
-using PrintaDot.Shared.CommunicationProtocol.V1;
+using PrintaDot.Shared.CommunicationProtocol.V1.Requests;
 
 namespace PrintaDot.Blazor;
 

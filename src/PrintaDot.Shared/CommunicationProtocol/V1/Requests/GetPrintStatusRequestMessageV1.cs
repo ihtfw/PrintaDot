@@ -1,4 +1,4 @@
-﻿namespace PrintaDot.Shared.CommunicationProtocol.V1;
+﻿namespace PrintaDot.Shared.CommunicationProtocol.V1.Requests;
 
 public class GetPrintStatusRequestMessageV1 : Message
 {

@@ -1,10 +1,11 @@
 ﻿using PrintaDot.Shared.Common;
-using PrintaDot.Shared.CommunicationProtocol.V1;
 using PrintaDot.Shared.ImageGeneration;
 using SixLabors.ImageSharp;
 using PrintaDot.Shared.Platform;
 
 using Image = SixLabors.ImageSharp.Image;
+using PrintaDot.Shared.CommunicationProtocol.V1.Requests;
+using PrintaDot.Shared.CommunicationProtocol.V1.Responses;
 
 namespace PrintaDot.Shared.Printing;
 
@@ -22,13 +23,13 @@ public class PrintService
         _paperSettings = paperSettings;
     }
 
-    public void Print(string printerName)
+    public bool Print(string printerName)
     {
         var images = _imageGenerator.GenerateImages();
 #if DEBUG
         SaveImageToDesktop(images);
 #endif
-        _platformPrintingService.Print(printerName, images, _paperSettings);
+        return _platformPrintingService.Print(printerName, images, _paperSettings);
     }
 
     private void SaveImageToDesktop(List<Image> images)

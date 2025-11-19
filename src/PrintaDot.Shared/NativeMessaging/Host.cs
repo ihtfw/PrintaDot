@@ -1,7 +1,8 @@
 ﻿using System.Reflection;
 using PrintaDot.Shared.Common;
 using PrintaDot.Shared.CommunicationProtocol;
-using PrintaDot.Shared.CommunicationProtocol.V1;
+using PrintaDot.Shared.CommunicationProtocol.V1.Requests;
+using PrintaDot.Shared.CommunicationProtocol.V1.Responses;
 using PrintaDot.Shared.ImageGeneration.V1;
 using PrintaDot.Shared.Platform;
 using PrintaDot.Shared.Printing;
@@ -50,14 +51,7 @@ public class Host
         {
             if (message is not null)
             {
-                if (message.Type == MessageType.Exception)
-                {
-                    StreamHandler.Write(message);
-                }
-                else
-                {
-                    ProcessMessageByType(message);
-                }
+                ProcessMessageByType(message);
             }
         }
     }
@@ -85,14 +79,9 @@ public class Host
         switch (message)
         {
             case GetPrintersRequest getPrintersRequest:
-                var printersResponse = PlatformPrintingService.GetInstalledPrinters();
+                var printersResponse = PlatformPrintingService.GetInstalledPrinters(getPrintersRequest.Id);
 
                 StreamHandler.Write(printersResponse);
-                break;
-            case ExceptionMessageV1 exceptionMessageV1:
-                Log.LogMessage(exceptionMessageV1!.MessageText);
-
-                StreamHandler.Write(exceptionMessageV1);
                 break;
             case PrintRequestMessageV1 printRequestMessageV1:
                 var barcodeImageGenerator = new BarcodeImageGeneratorV1(printRequestMessageV1);
@@ -106,7 +95,15 @@ public class Host
                 };
 
                 var printService = new PrintService(barcodeImageGenerator, PlatformPrintingService, paperSettings);
-                printService.Print(printRequestMessageV1.Profile.PrinterName);
+                var isPrintedSuccessfully = printService.Print(printRequestMessageV1.Profile.PrinterName);
+
+                if (isPrintedSuccessfully)
+                {
+                    StreamHandler.Write(PrintResponseMessageV1.CreateSuccessResponse(message.Id));
+                } else
+                {
+                    StreamHandler.Write(PrintResponseMessageV1.CreateFailedResponse(message.Id));
+                }
                 break;
             case GetPrintStatusRequestMessageV1:
                 // TODO: Add handling for GetPrintStatusRequestMessageV1
@@ -114,7 +111,7 @@ public class Host
             default:
                 Log.LogMessage("Current type of messages is not supported");
 
-                var exception = ExceptionMessageV1.Create("Current type of messages is not supported");
+                var exception = ExceptionResponseV1.Create("Current type of messages is not supported");
                 StreamHandler.Write(exception);
                 break;
         }

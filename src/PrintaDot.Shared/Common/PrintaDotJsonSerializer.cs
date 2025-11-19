@@ -1,5 +1,6 @@
 ﻿using PrintaDot.Shared.CommunicationProtocol;
-using PrintaDot.Shared.CommunicationProtocol.V1;
+using PrintaDot.Shared.CommunicationProtocol.V1.Requests;
+using PrintaDot.Shared.CommunicationProtocol.V1.Responses;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -55,6 +56,7 @@ public static class PrintaDotJsonSerializer
             catch (JsonException ex)
             {
                 Log.LogMessage(ex.Message, nameof(PrintaDotJsonSerializer));
+                StreamHandler.Write(ExceptionResponseV1.Create($"{ex.Message}"));
 
                 return null;
             }
@@ -63,7 +65,7 @@ public static class PrintaDotJsonSerializer
         return JsonSerializer.Deserialize(value, type, options);
     }
 
-    public static TBase DeserializeAbstract<TBase>(string value, JsonConverter converter) where TBase : class
+    public static TBase? DeserializeAbstract<TBase>(string value, JsonConverter converter) where TBase : class
     {
         var options = new JsonSerializerOptions();
         ApplyDefaultJsonSerializerOptions(options);
@@ -86,7 +88,7 @@ public static class PrintaDotJsonSerializer
         return JsonSerializer.Serialize(value, typeof(TBase), options);
     }
 
-    public static Message FromJsonToMessage(this string self)
+    public static Message? FromJsonToMessage(this string self)
     {
         try
         {
@@ -96,7 +98,9 @@ public static class PrintaDotJsonSerializer
             if (!root.TryGetProperty("type", out var typeProperty) || !root.TryGetProperty("version", out var versionProperty))
             {
                 Log.LogMessage("Json must contains type and version fields", nameof(PrintaDotJsonSerializer));
-                return ExceptionMessageV1.Create($"Exception during deserialization: json must contains type and version fields");
+                StreamHandler.Write(ExceptionResponseV1.Create($"Exception during deserialization: json must contains type and version fields"));
+
+                return null;
             }
 
             var type = typeProperty.ToString();
@@ -104,7 +108,9 @@ public static class PrintaDotJsonSerializer
             if (!Enum.TryParse<MessageType>(type, out var messageType))
             {
                 Log.LogMessage($"Invalid message type '{type}'", nameof(PrintaDotJsonSerializer));
-                return ExceptionMessageV1.Create($"Exception during deserialization: invalid message type '{type}'");
+                StreamHandler.Write(ExceptionResponseV1.Create($"Exception during deserialization: invalid message type '{type}'"));
+
+                return null;
             }
 
             return DeserializeWithFallback(self, messageType, versionProperty.GetInt32());
@@ -112,12 +118,14 @@ public static class PrintaDotJsonSerializer
         catch (Exception ex)
         {
             Log.LogMessage(ex.StackTrace, nameof(JsonSerializer));
+
+            StreamHandler.Write(ExceptionResponseV1.Create($"{ex.Message}"));
         }
 
         return null;
     }
 
-    private static Message DeserializeWithFallback(string json, MessageType messageType, int requestedVersion)
+    private static Message? DeserializeWithFallback(string json, MessageType messageType, int requestedVersion)
     {
         for (var targetVersion = Utils.SupportedMessageVersion; targetVersion > 0; targetVersion--)
         {
@@ -133,7 +141,9 @@ public static class PrintaDotJsonSerializer
         }
 
         Log.LogMessage("Deserialization failed", nameof(PrintaDotJsonSerializer));
-        return ExceptionMessageV1.Create($"Exception during deserialization: '{messageType.ToString() ?? "NULL"} v{requestedVersion}' message type is not supported");
+        StreamHandler.Write(ExceptionResponseV1.Create($"Exception during deserialization: '{messageType.ToString() ?? "NULL"} v{requestedVersion}' message type is not supported"));
+
+        return null;
     }
 
     private static Message? DeserializeToVersion(string json, MessageType messageType, int targetVersion)

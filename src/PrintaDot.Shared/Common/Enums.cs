@@ -10,9 +10,26 @@ public enum Aligment
 
 public enum PrintStatus
 {
-    Queued = 0,
-    Printing = 1,
-    Success = 2,
-    Error = 3,
-    Unknown = 4,
+    Queued,
+    Printing,
+    Success,
+    Error,
+    Unknown,
+}
+
+public enum MessageType
+{
+    PrintRequest,
+    GetPrintStatusRequest,
+    GetPrintStatusResponse,
+    GetPrintersRequest,
+    Exception
+}
+
+public enum ResponseType
+{
+    Exception,
+    PrintResponse,
+    GetPrintersResponse,
+    UpdateNativeApp
 }

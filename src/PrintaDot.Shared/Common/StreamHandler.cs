@@ -39,11 +39,11 @@ public static class StreamHandler
     /// Writes message to the standard output stream.
     /// Encodes the message according to the native messaging protocol
     /// </summary>
-    public static void Write(Message message)
+    public static void Write(Response response)
     {
-        Log.LogMessage("Sending..." + message.ToJson());
+        Log.LogMessage("Sending..." + response.ToJson());
 
-        byte[] bytes = Encoding.UTF8.GetBytes(message.ToJson()!);
+        byte[] bytes = Encoding.UTF8.GetBytes(response.ToJson()!);
         Stream stdout = Console.OpenStandardOutput();
 
         stdout.WriteByte((byte)(bytes.Length >> 0 & 0xFF));

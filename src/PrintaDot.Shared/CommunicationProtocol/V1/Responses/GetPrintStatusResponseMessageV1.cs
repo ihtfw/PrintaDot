@@ -1,6 +1,6 @@
 ﻿using PrintaDot.Shared.Common;
 
-namespace PrintaDot.Shared.CommunicationProtocol.V1;
+namespace PrintaDot.Shared.CommunicationProtocol.V1.Responses;
 
 public class GetPrintStatusResponseMessageV1 : Message
 {
