@@ -36,7 +36,7 @@ async function initializeOptionsPage() {
     initCollapsibleGroups();
     initLanguageToggle();
 
-    //without this function values of all inputs on page got broken
+    //workaround: without this function values of all inputs on page got broken
     await new Promise(resolve => setTimeout(resolve, 0));
 
     await updateMappingTable()
@@ -365,10 +365,6 @@ async function resetToThermo() {
     if (currentProfileName !== 'Thermo') {
         await saveCurrentProfile();
     }
-}
-
-async function loadPrinters() {
-   
 }
 
 function showPrinterError(message) {

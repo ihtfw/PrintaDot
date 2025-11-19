@@ -39,7 +39,6 @@ class Profile {
         this.barcodeAngle = settings.barcodeAngle ?? 0;
     }
 
-    // Convert to plain object for storage
     toStorageObject() {
         return {
             id: this.id,
@@ -70,7 +69,6 @@ class Profile {
         };
     }
 
-    // Create from storage object
     static fromStorageObject(obj) {
         return new Profile(
             obj.id,

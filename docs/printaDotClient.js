@@ -90,7 +90,3 @@ class PrintaDotClient {
         return true;
     }
 }
-
-window.PrintaDotClient = PrintaDotClient;
-window.PrintItem = PrintItem;
-window.PrintRequest = PrintRequest;
