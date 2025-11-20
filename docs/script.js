@@ -65,16 +65,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         updateJSON();
     }
 
-    function defineMessage(connection) {
-        if (!connection.isExtensionConnected){
-            return "Extension is not connected";
-        } else if (connection.isNativeAppConnected){
-            return "Native app is not installed or working properetly";
-        } 
-
-        return "Print request send successfully";
-    }
-
     function updateJSON() {
         const request = fromDOM(
             printTypeInput, 
@@ -113,7 +103,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         messageDiv.textContent = text;
         messageDiv.className = "message " + type;
         messageDiv.style.display = "block";
-        setTimeout(() => { messageDiv.style.display = "none"; }, 2500);
+        setTimeout(() => { messageDiv.style.display = "none"; }, 3000);
     }
 
     addItemButton.addEventListener("click", addItem);
@@ -141,13 +131,7 @@ sendButton.addEventListener("click", async () =>  {
         try {
             showMessage(`Sending print request...`, "success");
 
-            const response = await client.sendPrintRequest(request);
-            
-            if (response.type === "Exception") {
-                showMessage(`Error: ${response.messageText}`, "error");
-            } else {
-                showMessage("Print request completed successfully!", "success");
-            }
+            await client.sendPrintRequest(request);
             
         } catch (error) {
             showMessage(`Error: ${error.message}`, "error");

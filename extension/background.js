@@ -17,7 +17,7 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
             {
                 type: "CheckExtensionInstalledResponse",
                 isConnected: true,
-                messageIdToResponse: request.id
+                messageIdToResponse: request.id,
             }, sendResponse
         );
         

@@ -52,7 +52,6 @@ class PrintaDotClient {
         };
         
         this._TIMEOUT_MS = 2000;
-        this._PRINT_TIMEOUT_MS = 120000;
         
         this._pendingMessages = new Map();
         this._initResponseListener();
@@ -61,6 +60,7 @@ class PrintaDotClient {
     _initResponseListener() {
         window.addEventListener("message", (event) => {
             const data = event.data;
+
             if (data?.messageIdToResponse) {
                 const pendingMessage = this._pendingMessages.get(data.messageIdToResponse);
                 if (pendingMessage) {
@@ -74,136 +74,89 @@ class PrintaDotClient {
                     }
                 }
             }
+        });
+    }
+
+    _sendMessage(messageType, messageData = {}, timeoutMs = this._TIMEOUT_MS) {
+        return new Promise((resolve, reject) => {
+            const messageId = generateGuid();
             
-            if (data?.type === this._MESSAGE_RESPONSE_TYPES.CHECK_EXTENSION || 
-                data?.type === this._MESSAGE_RESPONSE_TYPES.CHECK_NATIVE_APP) {
-                return;
+            const timeoutId = setTimeout(() => {
+                this._pendingMessages.delete(messageId);
+                reject(new Error(`Request timeout after ${timeoutMs}ms`));
+            }, timeoutMs);
+
+            this._pendingMessages.set(messageId, {
+                resolve,
+                reject,
+                timeoutId
+            });
+
+            try {
+                window.postMessage({
+                    type: messageType,
+                    id: messageId,
+                    ...messageData
+                }, "*");
+            } catch (error) {
+                clearTimeout(timeoutId);
+                this._pendingMessages.delete(messageId);
+                reject(new Error(`Failed to send message: ${error.message}`));
             }
         });
     }
 
-    _checkConnection(messageType, responseType) {
-        return new Promise((resolve) => {
-            const messageId = generateGuid();
-            const timeout = setTimeout(() => {
-                resolve({
-                    type: "Exception",
-                    messageIdToResponse: messageId,
-                    isConnected: false
-                });
-            }, this._TIMEOUT_MS);
-
-            window.postMessage({ 
-                type: messageType,
-                messageId: messageId 
-            }, "*");
-
-            const handler = (event) => {
-                if (event.data?.type === responseType) {
-                    clearTimeout(timeout);
-                    window.removeEventListener("message", handler);
-                    resolve(event.data);
-                }
-            };
-
-            window.addEventListener("message", handler);
-        });
-    }
-
     async checkExtensionConnection() {
-        const response = await this._checkConnection(
-            this._MESSAGE_TYPES.CHECK_EXTENSION,
-            this._MESSAGE_RESPONSE_TYPES.CHECK_EXTENSION,
-        );
+        try {
+            const response = await this._sendMessage(this._MESSAGE_TYPES.CHECK_EXTENSION);
+            if (!response.isConnected) {
+                throw new Error("Extension is not connected");
+            }
 
-        if (!response.isConnected) {
-            response.type = "Exception";
-            response.messageText = "Extension is not connected";
             return response;
+        } catch (error) {
+            throw new Error(`Extension connection failed!`);
         }
-
-        response.messageText = "Extension connected successfully";
-        return response;
     }
 
     async checkNativeAppConnection() {
-        const response = await this._checkConnection(
-            this._MESSAGE_TYPES.CHECK_NATIVE_APP,
-            this._MESSAGE_RESPONSE_TYPES.CHECK_NATIVE_APP
-        );
-
-        if (!response.isConnected) {
-            response.type = "Exception";
-            response.messageText = "Native application is not connected";
+        try {
+            const response = await this._sendMessage(this._MESSAGE_TYPES.CHECK_NATIVE_APP);
+            if (!response.isConnected) {
+                throw new Error("Native application is not connected");
+            }
+            
             return response;
+        } catch (error) {
+            throw new Error(`Native app connection failed!`);
         }
-        
-        response.messageText = "Native application connected successfully";
-        return response;
     }
 
     async checkAllConnections() {
-        const extensionConnectionMessage = await this.checkExtensionConnection();
-        const nativeAppConnectionMessage = await this.checkNativeAppConnection();
-        
-        if (!extensionConnectionMessage.isConnected) {
-            return extensionConnectionMessage;
-        } else if (!nativeAppConnectionMessage.isConnected) {
-            return nativeAppConnectionMessage;
-        }
-
-        return {
-            type: "CheckAllConnectionsResponse",
-            messageText: "Extension and Native app connected successfully",
-            isConnected: true,
-        };
+        await this.checkExtensionConnection();
+        await this.checkNativeAppConnection();
     }
 
     calculateTimeout(printRequest) {
         const itemsCount = printRequest.items.length;
         return (2 * 60 * 1000) + (itemsCount * 2 * 1000);
     }
-
+    
+    /**
+    * Method for sending print request to extension.
+    * 
+    * @param {PrintRequest} printRequest
+    */
     async sendPrintRequest(printRequest) {
-        const connections = await this.checkAllConnections();
-        if (!connections.isConnected) {
-            return connections;
+        if (!(printRequest instanceof PrintRequest)) {
+            throw new Error("printRequest must be an instance of PrintRequest");
         }
 
+        await this.checkAllConnections();
+
         const timeoutMs = this.calculateTimeout(printRequest);
+        const message = printRequest.toObject();
 
-        return new Promise((resolve, reject) => {
-            if (!(printRequest instanceof PrintRequest)) {
-                reject(new Error("printRequest must be an instance of PrintRequest"));
-                return;
-            }
-            
-            const message = printRequest.toObject();
-            
-            const timeoutId = setTimeout(() => {
-                this._pendingMessages.delete(message.id);
-                reject(new Error(`Print request timeout after ${timeoutMs}ms`));
-            }, timeoutMs);
-
-            this._pendingMessages.set(message.id, {
-                resolve: (response) => {
-                    clearTimeout(timeoutId);
-                    resolve(response);
-                },
-                reject: (error) => {
-                    clearTimeout(timeoutId);
-                    reject(error);
-                },
-                timeoutId: timeoutId
-            });
-
-            try {
-                window.postMessage(message, "*");
-            } catch (error) {
-                clearTimeout(timeoutId);
-                this._pendingMessages.delete(message.id);
-                reject(new Error(`Failed to send print request: ${error.message}`));
-            }
-        });
+        return this._sendMessage(this._MESSAGE_TYPES.PRINT_REQUEST, message, timeoutMs);
     }
 }
