@@ -6,9 +6,11 @@ using PrintaDot.Shared.CommunicationProtocol.V1.Responses;
 namespace PrintaDot.Shared.Common;
 
 [JsonSerializable(typeof(Message))]
+[JsonSerializable(typeof(Response))]
 [JsonSerializable(typeof(PrintRequestMessageV1))]
 [JsonSerializable(typeof(PrintRequestMessageV1.PrintProfile))]
 [JsonSerializable(typeof(PrintRequestMessageV1.Item))]
+[JsonSerializable(typeof(PrintResponseMessageV1))]
 [JsonSerializable(typeof(GetPrintStatusRequestMessageV1))]
 [JsonSerializable(typeof(GetPrintStatusResponseMessageV1))]
 [JsonSerializable(typeof(ExceptionResponseV1))]
