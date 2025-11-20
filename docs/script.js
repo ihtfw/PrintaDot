@@ -1,5 +1,4 @@
 document.addEventListener("DOMContentLoaded", async () => {
-
     const printTypeInput = document.getElementById('printType');
     const duplicateBarcodeCheckbox = document.getElementById('duplicateBarcode');
     const itemsContainer = document.getElementById('itemsContainer');
@@ -7,7 +6,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     const itemCountSelect = document.getElementById('itemCount');
     const sendButton = document.getElementById('sendBtn');
     const clearButton = document.getElementById('clearBtn');
-    const jsonOutput = document.getElementById('jsonOutput');
     const messageDiv = document.getElementById('message');
 
     const client = new PrintaDotClient();
@@ -45,10 +43,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         div.querySelector(".remove-item").addEventListener("click", () => {
             div.remove();
             updateItemNumbers();
-            updateJSON();
         });
-
-        div.querySelectorAll("input").forEach(i => i.addEventListener("input", updateJSON));
 
         return div;
     }
@@ -62,23 +57,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     function addItem() {
         const count = document.querySelectorAll(".item").length + 1;
         itemsContainer.appendChild(createItemElement(count));
-        updateJSON();
     }
 
-    function updateJSON() {
-        const request = fromDOM(
-            printTypeInput, 
-            duplicateBarcodeCheckbox, 
-            itemsContainer
-        );
-
-        jsonOutput.textContent = request.toJSON(true);
-    }
-
-    function  fromDOM(printTypeInput, duplicateBarcodeCheckbox, itemsContainer) {
-        const printType = printTypeInput.value.trim() || "default";
-        const duplicateBarcode = duplicateBarcodeCheckbox.checked;
-
+    function getItemsFromDOM() {
         const items = [];
         const itemElements = itemsContainer.querySelectorAll(".item");
 
@@ -89,14 +70,18 @@ document.addEventListener("DOMContentLoaded", async () => {
             const barcode = itemEl.querySelector(`#barcode${i}`).value.trim() || `1234567890${i}`;
             let figures = itemEl.querySelector(`#figures${i}`).value.trim();
 
-            if (duplicateBarcode && !figures) {
+            if (duplicateBarcodeCheckbox.checked && !figures) {
                 figures = barcode;
             }
 
-            items.push(new PrintItem(header, barcode, figures || null));
+            items.push({
+                header: header || null,
+                barcode: barcode,
+                figures: figures || null
+            });
         });
 
-        return new PrintRequest(printType, items);
+        return items;
     }
 
     function showMessage(text, type = "success") {
@@ -112,27 +97,26 @@ document.addEventListener("DOMContentLoaded", async () => {
         const target = Number(itemCountSelect.value);
         let current = itemsContainer.querySelectorAll(".item").length;
 
-        while (current < target) { addItem(); current++; }
+        while (current < target) { 
+            addItem(); 
+            current++; 
+        }
         while (current > target) {
             itemsContainer.lastElementChild.remove();
             current--;
         }
         updateItemNumbers();
-        updateJSON();
     });
 
-sendButton.addEventListener("click", async () =>  {
-        const request = fromDOM(
-            printTypeInput,
-            duplicateBarcodeCheckbox,
-            itemsContainer
-        );
-        
+    sendButton.addEventListener("click", async () => {
+        const printType = printTypeInput.value.trim() || "default";
+        const items = getItemsFromDOM();
+
         try {
             showMessage(`Sending print request...`, "success");
-
-            await client.sendPrintRequest(request);
             
+            await client.sendPrintRequest(items, printType);
+            showMessage(`All items printed successfully`, "success");
         } catch (error) {
             showMessage(`Error: ${error.message}`, "error");
         }
@@ -144,11 +128,7 @@ sendButton.addEventListener("click", async () =>  {
         itemsContainer.innerHTML = "";
         addItem();
         itemCountSelect.value = 1;
-        updateJSON();
     });
-
-    printTypeInput.addEventListener("input", updateJSON);
-    duplicateBarcodeCheckbox.addEventListener("change", updateJSON);
 
     printTypeInput.value = "default";
     addItem();

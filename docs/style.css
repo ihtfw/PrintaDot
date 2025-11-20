@@ -212,18 +212,6 @@ input[type="text"]::placeholder {
     margin-bottom: 15px;
 }
 
-#jsonOutput {
-    background-color: #f8f9fa;
-    border: 1px solid #e9ecef;
-    border-radius: 6px;
-    padding: 15px;
-    font-family: monospace;
-    white-space: pre-wrap;
-    max-height: 300px;
-    overflow-y: auto;
-    font-size: 14px;
-}
-
 .message {
     padding: 12px;
     border-radius: 6px;
