@@ -61,7 +61,6 @@ class PrintaDotClient {
     initResponseListener() {
         window.addEventListener("message", (event) => {
             const data = event.data;
-            console.log(data);
             if (data?.messageIdToResponse) {
                 const pendingMessage = this.pendingMessages.get(data.messageIdToResponse);
                 if (pendingMessage) {
@@ -87,7 +86,11 @@ class PrintaDotClient {
         return new Promise((resolve) => {
             const messageId = generateGuid();
             const timeout = setTimeout(() => {
-                resolve(false);
+                resolve({
+                    type: "Exception",
+                    messageIdToResponse: messageId,
+                    isConnected: false
+                });
             }, this.TIMEOUT_MS);
 
             window.postMessage({ 
@@ -99,7 +102,7 @@ class PrintaDotClient {
                 if (event.data?.type === responseType) {
                     clearTimeout(timeout);
                     window.removeEventListener("message", handler);
-                    resolve(event.data.isConnected || false);
+                    resolve(event.data);
                 }
             };
 
@@ -107,30 +110,68 @@ class PrintaDotClient {
         });
     }
 
-    checkExtensionConnection() {
-        return this.checkConnection(
+    async checkExtensionConnection() {
+        const response = await this.checkConnection(
             this.MESSAGE_TYPES.CHECK_EXTENSION,
-            this.MESSAGE_RESPONSE_TYPES.CHECK_EXTENSION
+            this.MESSAGE_RESPONSE_TYPES.CHECK_EXTENSION,
         );
+
+        if (!response.isConnected) {
+            response.type = "Exception";
+            response.messageText = "Extension is not connected";
+            return response;
+        }
+
+        response.messageText = "Extension connected successfully";
+        return response;
     }
 
-    checkNativeAppConnection() {
-        return this.checkConnection(
+    async checkNativeAppConnection() {
+        const response = await this.checkConnection(
             this.MESSAGE_TYPES.CHECK_NATIVE_APP,
             this.MESSAGE_RESPONSE_TYPES.CHECK_NATIVE_APP
         );
+
+        if (!response.isConnected) {
+            response.type = "Exception";
+            response.messageText = "Native application is not connected";
+            return response;
+        }
+        
+        response.messageText = "Native application connected successfully";
+        return response;
     }
 
     async checkAllConnections() {
-        const isExtensionConnected = await this.checkExtensionConnection();
-        const isNativeAppConnected = await this.checkNativeAppConnection();
+        const extensionConnectionMessage = await this.checkExtensionConnection();
+        const nativeAppConnectionMessage = await this.checkNativeAppConnection();
         
-        return { isNativeAppConnected, isExtensionConnected };
+        if (!extensionConnectionMessage.isConnected) {
+            return extensionConnectionMessage;
+        } else if (!nativeAppConnectionMessage.isConnected) {
+            return nativeAppConnectionMessage;
+        }
+
+        return {
+            type: "CheckAllConnectionsResponse",
+            messageText: "Extension and Native app connected successfully",
+            isConnected: true,
+        };
     }
 
     async sendPrintRequest(printRequest, timeoutMs = this.PRINT_TIMEOUT_MS) {
+        const connections = await this.checkAllConnections();
+        if (!connections.isConnected) {
+            return connections;
+        }
+
         return new Promise((resolve, reject) => {
-            const message = printRequest.toObject(); // проверять инстанс PrintObject если нет то ошибка
+            if (!(printRequest instanceof PrintRequest)) {
+                reject(new Error("printRequest must be an instance of PrintRequest"));
+                return;
+            }
+            
+            const message = printRequest.toObject();
             
             const timeoutId = setTimeout(() => {
                 this.pendingMessages.delete(message.id);
@@ -145,13 +186,12 @@ class PrintaDotClient {
                 reject: (error) => {
                     clearTimeout(timeoutId);
                     reject(error);
-                }
+                },
+                timeoutId: timeoutId
             });
 
             try {
                 window.postMessage(message, "*");
-                console.log("Sent print request with ID:", message.id);
-                console.log("Waiting for response with messageIdToResponse:", message.id);
             } catch (error) {
                 clearTimeout(timeoutId);
                 this.pendingMessages.delete(message.id);

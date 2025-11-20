@@ -132,16 +132,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 
 sendButton.addEventListener("click", async () =>  {
-        var connection = await client.checkAllConnections();
-
-        console.log(connection);
-
-        if (!connection.isExtensionConnected || !connection.isNativeAppConnected) {
-            var message = defineMessage(connection);
-            showMessage(message, "error");
-            return;
-        }
-
         const request = fromDOM(
             printTypeInput,
             duplicateBarcodeCheckbox,
@@ -149,6 +139,8 @@ sendButton.addEventListener("click", async () =>  {
         );
         
         try {
+            showMessage(`Sending print request...`, "success");
+
             const response = await client.sendPrintRequest(request);
             
             if (response.type === "Exception") {
@@ -157,11 +149,8 @@ sendButton.addEventListener("click", async () =>  {
                 showMessage("Print request completed successfully!", "success");
             }
             
-            console.log("Print response:", response);
-            
         } catch (error) {
             showMessage(`Error: ${error.message}`, "error");
-            console.error("Print request failed:", error);
         }
     });
 
