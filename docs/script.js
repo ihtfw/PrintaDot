@@ -59,6 +59,24 @@ document.addEventListener("DOMContentLoaded", async () => {
         itemsContainer.appendChild(createItemElement(count));
     }
 
+    function updateFiguresFields() {
+        const itemElements = itemsContainer.querySelectorAll(".item");
+        
+        itemElements.forEach((itemEl, index) => {
+            const i = index + 1;
+            const barcodeInput = itemEl.querySelector(`#barcode${i}`);
+            const figuresInput = itemEl.querySelector(`#figures${i}`);
+            
+            if (duplicateBarcodeCheckbox.checked) {
+                figuresInput.value = barcodeInput.value;
+            } else {
+                if (figuresInput.value === barcodeInput.value) {
+                    figuresInput.value = "";
+                }
+            }
+        });
+    }
+
     function getItemsFromDOM() {
         const items = [];
         const itemElements = itemsContainer.querySelectorAll(".item");
@@ -91,6 +109,18 @@ document.addEventListener("DOMContentLoaded", async () => {
         setTimeout(() => { messageDiv.style.display = "none"; }, 3000);
     }
 
+    duplicateBarcodeCheckbox.addEventListener("change", updateFiguresFields);
+
+    itemsContainer.addEventListener("input", (e) => {
+        if (e.target.id.startsWith('barcode') && duplicateBarcodeCheckbox.checked) {
+            const index = e.target.id.replace('barcode', '');
+            const figuresInput = document.getElementById(`figures${index}`);
+            if (figuresInput) {
+                figuresInput.value = e.target.value;
+            }
+        }
+    });
+
     addItemButton.addEventListener("click", addItem);
 
     itemCountSelect.addEventListener("change", () => {
@@ -106,6 +136,9 @@ document.addEventListener("DOMContentLoaded", async () => {
             current--;
         }
         updateItemNumbers();
+        if (duplicateBarcodeCheckbox.checked) {
+            updateFiguresFields();
+        }
     });
 
     sendButton.addEventListener("click", async () => {
