@@ -51,7 +51,7 @@ class PrintaDotClient {
             CHECK_NATIVE_APP: "CheckConnetcionToNativeAppResponse"
         };
         
-        this._TIMEOUT_MS = 1000;
+        this._TIMEOUT_MS = 2000;
         this._PRINT_TIMEOUT_MS = 120000;
         
         this._pendingMessages = new Map();
