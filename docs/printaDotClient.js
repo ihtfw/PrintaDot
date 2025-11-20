@@ -40,32 +40,32 @@ class PrintRequest {
 
 class PrintaDotClient {
     constructor() {
-        this.MESSAGE_TYPES = {
+        this._MESSAGE_TYPES = {
             CHECK_EXTENSION: "CheckExtensionInstalled",
             CHECK_NATIVE_APP: "CheckConnetcionToNativeApp",
             PRINT_REQUEST: "PrintRequest"
         };
         
-        this.MESSAGE_RESPONSE_TYPES = {
+        this._MESSAGE_RESPONSE_TYPES = {
             CHECK_EXTENSION: "CheckExtensionInstalledResponse",
             CHECK_NATIVE_APP: "CheckConnetcionToNativeAppResponse"
         };
         
-        this.TIMEOUT_MS = 1000;
-        this.PRINT_TIMEOUT_MS = 7000;
+        this._TIMEOUT_MS = 1000;
+        this._PRINT_TIMEOUT_MS = 7000;
         
-        this.pendingMessages = new Map();
-        this.initResponseListener();
+        this._pendingMessages = new Map();
+        this._initResponseListener();
     }
 
-    initResponseListener() {
+    _initResponseListener() {
         window.addEventListener("message", (event) => {
             const data = event.data;
             if (data?.messageIdToResponse) {
-                const pendingMessage = this.pendingMessages.get(data.messageIdToResponse);
+                const pendingMessage = this._pendingMessages.get(data.messageIdToResponse);
                 if (pendingMessage) {
                     clearTimeout(pendingMessage.timeoutId);
-                    this.pendingMessages.delete(data.messageIdToResponse);
+                    this._pendingMessages.delete(data.messageIdToResponse);
                     
                     if (data.type === "Exception") {
                         pendingMessage.reject(new Error(data.messageText));
@@ -75,14 +75,14 @@ class PrintaDotClient {
                 }
             }
             
-            if (data?.type === this.MESSAGE_RESPONSE_TYPES.CHECK_EXTENSION || 
-                data?.type === this.MESSAGE_RESPONSE_TYPES.CHECK_NATIVE_APP) {
+            if (data?.type === this._MESSAGE_RESPONSE_TYPES.CHECK_EXTENSION || 
+                data?.type === this._MESSAGE_RESPONSE_TYPES.CHECK_NATIVE_APP) {
                 return;
             }
         });
     }
 
-    checkConnection(messageType, responseType) {
+    _checkConnection(messageType, responseType) {
         return new Promise((resolve) => {
             const messageId = generateGuid();
             const timeout = setTimeout(() => {
@@ -91,7 +91,7 @@ class PrintaDotClient {
                     messageIdToResponse: messageId,
                     isConnected: false
                 });
-            }, this.TIMEOUT_MS);
+            }, this._TIMEOUT_MS);
 
             window.postMessage({ 
                 type: messageType,
@@ -111,9 +111,9 @@ class PrintaDotClient {
     }
 
     async checkExtensionConnection() {
-        const response = await this.checkConnection(
-            this.MESSAGE_TYPES.CHECK_EXTENSION,
-            this.MESSAGE_RESPONSE_TYPES.CHECK_EXTENSION,
+        const response = await this._checkConnection(
+            this._MESSAGE_TYPES.CHECK_EXTENSION,
+            this._MESSAGE_RESPONSE_TYPES.CHECK_EXTENSION,
         );
 
         if (!response.isConnected) {
@@ -127,9 +127,9 @@ class PrintaDotClient {
     }
 
     async checkNativeAppConnection() {
-        const response = await this.checkConnection(
-            this.MESSAGE_TYPES.CHECK_NATIVE_APP,
-            this.MESSAGE_RESPONSE_TYPES.CHECK_NATIVE_APP
+        const response = await this._checkConnection(
+            this._MESSAGE_TYPES.CHECK_NATIVE_APP,
+            this._MESSAGE_RESPONSE_TYPES.CHECK_NATIVE_APP
         );
 
         if (!response.isConnected) {
@@ -159,7 +159,7 @@ class PrintaDotClient {
         };
     }
 
-    async sendPrintRequest(printRequest, timeoutMs = this.PRINT_TIMEOUT_MS) {
+    async sendPrintRequest(printRequest, timeoutMs = this._PRINT_TIMEOUT_MS) {
         const connections = await this.checkAllConnections();
         if (!connections.isConnected) {
             return connections;
@@ -174,11 +174,11 @@ class PrintaDotClient {
             const message = printRequest.toObject();
             
             const timeoutId = setTimeout(() => {
-                this.pendingMessages.delete(message.id);
+                this._pendingMessages.delete(message.id);
                 reject(new Error(`Print request timeout after ${timeoutMs}ms`));
             }, timeoutMs);
 
-            this.pendingMessages.set(message.id, {
+            this._pendingMessages.set(message.id, {
                 resolve: (response) => {
                     clearTimeout(timeoutId);
                     resolve(response);
@@ -194,7 +194,7 @@ class PrintaDotClient {
                 window.postMessage(message, "*");
             } catch (error) {
                 clearTimeout(timeoutId);
-                this.pendingMessages.delete(message.id);
+                this._pendingMessages.delete(message.id);
                 reject(new Error(`Failed to send print request: ${error.message}`));
             }
         });
