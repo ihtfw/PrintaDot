@@ -52,7 +52,7 @@ class PrintaDotClient {
         };
         
         this._TIMEOUT_MS = 1000;
-        this._PRINT_TIMEOUT_MS = 7000;
+        this._PRINT_TIMEOUT_MS = 120000;
         
         this._pendingMessages = new Map();
         this._initResponseListener();
@@ -159,11 +159,18 @@ class PrintaDotClient {
         };
     }
 
-    async sendPrintRequest(printRequest, timeoutMs = this._PRINT_TIMEOUT_MS) {
+    calculateTimeout(printRequest) {
+        const itemsCount = printRequest.items.length;
+        return (2 * 60 * 1000) + (itemsCount * 2 * 1000);
+    }
+
+    async sendPrintRequest(printRequest) {
         const connections = await this.checkAllConnections();
         if (!connections.isConnected) {
             return connections;
         }
+
+        const timeoutMs = this.calculateTimeout(printRequest);
 
         return new Promise((resolve, reject) => {
             if (!(printRequest instanceof PrintRequest)) {
