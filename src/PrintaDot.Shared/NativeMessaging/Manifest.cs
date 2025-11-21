@@ -22,14 +22,24 @@ public static class Manifest
     [JsonPropertyName("type")]
     public static string Type => "stdio";
     [JsonPropertyName("allowed_origins")]
+#if DEBUG
     public static string[] AllowedOrigins { get; set; } = ["chrome-extension://ncpdldoackcgjeocgpkjbfimpdjkolpg/"];
-
+#else
+    public static string[] AllowedOrigins { get; set; } = ["chrome-extension://mafhdhphilplnoldeghpeaafffeibaej/"];
+#endif
     [JsonIgnore]
     public static string ManifestPath => Path.Combine(Utils.TargetApplicationDirectory, ManifestFileName);
     [JsonIgnore]
     public static string ManifestFileName => HostName + "-manifest.json";
     public static void GenerateManifest()
     {
+        if (File.Exists(ManifestPath))
+        {
+            Log.LogMessage("Manifest already exist");
+
+            return;
+        }
+
         var manifest = new Dictionary<string, object>
         {
             ["name"] = HostName,

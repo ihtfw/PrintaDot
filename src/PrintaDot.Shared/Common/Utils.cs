@@ -67,27 +67,34 @@ public static class Utils
     public static bool IsLocalAppDataDirectory(string directory) =>
         string.Equals(directory, TargetApplicationDirectory, StringComparison.OrdinalIgnoreCase);
 
+    public static void CreatePrintaDotFolderInLocalAppData()
+    {
+        var currentDirectory = AssemblyLoadDirectory();
+
+        if (Directory.Exists(TargetApplicationDirectory))
+        {
+            return;
+        }
+
+        Directory.CreateDirectory(TargetApplicationDirectory);
+    }
+
     /// <summary>
     /// Moving application to %LocalAppData%/PrintaDot/ directory.
     /// </summary>
     /// <returns></returns>
-    public static bool MoveApplicationToLocalAppData(string currentDictionary)
+    public static bool MoveApplicationToLocalAppData()
     {
         var currentDirectory = AssemblyLoadDirectory();
 
         if (IsLocalAppDataDirectory(currentDirectory))
         {
+            Log.LogMessage("Application is alredy in local app data");
             return true;
         }
 
         try
         {
-            if (Directory.Exists(TargetApplicationDirectory))
-            {
-                Directory.Delete(TargetApplicationDirectory, true);
-            }
-
-            Directory.CreateDirectory(TargetApplicationDirectory);
 
 #if DEBUG
             var isFilesMoved =  CopyAllFiles(currentDirectory, TargetApplicationDirectory);
@@ -106,7 +113,7 @@ public static class Utils
             return false;
         }
 
-        return false;
+        return true;
     }
 
     /// <summary>
@@ -127,8 +134,7 @@ public static class Utils
         {
             var publishFiles = new[]
             {
-                "PrintaDot.exe",
-                Manifest.ManifestFileName,
+                "PrintaDot.exe"
             };
 
             foreach (var fileName in publishFiles)
@@ -188,7 +194,7 @@ public static class Utils
         }
         catch (Exception ex)
         {
-            //Console.WriteLine($"Error moving files");
+            Console.WriteLine($"Error moving files");
 
             return false;
         }
