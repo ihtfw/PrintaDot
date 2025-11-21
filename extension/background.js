@@ -77,10 +77,16 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
 });
 
 function sendResponseFromExtension(response, sendResponse) {
-    sendResponse(response);
+    if (sendResponse) {
+        sendResponse(response);
+        return;
+    }
 
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-        chrome.tabs.sendMessage(tabs[0].id, response);
+        if (tabs[0]?.id) {
+            chrome.tabs.sendMessage(tabs[0].id, response);
+
+        }
     });
 }
 
@@ -241,10 +247,9 @@ async function onNativeMessage(message) {
 
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
         chrome.tabs.sendMessage(tabs[0].id, message).catch((error) => {
-        
+            // if reciving end does not exists do nothing
+        });
     });
-    });
-    
 }
 
 async function onDisconnected() {
