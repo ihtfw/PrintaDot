@@ -163,6 +163,7 @@ function handlePrint() {
     chrome.runtime.sendMessage({
         type: "PrintRequest",
         version: 1,
+        id: generateGuid(),
         profile: profile,
         isFromExtension: true,
         items: [

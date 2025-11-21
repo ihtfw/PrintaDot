@@ -64,8 +64,9 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
     }
     request = await addProfile(request);
 
+    console.log("request");
     console.log(request);
-    
+    console.log("request");
     const response = await sendMessageWithResponse(request);
     if (response && response.type === "Exception") {
         chrome.runtime.sendMessage({
@@ -215,7 +216,6 @@ async function onNativeMessage(message) {
 
     console.log("Native message:", message);
 
-    // Обработка ответов на наши сообщения
     if (message.messageIdToResponse) {
         const pendingMessage = pendingMessages.get(message.messageIdToResponse);
 
@@ -240,7 +240,9 @@ async function onNativeMessage(message) {
     });
 
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-        chrome.tabs.sendMessage(tabs[0].id, message);
+        chrome.tabs.sendMessage(tabs[0].id, message).catch((error) => {
+        
+    });
     });
     
 }
@@ -279,7 +281,6 @@ async function connect() {
         console.error("Connection failed:", error);
         isConnected = false;
         
-        // Уведомляем об ошибке соединения все ожидающие сообщения
         for (const [messageId, pendingMessage] of pendingMessages.entries()) {
             clearTimeout(pendingMessage.timeoutId);
             pendingMessage.resolve({
