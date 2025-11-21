@@ -64,9 +64,8 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
     }
     request = await addProfile(request);
 
-    console.log("request");
     console.log(request);
-    console.log("request");
+
     const response = await sendMessageWithResponse(request);
     if (response && response.type === "Exception") {
         chrome.runtime.sendMessage({
@@ -246,9 +245,11 @@ async function onNativeMessage(message) {
     });
 
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-        chrome.tabs.sendMessage(tabs[0].id, message).catch((error) => {
-            // if reciving end does not exists do nothing
-        });
+        if (tabs[0]?.id) {
+            chrome.tabs.sendMessage(tabs[0].id, message).catch((error) => {
+                // if reciving end does not exists do nothing
+            });
+        }
     });
 }
 

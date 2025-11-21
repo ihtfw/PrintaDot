@@ -168,7 +168,7 @@ function handlePrint() {
         isFromExtension: true,
         items: [
             {
-                header: header,
+                header: header || null,
                 barcode: barcode
             }
         ]

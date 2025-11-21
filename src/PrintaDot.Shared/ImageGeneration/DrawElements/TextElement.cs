@@ -13,8 +13,13 @@ internal class TextElement : Element, IDrawElement
     public FontRectangle TextBbox { get; set; }
     public Font Font { get; set; } = SystemFonts.CreateFont(ImageGenerationHelper.DEFAULT_FONT, 10);
 
-    public virtual void Draw(Image<Rgba32> image)
+    public void Draw(Image<Rgba32> image)
     {
+        if (string.IsNullOrEmpty(Text))
+        {
+            return;
+        }
+
         var textImage = new Image<Rgba32>((int)TextBbox.Width, (int)TextBbox.Height);
 
         textImage.Mutate(ctx =>

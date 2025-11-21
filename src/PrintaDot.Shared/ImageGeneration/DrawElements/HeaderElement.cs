@@ -1,6 +1,7 @@
 ﻿using PrintaDot.Shared.ImageGeneration.V1;
 using SixLabors.Fonts;
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 using System.Text;
 
 namespace PrintaDot.Shared.ImageGeneration.DrawElements;
@@ -9,6 +10,11 @@ internal class HeaderElement : TextElement
 {
     public HeaderElement(PixelImageProfileV1 profile, string text, PointF barcodeTopLeft)
     {
+        if (string.IsNullOrEmpty(text))
+        {
+            return;
+        }
+
         Text = profile.TextTrimLength > 0 && text.Length > profile.TextTrimLength
             ? text.Substring(0, profile.TextTrimLength)
             : text;
@@ -72,5 +78,5 @@ internal class HeaderElement : TextElement
         }
 
         return result.ToString();
-    }
+    } 
 }

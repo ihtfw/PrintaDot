@@ -36,12 +36,4 @@ internal class FiguresElement : TextElement
         TopLeft += new PointF(0, ImageGenerationHelper.MARGIM_FROM_BARCODE);
         TopLeft = new PointF(GetHorizontalAligment(profile.NumbersAlignment, profile.LabelWidth, TextBbox.Width, TopLeft.X), TopLeft.Y);
     }
-
-    public override void Draw(Image<Rgba32> image)
-    {
-        if (!string.IsNullOrEmpty(Text))
-        {
-            base.Draw(image);
-        }
-    }
 }
