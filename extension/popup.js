@@ -39,6 +39,10 @@ async function showNativeAppNotInstalledView() {
         </div>
     `;
 
+    document.getElementById('closeBtn').addEventListener('click', function() {
+        window.close();
+    });;
+
     document.getElementById('downloadNativeAppBtn').addEventListener('click', downloadNativeApp);
 }
 
@@ -251,8 +255,10 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 document.addEventListener('DOMContentLoaded', async function() {
     await initLocalization();
     
-    const errorCloseBtn = document.getElementById('errorCloseBtn');
-    errorCloseBtn.addEventListener('click', hideError);
+    document.getElementById('errorCloseBtn').addEventListener('click', hideError);
+    document.getElementById('closeBtn').addEventListener('click', function() {
+        window.close();
+    });;
 
     const isConnected = await checkNativeAppConnection();
     
