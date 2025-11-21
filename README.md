@@ -49,36 +49,51 @@ The extension provides comprehensive printing configuration:
 7. Once the manifest is generated and you see "application ready to work" in console, you can close it
 8. Enable the extension and pin it to the browser toolbar
 
-## Developer API
+#  PrintaDotClient (for developers)
 
-Integrate barcode printing directly into your web applications using the provided API.
+Helper class that communicates with the PrintaDot browser extension and the native host application.
 
-### JavaScript Integration
+### sendPrintRequest
+
+Before printing, method **sendPrintRequest** ensure that both parts of the system are available:
+
+- Browser extension connection.
+If the extension is not installed or does not respond, an error is thrown.
+
+- Native host connection
+The method confirms that the native printing application is running and reachable.
+
 
 ```javascript
-function sendPrintRequest(jsonData) {
-    var printData = JSON.parse(jsonData);
-    window.postMessage(printData, '*');
-}
+  /**
+   * Send print request to PrintaDot extension.
+   *
+   * @param {PrintItem[]} items - array of PrintItem objects
+   * @param {string} printType - print profile
+   * @returns {Promise<void>}
+   */
+  async sendPrintRequest(items, printType = "default")
 ```
 
-### Print Request Json Format
+## PrintItem
 
-Print type field by default will map with A4 printing profile but you can change it in extension options. All json fields are required exept item figures. If you send empty or null items list to extensions it will print nothing.
+Represents a single printable entity passed to the PrintaDot extension.
+Each item contains a mandatory barcode value and optional header/figures text.
 
-```json
-{
-  "version": 1,
-  "type": "PrintRequest",
-  "printType": "*your print type*",
-  "items": [
-    {
-      "header": "item header",
-      "barcode": "123456789012",
-      "figures": "text below barcode" //nullable
-    }
-  ] // nullable
+
+
+```javascript
+/**
+ * @typedef PrintItem
+ * @property {string?} header  - Optional header text
+ * @property {string} barcode  - Barcode value (required)
+ * @property {string?} figures - Optional figures string
+ */
+class PrintItem {
+  constructor(header, barcode, figures = null) {
+    this.header = header;
+    this.barcode = barcode;
+    this.figures = figures;
+  }
 }
 ```
-
-⚠️ Note: The version and type fields are required for the extension to identify the message format. Currently, only "PrintRequest" with version: 1 is supported.
