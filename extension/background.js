@@ -75,12 +75,10 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
     }
 });
 
+//might be errors when reciever does not exists, but doesnt affect functionality
 function sendResponseFromExtension(response, sendResponse) {
-    if (sendResponse) {
-        sendResponse(response);
-        return;
-    }
-
+    
+    sendResponse(response);
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
         if (tabs[0]?.id) {
             chrome.tabs.sendMessage(tabs[0].id, response);

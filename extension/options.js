@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', async function () {
 });
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    console.log(request);
     if (request.type === "Exception" && request.messageText) {
         showError(request.messageText);
     }
@@ -31,7 +32,6 @@ async function initializeOptionsPage() {
     document.getElementById('headerInput').value = 'test';
     document.getElementById('barcodeInput').value = '0123456789';
 
-    loadPrinters();
     initEventHandlers();
     initCollapsibleGroups();
     initLanguageToggle();
@@ -406,11 +406,12 @@ function handlePrint() {
     chrome.runtime.sendMessage({
         type: "PrintRequest",
         version: 1,
+        id: generateGuid(),
         profile: profile,
         isFromExtension: true,
         items: [
             {
-                header: header,
+                header: header || null,
                 barcode: barcode
             }
         ]
@@ -420,6 +421,7 @@ function handlePrint() {
 async function getPrinters() {
     chrome.runtime.sendMessage({
         type: "GetPrintersRequest",
+        id: generateGuid(),
         version: 1,
     });
 }
