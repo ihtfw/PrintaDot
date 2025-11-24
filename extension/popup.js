@@ -220,7 +220,7 @@ async function downloadNativeApp() {
 function checkNativeAppConnection() {
     return new Promise((resolve) => {
         chrome.runtime.sendMessage(
-            { type: "CheckConnetcionToNativeApp" },
+            { type: "CheckConnetcionToNativeApp", isFromExtension: true },
             (response) => {
                 if (chrome.runtime.lastError) {
                     resolve(false);

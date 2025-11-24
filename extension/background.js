@@ -11,68 +11,63 @@ connect();
 
 chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
     console.log(request);
+    return await handleRuntimeMessage(request, sendResponse);
+});
 
-    if (request.type === "CheckExtensionInstalled") {
-        sendResponseFromExtension(
-            {
+async function handleRuntimeMessage(request, sendResponse) {
+    switch (request.type) {
+        case "CheckExtensionInstalled":
+            sendResponseFromExtension({
                 type: "CheckExtensionInstalledResponse",
                 isConnected: true,
                 messageIdToResponse: request.id,
-            }, sendResponse
-        );
-        
-        return true;
-    }
+            }, sendResponse);
+            break;
 
-    if (request.type == "CheckConnetcionToNativeApp") {
-        sendResponseFromExtension(
-            {
+        case "CheckConnetcionToNativeApp":
+            sendResponseFromExtension({
                 type: "CheckConnetcionToNativeAppResponse",
                 isConnected: isConnected,
                 messageIdToResponse: request.id
-            }, sendResponse
-        );
+            }, sendResponse, request.isFromExtension);
+            break;
 
-        return true;
+        case "GetPrintersRequest":
+            const printersResponse = await sendMessageWithResponse(request);
+            sendResponse({
+                ...printersResponse,
+                messageIdToResponse: request.id
+            });
+            break;
+
+        case "PrintRequest":
+            const processedRequest = await handleMessage(request);
+            const requestWithProfile = await addProfile(processedRequest);
+            
+            const printResponse = await sendMessageWithResponse(requestWithProfile);
+            if (printResponse?.type === "Exception") {
+                chrome.runtime.sendMessage({
+                    ...printResponse,
+                    messageIdToResponse: request.id
+                }).catch(() => {});
+            }
+            break;
+
+        default:
+            return false;
     }
 
-    if (request.type == "GetPrintersRequest") {
-        const response = await sendMessageWithResponse(request);
-        sendResponse({
-            ...response,
-            messageIdToResponse: request.id
-        });
-        return true;
-    }
-
-    if (request.type !== "PrintRequest")
-        return;
-
-    if (!isConnected) {
-        chrome.runtime.sendMessage({
-            type: "Exception",
-            messageText: "Native app is not connected. Application is not installed or have errors in installed version.",
-            messageIdToResponse: request.id
-        }).catch(() => { });
-        return;
-    }
-
-    request = await handleMessage(request);
-    request = await addProfile(request);
-
-    const response = await sendMessageWithResponse(request);
-    if (response && response.type === "Exception") {
-        chrome.runtime.sendMessage({
-            ...response,
-            messageIdToResponse: request.id
-        }).catch(() => { });
-    }
-});
+    return true;
+}
 
 //might be errors when reciever does not exists, but doesnt affect functionality
-function sendResponseFromExtension(response, sendResponse) {
+function sendResponseFromExtension(response, sendResponse, isForExtension) {
+    console.log(isForExtension);
+    if (isForExtension) {
+        sendResponse(response);
+        return;
+    } 
     
-    sendResponse(response);
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
         if (tabs[0]?.id) {
             chrome.tabs.sendMessage(tabs[0].id, response);
