@@ -1,0 +1,26 @@
+{
+  "name": "@ihtfw/printadot",
+  "version": "1.0.0",
+  "description": "Client library for PrintaDot browser extension communication",
+  "main": "./src/printaDotClient.js",
+  "module": "./src/printaDotClient.js",
+  "type": "module",
+  "exports": {
+    ".": "./src/printaDotClient.js"
+  },
+  "keywords": [
+    "print",
+    "browser",
+    "extension",
+    "printadot",
+    "client"
+  ],
+  "author": "Vadim Kandrushin",
+  "contributors": [
+    "Dmitry Alekseev"
+  ],
+  "license": "MIT",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
+  }
+}
