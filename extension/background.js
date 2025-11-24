@@ -17,7 +17,7 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
 async function handleRuntimeMessage(request, sendResponse) {
     switch (request.type) {
         case "CheckExtensionInstalled":
-            sendResponseFromExtension({
+            sendResponseFromBackground({
                 type: "CheckExtensionInstalledResponse",
                 isConnected: true,
                 messageIdToResponse: request.id,
@@ -25,7 +25,7 @@ async function handleRuntimeMessage(request, sendResponse) {
             break;
 
         case "CheckConnetcionToNativeApp":
-            sendResponseFromExtension({
+            sendResponseFromBackground({
                 type: "CheckConnetcionToNativeAppResponse",
                 isConnected: isConnected,
                 messageIdToResponse: request.id
@@ -49,7 +49,7 @@ async function handleRuntimeMessage(request, sendResponse) {
                 chrome.runtime.sendMessage({
                     ...printResponse,
                     messageIdToResponse: request.id
-                }).catch(() => {});
+                });
             }
             break;
 
@@ -60,9 +60,7 @@ async function handleRuntimeMessage(request, sendResponse) {
     return true;
 }
 
-//might be errors when reciever does not exists, but doesnt affect functionality
-function sendResponseFromExtension(response, sendResponse, isForExtension) {
-    console.log(isForExtension);
+function sendResponseFromBackground(response, sendResponse, isForExtension) {
     if (isForExtension) {
         sendResponse(response);
         return;
@@ -71,7 +69,6 @@ function sendResponseFromExtension(response, sendResponse, isForExtension) {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
         if (tabs[0]?.id) {
             chrome.tabs.sendMessage(tabs[0].id, response);
-
         }
     });
 }
@@ -159,7 +156,7 @@ async function handleMessage(message, isFromExtension = false) {
         const result = await chrome.storage.local.get(PRINT_TYPE_KEY);
         let mapping = result[PRINT_TYPE_KEY] || {};
         let printType = message.printType;
-
+        
         return {
             type: message.type,
             version: message.version,

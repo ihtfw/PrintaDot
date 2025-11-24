@@ -1,4 +1,6 @@
 /**
+ * Item entity for printing.
+ * 
  * @typedef PrintItem
  * @property {string?} header - Header text
  * @property {string} barcode - Barcode string
@@ -20,6 +22,11 @@ function generateGuid() {
   });
 }
 
+/**
+ * Class for communicating with extension.
+ * 
+ * @typedef PrintaDotClient
+ */
 class PrintaDotClient {
   constructor() {
     this._MESSAGE_TYPES = {
