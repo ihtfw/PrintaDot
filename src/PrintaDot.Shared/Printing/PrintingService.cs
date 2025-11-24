@@ -32,6 +32,10 @@ public class PrintService
         return _platformPrintingService.Print(printerName, images, _paperSettings);
     }
 
+    /// <summary>
+    /// For debug. Saves generated image on desktop inside "BarcodeImages" directory.
+    /// </summary>
+    /// <param name="images">Generated ImageSharp image </param>
     private void SaveImageToDesktop(List<Image> images)
     {
         foreach (var image in images)
@@ -48,12 +52,10 @@ public class PrintService
                 string filePath = Path.Combine(imagesFolder, fileName);
 
                 image.SaveAsBmp(filePath);
-
-                Console.WriteLine($"Image saved to: {filePath}");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error when saving image: {ex.Message}");
+                //Console.WriteLine($"Error when saving image: {ex.Message}");
             }
         }
     }
