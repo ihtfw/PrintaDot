@@ -3,7 +3,7 @@ name: Publish to npm
 on:
   push:
     tags:
-      - "v*" # Triggers on version tags like v1.0.0
+      - "npm-v*" # Triggers on version tags like v1.0.0
   workflow_dispatch: # Allows manual trigger
 
 jobs:
