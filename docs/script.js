@@ -1,4 +1,4 @@
-import { PrintaDotClient, PrintItem } from "https://unpkg.com/@ihtfw/printadot";
+import { PrintaDotClient, PrintItem } from "@ihtfw/printadot";
 
 document.addEventListener("DOMContentLoaded", async () => {
     const printTypeInput = document.getElementById('printType');
