@@ -23,6 +23,13 @@ jobs:
           node-version: "20"
           registry-url: "https://registry.npmjs.org"
 
+      - name: Debug - List workspace
+        run: |
+          pwd
+          ls -la
+          ls -la packages/ || echo "packages directory not found"
+          ls -la packages/printadot/ || echo "packages/printadot directory not found"
+
       - name: Publish to npm
-        working-directory: ./packages/printadot
+        working-directory: packages/printadot
         run: npm publish --provenance --access public
