@@ -1,3 +1,5 @@
+import { PrintaDotClient, PrintItem } from "../packages/printadot/src/printaDotClient.js";
+
 document.addEventListener("DOMContentLoaded", async () => {
     const printTypeInput = document.getElementById('printType');
     const duplicateBarcodeCheckbox = document.getElementById('duplicateBarcode');
@@ -92,11 +94,11 @@ document.addEventListener("DOMContentLoaded", async () => {
                 figures = barcode;
             }
 
-            items.push({
-                header: header || null,
-                barcode: barcode,
-                figures: figures || null
-            });
+            items.push(new PrintItem(
+                header || null,
+                barcode,
+                figures || null
+            ));
         });
 
         return items;
