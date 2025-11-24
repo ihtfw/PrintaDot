@@ -57,14 +57,8 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
         return;
     }
 
-    if (request.isFromExtension) {
-        request = await handleMessageFromExtension(request);
-    } else {
-        request = await handleMessageFromSite(request);
-    }
+    request = await handleMessage(request);
     request = await addProfile(request);
-
-    console.log(request);
 
     const response = await sendMessageWithResponse(request);
     if (response && response.type === "Exception") {
@@ -165,16 +159,11 @@ async function addProfile(message) {
     return message;
 }
 
-async function handleMessageFromSite(message) {
-    try {
+async function handleMessage(message, isFromExtension = false) {
+    if (!isFromExtension) {
         const result = await chrome.storage.local.get(PRINT_TYPE_KEY);
         let mapping = result[PRINT_TYPE_KEY] || {};
         let printType = message.printType;
-
-        if (!mapping[printType]) {
-            mapping[printType] = "A4";
-            await chrome.storage.local.set({ [PRINT_TYPE_KEY]: mapping });
-        }
 
         return {
             type: message.type,
@@ -183,35 +172,16 @@ async function handleMessageFromSite(message) {
             items: message.items,
             id: message.id
         };
-    } catch (error) {
-        console.error("Error in handleMessageFromSite:", error);
-        return {
-            ...message,
-            type: "Exception",
-            messageText: error.message,
-            messageIdToResponse: message.id
-        };
-    }
-}
 
-async function handleMessageFromExtension(message) {
-    try {
-        return {
-            type: message.type,
-            version: message.version,
-            profile: message.profile,
-            items: message.items,
-            id: message.id
-        };
-    } catch (error) {
-        console.error("Error in handleMessageFromExtension:", error);
-        return {
-            ...message,
-            type: "Exception",
-            messageText: error.message,
-            messageIdToResponse: message.id
-        };
     }
+
+    return {
+        type: message.type,
+        version: message.version,
+        profile: message.profile,
+        items: message.items,
+        id: message.id
+    };
 }
 
 async function onNativeMessage(message) {
