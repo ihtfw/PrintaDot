@@ -1,0 +1,30 @@
+# Exclude development files
+node_modules/
+*.log
+npm-debug.log*
+
+# Exclude test files
+test/
+tests/
+*.test.js
+*.spec.js
+
+# Exclude build tools config
+.eslintrc*
+.prettierrc*
+tsconfig.json
+
+# Exclude version control
+.git/
+.gitignore
+
+# Exclude IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Exclude OS files
+.DS_Store
+Thumbs.db
