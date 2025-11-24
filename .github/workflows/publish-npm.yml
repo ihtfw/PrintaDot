@@ -23,10 +23,6 @@ jobs:
           node-version: "20"
           registry-url: "https://registry.npmjs.org"
 
-      - name: Install dependencies
-        working-directory: ./packages/printadot
-        run: npm ci || npm install
-
       - name: Publish to npm
         working-directory: ./packages/printadot
         run: npm publish --provenance --access public
