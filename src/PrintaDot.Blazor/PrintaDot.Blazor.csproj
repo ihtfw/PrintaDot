@@ -6,7 +6,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>	
 		<PackageId>PrintaDot.Blazor</PackageId>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
-		<Version>1.0.1</Version>
+		<Version>1.0.2</Version>
 		<Authors>Vadim Kandrushin, Dmitry Alekseev</Authors>
 		<Description>Blazor wrapper for PrintaDot barcode printing library</Description>
 		<PackageTags>blazor;barcode;printing;printadot</PackageTags>
@@ -24,5 +24,15 @@
 	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
 	  </Content>
 	</ItemGroup>
+	
+	<Target Name="CopyPrintaDotPackage" BeforeTargets="Build">
+		<Exec Command="npm install @ihtfw/printadot" Condition="!Exists('node_modules/@ihtfw/printadot')" />
+
+		<ItemGroup>
+			<PrintaDotFiles Include="node_modules/@ihtfw/printadot/**/*" />
+		</ItemGroup>
+
+		<Copy SourceFiles="@(PrintaDotFiles)" DestinationFiles="@(PrintaDotFiles->'wwwroot/printadot/%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
+	</Target>
 
 </Project>

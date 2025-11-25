@@ -1,4 +1,4 @@
-﻿import { PrintaDotClient, PrintItem } from './printaDotClient.js';
+﻿import { PrintaDotClient, PrintItem } from './printadot/src/printaDotClient.js';
 
 export function createPrintaDotClient() {
     return new PrintaDotClient();
