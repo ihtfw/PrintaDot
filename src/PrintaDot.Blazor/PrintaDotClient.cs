@@ -11,6 +11,7 @@ namespace PrintaDot.Blazor
 
     public class PrintaDotClient : IPrintaDotClient, IAsyncDisposable
     {
+        private readonly SemaphoreSlim _semaphore = new(1, 1);
         private readonly IJSRuntime _jsRuntime;
         private IJSObjectReference? _module;
         private IJSObjectReference? _client;
@@ -21,17 +22,26 @@ namespace PrintaDot.Blazor
             _jsRuntime = jsRuntime;
         }
 
-        private async Task EnsureInitializedAsync() // потокобезопасный (симафор либо таску)
+        private async Task EnsureInitializedAsync()
         {
             if (!_isInitialized)
             {
-                _module = await _jsRuntime.InvokeAsync<IJSObjectReference>(
-                    "import",
-                    "./_content/PrintaDot.Blazor/printaDotBlazor.js"
-                );
+                try
+                {
+                    await _semaphore.WaitAsync();
 
-                _client = await _module.InvokeAsync<IJSObjectReference>("createPrintaDotClient");
-                _isInitialized = true;
+                    _module = await _jsRuntime.InvokeAsync<IJSObjectReference>(
+                        "import",
+                        "./_content/PrintaDot.Blazor/printaDotBlazor.js"
+                    );
+
+                    _client = await _module.InvokeAsync<IJSObjectReference>("createPrintaDotClient");
+                    _isInitialized = true;
+                }
+                finally
+                {
+                    _semaphore.Release();
+                }
             }
         }
 
