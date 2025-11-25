@@ -1,11 +1,12 @@
-<Project Sdk="Microsoft.NET.Sdk.Razor">
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
 	<PropertyGroup>
 		<TargetFramework>net9.0</TargetFramework>
 		<Nullable>enable</Nullable>
-		<ImplicitUsings>enable</ImplicitUsings>
+		<ImplicitUsings>enable</ImplicitUsings>	
 		<PackageId>PrintaDot.Blazor</PackageId>
-		<Version>1.0.0</Version>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<Version>1.0.1</Version>
 		<Authors>Vadim Kandrushin, Dmitry Alekseev</Authors>
 		<Description>Blazor wrapper for PrintaDot barcode printing library</Description>
 		<PackageTags>blazor;barcode;printing;printadot</PackageTags>
@@ -18,6 +19,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<None Include="README.md" Pack="true" PackagePath="\"/>
 	  <Content Update="wwwroot\printaDotBlazor.js">
 	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
 	  </Content>
