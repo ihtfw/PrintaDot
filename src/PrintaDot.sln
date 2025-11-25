@@ -5,8 +5,6 @@ VisualStudioVersion = 17.12.35707.178
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrintaDot.Shared", "PrintaDot.Shared\PrintaDot.Shared.csproj", "{F43F7236-D085-4C7D-BA7B-FBBF14BDB3B6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrintaDot.Blazor", "PrintaDot.Blazor\PrintaDot.Blazor.csproj", "{AB1E2317-7413-4F18-9FB9-1D8EE5D0DA76}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrintaDot.Tests", "PrintaDot.Tests\PrintaDot.Tests.csproj", "{E8F027B5-C15D-4ED4-ADB5-1B425DBB719A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".config", ".config", "{663C24EB-B932-463D-A10F-561EB9B738AE}"
@@ -15,6 +13,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".config", ".config", "{663C
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrintaDot.Windows", "PrintaDot.Windows\PrintaDot.Windows.csproj", "{67AE03B6-0773-4D99-97C0-1E6ECF2896C0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrintaDot.Blazor", "PrintaDot.Blazor\PrintaDot.Blazor.csproj", "{2FCBA2EF-B816-40B7-8BBB-235DC3569503}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrintaDot.BlazorTest", "PrintaDot.BlazorTest\PrintaDot.BlazorTest.csproj", "{BBCD689E-FB6E-449B-8F92-EB5D79032561}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -26,10 +28,6 @@ Global
 		{F43F7236-D085-4C7D-BA7B-FBBF14BDB3B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F43F7236-D085-4C7D-BA7B-FBBF14BDB3B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F43F7236-D085-4C7D-BA7B-FBBF14BDB3B6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{AB1E2317-7413-4F18-9FB9-1D8EE5D0DA76}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AB1E2317-7413-4F18-9FB9-1D8EE5D0DA76}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AB1E2317-7413-4F18-9FB9-1D8EE5D0DA76}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AB1E2317-7413-4F18-9FB9-1D8EE5D0DA76}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E8F027B5-C15D-4ED4-ADB5-1B425DBB719A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E8F027B5-C15D-4ED4-ADB5-1B425DBB719A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E8F027B5-C15D-4ED4-ADB5-1B425DBB719A}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -38,6 +36,14 @@ Global
 		{67AE03B6-0773-4D99-97C0-1E6ECF2896C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{67AE03B6-0773-4D99-97C0-1E6ECF2896C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{67AE03B6-0773-4D99-97C0-1E6ECF2896C0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2FCBA2EF-B816-40B7-8BBB-235DC3569503}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2FCBA2EF-B816-40B7-8BBB-235DC3569503}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2FCBA2EF-B816-40B7-8BBB-235DC3569503}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2FCBA2EF-B816-40B7-8BBB-235DC3569503}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BBCD689E-FB6E-449B-8F92-EB5D79032561}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BBCD689E-FB6E-449B-8F92-EB5D79032561}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BBCD689E-FB6E-449B-8F92-EB5D79032561}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BBCD689E-FB6E-449B-8F92-EB5D79032561}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

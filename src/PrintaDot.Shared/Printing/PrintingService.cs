@@ -35,7 +35,7 @@ public class PrintService
     /// <summary>
     /// For debug. Saves generated image on desktop inside "BarcodeImages" directory.
     /// </summary>
-    /// <param name="images">Generated ImageSharp image </param>
+    /// <param name="images">Generated  ImageSharp image </param>
     private void SaveImageToDesktop(List<Image> images)
     {
         foreach (var image in images)

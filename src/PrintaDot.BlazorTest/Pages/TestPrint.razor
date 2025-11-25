@@ -1,0 +1,62 @@
+﻿@page "/"
+@using PrintaDot.Blazor
+@inject IPrintaDotClient PrintaDotClient
+
+<h3>Test PrintaDot Library</h3>
+
+<div class="mb-3">
+    <button @onclick="CheckConnections" class="btn btn-primary me-2">Check Connections</button>
+    <button @onclick="Print" class="btn btn-success">Test Print</button>
+</div>
+
+@if (!string.IsNullOrEmpty(message))
+{
+    <div class="alert alert-info mt-3">@message</div>
+}
+
+@code {
+    private string message = string.Empty;
+
+    private async Task CheckConnections()
+    {
+        try
+        {
+            message = "Checking connections...";
+
+            await PrintaDotClient.CheckExtensionConnectionAsync();
+            await PrintaDotClient.CheckNativeAppConnectionAsync();
+
+            message = "Extension and native app successfully connected!";
+
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            message = $"Error checking connections: {ex.Message}";
+        }
+    }
+
+    private async Task Print()
+    {
+        try
+        {
+            message = "Sending print request...";
+            StateHasChanged();
+
+            var items = new List<PrintItem>
+            {
+                new PrintItem { Header = "Test Item 1", Barcode = "123456789", Figures = "100" },
+                new PrintItem { Header = null, Barcode = "987654321", Figures = null },
+                new PrintItem { Header = "Test Item 3", Barcode = "555555555", Figures = "200" }
+            };
+
+            await PrintaDotClient.SendPrintRequestAsync(items, "default");
+
+            message = "Print request sent successfully!";
+        }
+        catch (Exception ex)
+        {
+            message = $"Print error: {ex.Message}";
+        }
+    }
+}
