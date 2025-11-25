@@ -1,0 +1,49 @@
+name: Publish NuGet (PrintaDot.Blazor)
+
+on:
+  push:
+    tags:
+      - "nuget-v*" # Triggers on version tags like v1.0.0
+  workflow_dispatch: # Allows manual trigger
+
+# Needed for GitHub → NuGet.org OIDC (trusted publishing)
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish-nuget:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Restore
+        run: dotnet restore src/PrintaDot.Blazor/PrintaDot.Blazor.csproj
+
+      - name: Build
+        run: dotnet build src/PrintaDot.Blazor/PrintaDot.Blazor.csproj -c Release --no-restore
+
+      - name: Pack
+        run: dotnet pack src/PrintaDot.Blazor/PrintaDot.Blazor.csproj -c Release -o ./artifacts --no-build
+
+      # OIDC → short-lived NuGet API key (Trusted Publishing)
+      - name: NuGet login (trusted publishing)
+        id: login
+        uses: NuGet/login@v1
+        with:
+          # Your nuget.org username (profile name), NOT email
+          user: ihtfw
+
+      - name: Push package to NuGet.org
+        run: >
+          dotnet nuget push "artifacts/*.nupkg"
+          --api-key "${{ steps.login.outputs.NUGET_API_KEY }}"
+          --source "https://api.nuget.org/v3/index.json"
+          --skip-duplicate
