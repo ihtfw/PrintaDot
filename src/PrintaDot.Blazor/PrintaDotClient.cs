@@ -6,7 +6,7 @@ namespace PrintaDot.Blazor
     {
         Task CheckExtensionConnectionAsync();
         Task CheckNativeAppConnectionAsync();
-        Task SendPrintRequestAsync(IEnumerable<PrintItem> items, string printType = "default");
+        Task SendPrintRequestAsync(IEnumerable<PrintItem> items, string printType = "default", Options? options = null);
     }
 
     public class PrintaDotClient : IPrintaDotClient, IAsyncDisposable
@@ -57,13 +57,13 @@ namespace PrintaDot.Blazor
             await _module!.InvokeVoidAsync("checkNativeAppConnection", _client);
         }
 
-        public async Task SendPrintRequestAsync(IEnumerable<PrintItem> items, string printType = "default")
+        public async Task SendPrintRequestAsync(IEnumerable<PrintItem> items, string printType = "default", Options? options = null)
         {
             if (items == null || !items.Any())
                 throw new ArgumentException("Items cannot be null or empty", nameof(items));
 
             await EnsureInitializedAsync();
-            await _module!.InvokeVoidAsync("sendPrintRequest", _client, items, printType);
+            await _module!.InvokeVoidAsync("sendPrintRequest", _client, items, printType, options);
         }
 
         public async ValueTask DisposeAsync()

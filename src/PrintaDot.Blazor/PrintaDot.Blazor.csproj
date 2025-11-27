@@ -26,7 +26,7 @@
 	</ItemGroup>
 	
 	<Target Name="CopyPrintaDotPackage" BeforeTargets="Build">
-		<Exec Command="npm install @ihtfw/printadot" Condition="!Exists('node_modules/@ihtfw/printadot')" />
+		<Exec Command="npm install @ihtfw/printadot"  />
 
 		<ItemGroup>
 			<PrintaDotFiles Include="node_modules/@ihtfw/printadot/**/*" />

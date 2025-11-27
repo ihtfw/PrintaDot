@@ -16,10 +16,10 @@ export async function checkAllConnections(client) {
     return await client.checkAllConnections();
 }
 
-export async function sendPrintRequest(client, items, printType) {
+export async function sendPrintRequest(client, items, printType, options) {
     const jsItems = items.map(item =>
         new PrintItem(item.header, item.barcode, item.figures)
     );
 
-    return await client.sendPrintRequest(jsItems, printType);
+    return await client.sendPrintRequest(jsItems, printType, options);
 }
