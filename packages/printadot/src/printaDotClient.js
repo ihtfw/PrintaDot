@@ -70,8 +70,6 @@ export class PrintaDotClient {
 
     _sendMessage(type, payload = {}, timeout = this._TIMEOUT_MS) {
         return new Promise((resolve, reject) => {
-            //проверка подписки
-
             const id = generateGuid();
 
             const timeoutId = setTimeout(() => {
