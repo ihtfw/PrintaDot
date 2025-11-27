@@ -52,7 +52,6 @@ async function handleRuntimeMessage(request, sendResponse) {
                 });
             }
             break;
-
         default:
             return false;
     }
@@ -159,16 +158,17 @@ async function handleMessage(message, isFromExtension = false) {
         
         return {
             type: message.type,
+            options: message.options || null,
             version: message.version,
             profile: mapping[printType],
             items: message.items,
             id: message.id
         };
-
     }
 
     return {
         type: message.type,
+        options: message.options || null,
         version: message.version,
         profile: message.profile,
         items: message.items,
@@ -258,17 +258,3 @@ async function connect() {
         pendingMessages.clear();
     }
 }
-
-// // Очистка старых сообщений (на случай утечек)
-// setInterval(() => {
-//     const now = Date.now();
-//     const timeout = DEFAULT_TIMEOUT + 5000; // +5 секунд сверх обычного таймаута
-    
-//     for (const [messageId, pendingMessage] of pendingMessages.entries()) {
-//         if (now - pendingMessage.timestamp > timeout) {
-//             console.warn("Cleaning up stale message:", messageId);
-//             clearTimeout(pendingMessage.timeoutId);
-//             pendingMessages.delete(messageId);
-//         }
-//     }
-// }, 60000); // Проверка каждую минуту
