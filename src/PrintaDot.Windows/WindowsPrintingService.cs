@@ -18,12 +18,21 @@ public class WindowsPrintingService : IPlatformPrintingService
             using var printDocument = SetupPrintDocument(printerName, paperSettings);
 
             var currentImageIndex = 0;
-            var labelsPerPage = paperSettings.LabelsPerRow * paperSettings.LabelsPerColumn;
+            var currentPageNumber = 0; // Добавляем счетчик страниц
 
             var dpi = (float)images.First().Metadata.HorizontalResolution;
-
             var labelWidthInch = ImageGenerationHelper.FromPixelsToHundredthsInch(images[0].Width, dpi);
             var labelHeightInch = ImageGenerationHelper.FromPixelsToHundredthsInch(images[0].Height, dpi);
+
+            // Получаем размеры бумаги в сотых долях дюйма
+            var paperWidthInch = printDocument.DefaultPageSettings.PaperSize.Width;
+            var paperHeightInch = printDocument.DefaultPageSettings.PaperSize.Height;
+
+            // Рассчитываем количество наклеек на страницу
+            var (labelsPerRow, labelsPerColumn) = CalculateLabelsPerPage(paperSettings, labelWidthInch, labelHeightInch, paperWidthInch, paperHeightInch);
+            var labelsPerPage = labelsPerRow * labelsPerColumn;
+
+            var offset = paperSettings.Offset ?? 0;
 
             printDocument.PrintPage += (sender, e) =>
             {
@@ -35,10 +44,20 @@ public class WindowsPrintingService : IPlatformPrintingService
 
                 int currentPageLabelIndex = 0;
 
+                // Применяем offset только для первой страницы
+                var currentOffset = currentPageNumber == 0 ? offset : 0;
+
                 while (currentImageIndex < images.Count && currentPageLabelIndex < labelsPerPage)
                 {
-                    var row = currentPageLabelIndex / paperSettings.LabelsPerRow;
-                    var col = currentPageLabelIndex % paperSettings.LabelsPerRow;
+                    var effectivePosition = currentPageLabelIndex + currentOffset;
+
+                    if (effectivePosition >= labelsPerPage)
+                    {
+                        break;
+                    }
+
+                    var row = effectivePosition / labelsPerRow;
+                    var col = effectivePosition % labelsPerRow;
 
                     var x = col * labelWidthInch;
                     var y = row * labelHeightInch;
@@ -54,6 +73,7 @@ public class WindowsPrintingService : IPlatformPrintingService
                     currentPageLabelIndex++;
                 }
 
+                currentPageNumber++; // Увеличиваем счетчик страниц
                 e.HasMorePages = currentImageIndex < images.Count;
             };
 
@@ -66,6 +86,35 @@ public class WindowsPrintingService : IPlatformPrintingService
         }
 
         return true;
+    }
+
+    private (int labelsPerRow, int labelsPerColumn) CalculateLabelsPerPage(
+        PaperSettings paperSettings,
+        float labelWidthInch,
+        float labelHeightInch,
+        int paperWidthInch,
+        int paperHeightInch)
+    {
+        // Если заданы явные значения, используем их
+        if (paperSettings.LabelsPerRow > 0 && paperSettings.LabelsPerColumn > 0)
+        {
+            return (paperSettings.LabelsPerRow, paperSettings.LabelsPerColumn);
+        }
+
+        // Рассчитываем максимальное количество наклеек, которые помещаются на странице
+        int calculatedLabelsPerRow = paperSettings.LabelsPerRow > 0
+            ? paperSettings.LabelsPerRow
+            : (int)Math.Floor(paperWidthInch / labelWidthInch);
+
+        int calculatedLabelsPerColumn = paperSettings.LabelsPerColumn > 0
+            ? paperSettings.LabelsPerColumn
+            : (int)Math.Floor(paperHeightInch / labelHeightInch);
+
+        // Обеспечиваем минимум 1 наклейку на страницу
+        calculatedLabelsPerRow = Math.Max(1, calculatedLabelsPerRow);
+        calculatedLabelsPerColumn = Math.Max(1, calculatedLabelsPerColumn);
+
+        return (calculatedLabelsPerRow, calculatedLabelsPerColumn);
     }
 
     private PrintDocument SetupPrintDocument(string printerName, PaperSettings paperSettings)

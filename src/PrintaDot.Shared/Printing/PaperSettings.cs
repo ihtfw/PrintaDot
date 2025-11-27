@@ -6,4 +6,5 @@ public class PaperSettings
     public float Width { get; init; }
     public int LabelsPerRow {  get; init; }
     public int LabelsPerColumn { get; init; }
+    public int? Offset {  get; init; }
 }

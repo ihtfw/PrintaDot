@@ -7,7 +7,7 @@ internal class Program
         var printerName = "Microsoft Print to PDF";
 
         var testsRunner = new TestsRunnerV1();
-        testsRunner.PrintThermo(printerName);
-        //testsRunnerV1.PrintA4();
+        //testsRunner.PrintThermo(printerName);
+        testsRunner.PrintA4(printerName);
     }
 }

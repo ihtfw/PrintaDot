@@ -10,6 +10,7 @@ namespace PrintaDot.Shared.Common;
 [JsonSerializable(typeof(PrintRequestMessageV1))]
 [JsonSerializable(typeof(PrintRequestMessageV1.PrintProfile))]
 [JsonSerializable(typeof(PrintRequestMessageV1.Item))]
+[JsonSerializable(typeof(PrintRequestMessageV1.PrintRequestOptions))]
 [JsonSerializable(typeof(PrintResponseMessageV1))]
 [JsonSerializable(typeof(GetPrintStatusRequestMessageV1))]
 [JsonSerializable(typeof(GetPrintStatusResponseMessageV1))]
@@ -17,6 +18,4 @@ namespace PrintaDot.Shared.Common;
 [JsonSerializable(typeof(GetPrintersRequest))]
 [JsonSerializable(typeof(GetPrintersResponse))]
 [JsonSerializable(typeof(UpdateResponseDto))]
-public partial class PrintaDotJsonContext : JsonSerializerContext
-{
-}
+public partial class PrintaDotJsonContext : JsonSerializerContext { }

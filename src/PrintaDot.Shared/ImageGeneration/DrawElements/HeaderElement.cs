@@ -8,7 +8,7 @@ namespace PrintaDot.Shared.ImageGeneration.DrawElements;
 
 internal class HeaderElement : TextElement
 {
-    public HeaderElement(PixelImageProfileV1 profile, string text, PointF barcodeTopLeft)
+    public HeaderElement(PixelImageProfileV1 profile, string? text, PointF barcodeTopLeft)
     {
         if (string.IsNullOrEmpty(text))
         {

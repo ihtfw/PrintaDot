@@ -25,7 +25,7 @@ public class BarcodeImageGeneratorV1 : IPrintaDotImageGenerator
         foreach (var item in _items)
         {
             var labelImage = GenerateBackround((int)_profile.LabelWidth, (int)_profile.LabelHeight);
-            var barcodeImage = GenerateBackround((int)_profile.PaperWidth, (int)_profile.PaperHeight);
+            var barcodeImage = GenerateBackround((int)_profile.LabelWidth, (int)_profile.LabelHeight);
 
             var barcodeElement = new BarcodeElement(_profile, item.Barcode);
             var headerElement = new HeaderElement(_profile, item.Header, barcodeElement.TopLeft);

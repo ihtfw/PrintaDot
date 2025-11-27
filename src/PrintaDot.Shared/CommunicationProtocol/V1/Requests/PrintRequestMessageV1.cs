@@ -3,7 +3,8 @@
 public class PrintRequestMessageV1 : Message
 {
     public required PrintProfile Profile { get; set; }
-    public List<Item> Items { get; set; }
+    public PrintRequestOptions? Options { get; set; }
+    public required List<Item> Items { get; set; }
 
     public class Item
     {
@@ -51,5 +52,10 @@ public class PrintRequestMessageV1 : Message
         public required string BarcodeAlignment { get; set; }
         public required float BarcodeFontSize { get; set; }
         public required float BarcodeAngle { get; set; }
+    }
+
+    public class PrintRequestOptions
+    {
+        public int? Offset { get; set; }
     }
 }

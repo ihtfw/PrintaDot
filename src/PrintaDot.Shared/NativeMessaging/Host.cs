@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using PrintaDot.Shared.Common;
+﻿using PrintaDot.Shared.Common;
 using PrintaDot.Shared.CommunicationProtocol;
 using PrintaDot.Shared.CommunicationProtocol.V1.Requests;
 using PrintaDot.Shared.CommunicationProtocol.V1.Responses;
@@ -14,9 +13,6 @@ namespace PrintaDot.Shared.NativeMessaging;
 /// </summary>
 public class Host
 {
-    
-    private bool _sendConfirmationReceipt;
-
     /// <summary>
     /// List of supported browsers.
     /// </summary>
@@ -29,8 +25,6 @@ public class Host
     public Host(bool sendConfirmationReceipt = true)
     {
         SupportedBrowsers = [BrowserCreator.GoogleChrome, BrowserCreator.MicrosoftEdge];
-
-        _sendConfirmationReceipt = sendConfirmationReceipt;
     }
 
     public required IPlatformPrintingService PlatformPrintingService { get; init; }
@@ -84,26 +78,7 @@ public class Host
                 StreamHandler.Write(printersResponse);
                 break;
             case PrintRequestMessageV1 printRequestMessageV1:
-                var barcodeImageGenerator = new BarcodeImageGeneratorV1(printRequestMessageV1);
-
-                var paperSettings = new PaperSettings()
-                {
-                    Height = printRequestMessageV1.Profile.PaperHeight,
-                    Width = printRequestMessageV1.Profile.PaperWidth,
-                    LabelsPerColumn = printRequestMessageV1.Profile.LabelsPerColumn,
-                    LabelsPerRow = printRequestMessageV1.Profile.LabelsPerRow
-                };
-
-                var printService = new PrintService(barcodeImageGenerator, PlatformPrintingService, paperSettings);
-                var isPrintedSuccessfully = printService.Print(printRequestMessageV1.Profile.PrinterName);
-
-                if (isPrintedSuccessfully)
-                {
-                    StreamHandler.Write(PrintResponseMessageV1.CreateSuccessResponse(message.Id));
-                } else
-                {
-                    StreamHandler.Write(PrintResponseMessageV1.CreateFailedResponse(message.Id));
-                }
+                ProcessPrintRequestMessageV1(printRequestMessageV1);
                 break;
             case GetPrintStatusRequestMessageV1:
                 // TODO: Add handling for GetPrintStatusRequestMessageV1
@@ -115,6 +90,32 @@ public class Host
                 StreamHandler.Write(exception);
                 break;
         }
+    }
+
+    private void ProcessPrintRequestMessageV1(PrintRequestMessageV1 printRequestMessageV1)
+    {
+        var barcodeImageGenerator = new BarcodeImageGeneratorV1(printRequestMessageV1);
+
+        var paperSettings = new PaperSettings()
+        {
+            Height = printRequestMessageV1.Profile.PaperHeight,
+            Width = printRequestMessageV1.Profile.PaperWidth,
+            LabelsPerColumn = printRequestMessageV1.Profile.LabelsPerColumn,
+            LabelsPerRow = printRequestMessageV1.Profile.LabelsPerRow,
+            Offset = printRequestMessageV1.Options?.Offset
+        };
+
+        var printService = new PrintService(barcodeImageGenerator, PlatformPrintingService, paperSettings);
+        var isPrintedSuccessfully = printService.Print(printRequestMessageV1.Profile.PrinterName);
+
+        if (isPrintedSuccessfully)
+        {
+            StreamHandler.Write(PrintResponseMessageV1.CreateSuccessResponse(printRequestMessageV1.Id));
+
+            return;
+        }
+
+        StreamHandler.Write(PrintResponseMessageV1.CreateFailedResponse(printRequestMessageV1.Id));
     }
 
     /// <summary>
