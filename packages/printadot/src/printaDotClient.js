@@ -123,9 +123,31 @@ export class PrintaDotClient {
  * @param {string} printType - print profile
  * @returns {Promise<void>}
  */
-    async sendPrintRequest(items, printType = "default") {
+    async sendPrintRequest(items, printType = "default", options = null) {
         if (!Array.isArray(items)) throw new Error("items must be an array");
         if (items.length === 0) throw new Error("items array cannot be empty");
+
+        //validate options
+        if (options !== null && typeof options !== "object") {
+            throw new Error("options must be an object or null");
+        }
+
+        let normalizedOptions = options;
+        if (options && options.offset === undefined) {
+            normalizedOptions = {
+                ...options,
+                offset: null
+            };
+        }
+
+        if (normalizedOptions.offset !== null && normalizedOptions.offset !== undefined) {
+            if (!Number.isInteger(normalizedOptions.offset)) {
+                throw new Error("offset must be an integer");
+            }
+            if (normalizedOptions.offset <= 0) {
+                throw new Error("offset must be greater than 0");
+            }
+        }
 
         // let's validate items on client
         for (const item of items) {
@@ -149,6 +171,7 @@ export class PrintaDotClient {
             {
                 version: 1,
                 printType,
+                options: normalizedOptions,
                 // let's map items to plain objects for serialization, so we don't accidently send more data than needed
                 items: items.map(i => ({
                     header: i.header,
