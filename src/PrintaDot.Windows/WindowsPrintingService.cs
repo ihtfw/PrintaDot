@@ -18,17 +18,15 @@ public class WindowsPrintingService : IPlatformPrintingService
             using var printDocument = SetupPrintDocument(printerName, paperSettings);
 
             var currentImageIndex = 0;
-            var currentPageNumber = 0; // Добавляем счетчик страниц
+            var currentPageNumber = 0;
 
             var dpi = (float)images.First().Metadata.HorizontalResolution;
             var labelWidthInch = ImageGenerationHelper.FromPixelsToHundredthsInch(images[0].Width, dpi);
             var labelHeightInch = ImageGenerationHelper.FromPixelsToHundredthsInch(images[0].Height, dpi);
 
-            // Получаем размеры бумаги в сотых долях дюйма
             var paperWidthInch = printDocument.DefaultPageSettings.PaperSize.Width;
             var paperHeightInch = printDocument.DefaultPageSettings.PaperSize.Height;
 
-            // Рассчитываем количество наклеек на страницу
             var (labelsPerRow, labelsPerColumn) = CalculateLabelsPerPage(paperSettings, labelWidthInch, labelHeightInch, paperWidthInch, paperHeightInch);
             var labelsPerPage = labelsPerRow * labelsPerColumn;
 
@@ -44,7 +42,6 @@ public class WindowsPrintingService : IPlatformPrintingService
 
                 int currentPageLabelIndex = 0;
 
-                // Применяем offset только для первой страницы
                 var currentOffset = currentPageNumber == 0 ? offset : 0;
 
                 while (currentImageIndex < images.Count && currentPageLabelIndex < labelsPerPage)
@@ -73,7 +70,7 @@ public class WindowsPrintingService : IPlatformPrintingService
                     currentPageLabelIndex++;
                 }
 
-                currentPageNumber++; // Увеличиваем счетчик страниц
+                currentPageNumber++;
                 e.HasMorePages = currentImageIndex < images.Count;
             };
 
@@ -95,22 +92,22 @@ public class WindowsPrintingService : IPlatformPrintingService
         int paperWidthInch,
         int paperHeightInch)
     {
-        // Если заданы явные значения, используем их
+        //if we have values use them
         if (paperSettings.LabelsPerRow > 0 && paperSettings.LabelsPerColumn > 0)
         {
             return (paperSettings.LabelsPerRow, paperSettings.LabelsPerColumn);
         }
 
-        // Рассчитываем максимальное количество наклеек, которые помещаются на странице
+        //calculating labels per row
         int calculatedLabelsPerRow = paperSettings.LabelsPerRow > 0
             ? paperSettings.LabelsPerRow
             : (int)Math.Floor(paperWidthInch / labelWidthInch);
-
+        //calculating labels per column
         int calculatedLabelsPerColumn = paperSettings.LabelsPerColumn > 0
             ? paperSettings.LabelsPerColumn
             : (int)Math.Floor(paperHeightInch / labelHeightInch);
 
-        // Обеспечиваем минимум 1 наклейку на страницу
+
         calculatedLabelsPerRow = Math.Max(1, calculatedLabelsPerRow);
         calculatedLabelsPerColumn = Math.Max(1, calculatedLabelsPerColumn);
 
