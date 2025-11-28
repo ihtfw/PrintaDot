@@ -70,8 +70,6 @@ export class PrintaDotClient {
 
     _sendMessage(type, payload = {}, timeout = this._TIMEOUT_MS) {
         return new Promise((resolve, reject) => {
-            //проверка подписки
-
             const id = generateGuid();
 
             const timeoutId = setTimeout(() => {
@@ -127,25 +125,26 @@ export class PrintaDotClient {
         if (!Array.isArray(items)) throw new Error("items must be an array");
         if (items.length === 0) throw new Error("items array cannot be empty");
 
-        //validate options
-        if (options !== null && typeof options !== "object") {
-            throw new Error("options must be an object or null");
-        }
-
         let normalizedOptions = options;
-        if (options && options.offset === undefined) {
-            normalizedOptions = {
-                ...options,
-                offset: null
-            };
-        }
 
-        if (normalizedOptions.offset !== null && normalizedOptions.offset !== undefined) {
-            if (!Number.isInteger(normalizedOptions.offset)) {
-                throw new Error("offset must be an integer");
+        if (options !== null) {
+            if (typeof options !== "object") {
+                throw new Error("options must be an object or null");
             }
-            if (normalizedOptions.offset <= 0) {
-                throw new Error("offset must be greater than 0");
+
+            if (options.offset === undefined) {
+                normalizedOptions = {
+                    offset: null
+                };
+            }
+
+            if (normalizedOptions.offset !== null && normalizedOptions.offset !== undefined) {
+                if (!Number.isInteger(normalizedOptions.offset)) {
+                    throw new Error("offset must be an integer");
+                }
+                if (normalizedOptions.offset < 0) {
+                    throw new Error("offset must be 0 or greater");
+                }
             }
         }
 
