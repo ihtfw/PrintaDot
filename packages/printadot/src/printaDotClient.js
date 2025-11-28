@@ -137,7 +137,7 @@ export class PrintaDotClient {
                 repeat: null
             };
 
-            if (typeof offset.offset !== "undefined") {
+            if (Object.hasOwn(options, 'offset')) {
                 if (!Number.isInteger(options.offset)) {
                     throw new Error("offset must be an integer");
                 }
@@ -148,7 +148,7 @@ export class PrintaDotClient {
                 normalizedOptions.offset = options.offset;
             }
 
-            if (typeof offset.repeat !== "undefined") {
+            if (Object.hasOwn(options, 'repeat')) {
                 if (!Number.isInteger(options.repeat)) {
                     throw new Error("repeat must be an integer");
                 }
