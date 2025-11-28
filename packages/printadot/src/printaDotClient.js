@@ -142,8 +142,8 @@ export class PrintaDotClient {
                 if (!Number.isInteger(normalizedOptions.offset)) {
                     throw new Error("offset must be an integer");
                 }
-                if (normalizedOptions.offset <= 0) {
-                    throw new Error("offset must be greater than 0");
+                if (normalizedOptions.offset < 0) {
+                    throw new Error("offset must be 0 or greater");
                 }
             }
         }
