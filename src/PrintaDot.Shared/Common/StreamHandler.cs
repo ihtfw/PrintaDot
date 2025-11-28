@@ -17,18 +17,17 @@ public static class StreamHandler
     {
         Stream stdin = Console.OpenStandardInput();
 
+        // Read message length (4 bytes)
         byte[] lengthBytes = new byte[4];
         stdin.Read(lengthBytes, 0, 4);
+        int length = BitConverter.ToInt32(lengthBytes, 0);
 
-        char[] buffer = new char[BitConverter.ToInt32(lengthBytes, 0)];
+        // Read message bytes
+        byte[] buffer = new byte[length];
+        stdin.Read(buffer, 0, length);
 
-        using (StreamReader reader = new StreamReader(stdin))
-            if (reader.Peek() >= 0)
-            {
-                reader.Read(buffer, 0, buffer.Length);
-            }
-
-        var jsonString = new string(buffer);
+        // Convert UTF-8 bytes → string
+        string jsonString = Encoding.UTF8.GetString(buffer);
 
         Log.LogMessage(jsonString, nameof(StreamHandler));
 
