@@ -137,23 +137,25 @@ export class PrintaDotClient {
                 repeat: null
             };
 
-            if (options.offset !== undefined) {
+            if (typeof offset.offset !== "undefined") {
                 if (!Number.isInteger(options.offset)) {
                     throw new Error("offset must be an integer");
                 }
                 if (options.offset < 0) {
                     throw new Error("offset must be 0 or greater");
                 }
+
                 normalizedOptions.offset = options.offset;
             }
 
-            if (options.repeat !== undefined) {
+            if (typeof offset.repeat !== "undefined") {
                 if (!Number.isInteger(options.repeat)) {
                     throw new Error("repeat must be an integer");
                 }
                 if (options.repeat < 1) {
                     throw new Error("repeat must be 1 or greater");
                 }
+                
                 normalizedOptions.repeat = options.repeat;
             }
         }
