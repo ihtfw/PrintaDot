@@ -125,26 +125,36 @@ export class PrintaDotClient {
         if (!Array.isArray(items)) throw new Error("items must be an array");
         if (items.length === 0) throw new Error("items array cannot be empty");
 
-        let normalizedOptions = options;
+        let normalizedOptions = null;
 
         if (options !== null) {
             if (typeof options !== "object") {
                 throw new Error("options must be an object or null");
             }
 
-            if (options.offset === undefined) {
-                normalizedOptions = {
-                    offset: null
-                };
-            }
+            normalizedOptions = {
+                offset: null,
+                repeat: null
+            };
 
-            if (normalizedOptions.offset !== null && normalizedOptions.offset !== undefined) {
-                if (!Number.isInteger(normalizedOptions.offset)) {
+            if (options.offset !== undefined) {
+                if (!Number.isInteger(options.offset)) {
                     throw new Error("offset must be an integer");
                 }
-                if (normalizedOptions.offset < 0) {
+                if (options.offset < 0) {
                     throw new Error("offset must be 0 or greater");
                 }
+                normalizedOptions.offset = options.offset;
+            }
+
+            if (options.repeat !== undefined) {
+                if (!Number.isInteger(options.repeat)) {
+                    throw new Error("repeat must be an integer");
+                }
+                if (options.repeat < 1) {
+                    throw new Error("repeat must be 1 or greater");
+                }
+                normalizedOptions.repeat = options.repeat;
             }
         }
 
