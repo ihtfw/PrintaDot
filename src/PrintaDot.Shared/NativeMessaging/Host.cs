@@ -102,7 +102,8 @@ public class Host
             Width = printRequestMessageV1.Profile.PaperWidth,
             LabelsPerColumn = printRequestMessageV1.Profile.LabelsPerColumn,
             LabelsPerRow = printRequestMessageV1.Profile.LabelsPerRow,
-            Offset = printRequestMessageV1.Options?.Offset
+            Offset = printRequestMessageV1.Options?.Offset,
+            Repeat = printRequestMessageV1.Options?.Repeat,
         };
 
         var printService = new PrintService(barcodeImageGenerator, PlatformPrintingService, paperSettings);

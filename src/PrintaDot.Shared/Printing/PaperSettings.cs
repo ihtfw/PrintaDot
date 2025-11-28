@@ -7,4 +7,5 @@ public class PaperSettings
     public int LabelsPerRow {  get; init; }
     public int LabelsPerColumn { get; init; }
     public int? Offset {  get; init; }
+    public int? Repeat { get; init; }
 }

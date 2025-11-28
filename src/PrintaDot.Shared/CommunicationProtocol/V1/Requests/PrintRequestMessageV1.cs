@@ -57,5 +57,6 @@ public class PrintRequestMessageV1 : Message
     public class PrintRequestOptions
     {
         public int? Offset { get; set; }
+        public int? Repeat { get; set; }
     }
 }

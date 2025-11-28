@@ -20,10 +20,12 @@ public class WindowsPrintingService : IPlatformPrintingService
             var currentImageIndex = 0;
             var currentPageNumber = 0;
 
+            //caculating size of each label
             var dpi = (float)images.First().Metadata.HorizontalResolution;
             var labelWidthInch = ImageGenerationHelper.FromPixelsToHundredthsInch(images[0].Width, dpi);
             var labelHeightInch = ImageGenerationHelper.FromPixelsToHundredthsInch(images[0].Height, dpi);
 
+            //calculating size of page
             var paperWidthInch = printDocument.DefaultPageSettings.PaperSize.Width;
             var paperHeightInch = printDocument.DefaultPageSettings.PaperSize.Height;
 
@@ -31,6 +33,13 @@ public class WindowsPrintingService : IPlatformPrintingService
             var labelsPerPage = labelsPerRow * labelsPerColumn;
 
             var offset = paperSettings.Offset ?? 0;
+            var repeat = paperSettings.Repeat ?? 1;
+
+            var extendedImages = new List<SixLabors.ImageSharp.Image>();
+            for (int i = 0; i < repeat; i++)
+            {
+                extendedImages.AddRange(images);
+            }
 
             printDocument.PrintPage += (sender, e) =>
             {
@@ -44,7 +53,7 @@ public class WindowsPrintingService : IPlatformPrintingService
 
                 var currentOffset = currentPageNumber == 0 ? offset : 0;
 
-                while (currentImageIndex < images.Count && currentPageLabelIndex < labelsPerPage)
+                while (currentImageIndex < extendedImages.Count && currentPageLabelIndex < labelsPerPage)
                 {
                     var effectivePosition = currentPageLabelIndex + currentOffset;
 
@@ -60,7 +69,7 @@ public class WindowsPrintingService : IPlatformPrintingService
                     var y = row * labelHeightInch;
 
                     using var ms = new MemoryStream();
-                    images[currentImageIndex].Save(ms, new BmpEncoder());
+                    extendedImages[currentImageIndex].Save(ms, new BmpEncoder());
                     ms.Position = 0;
 
                     using var bitmap = new Bitmap(ms);
@@ -71,7 +80,7 @@ public class WindowsPrintingService : IPlatformPrintingService
                 }
 
                 currentPageNumber++;
-                e.HasMorePages = currentImageIndex < images.Count;
+                e.HasMorePages = currentImageIndex < extendedImages.Count;
             };
 
             printDocument.Print();
