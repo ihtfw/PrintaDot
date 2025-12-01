@@ -14,6 +14,20 @@ export class PrintItem {
     }
 }
 
+/**
+ * Options entity for printing.
+ * 
+ * @typedef Options
+ * @property {int} offset - Header text
+ * @property {int} repeat - Barcode string
+ */
+export class Options {
+    constructor(offset = null, repeat = null) {
+        this.offset = offset;
+        this.repeat = repeat;
+    }
+}
+
 export function generateGuid() {
     return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
         const r = (Math.random() * 16) | 0;
@@ -119,44 +133,34 @@ export class PrintaDotClient {
  *
  * @param {PrintItem[]} items - array of PrintItem objects
  * @param {string} printType - print profile
+ * @param {Options} options - additional options for printing
  * @returns {Promise<void>}
  */
     async sendPrintRequest(items, printType = "default", options = null) {
         if (!Array.isArray(items)) throw new Error("items must be an array");
         if (items.length === 0) throw new Error("items array cannot be empty");
 
-        let normalizedOptions = null;
-
         if (options !== null) {
             if (typeof options !== "object") {
                 throw new Error("options must be an object or null");
             }
 
-            normalizedOptions = {
-                offset: null,
-                repeat: null
-            };
-
-            if (Object.hasOwn(options, 'offset')) {
+            if (options.offset != null) {
                 if (!Number.isInteger(options.offset)) {
                     throw new Error("offset must be an integer");
                 }
                 if (options.offset < 0) {
                     throw new Error("offset must be 0 or greater");
                 }
-
-                normalizedOptions.offset = options.offset;
             }
 
-            if (Object.hasOwn(options, 'repeat')) {
+            if (options.repeat != null) {
                 if (!Number.isInteger(options.repeat)) {
                     throw new Error("repeat must be an integer");
                 }
                 if (options.repeat < 1) {
                     throw new Error("repeat must be 1 or greater");
                 }
-                
-                normalizedOptions.repeat = options.repeat;
             }
         }
 
@@ -182,7 +186,7 @@ export class PrintaDotClient {
             {
                 version: 1,
                 printType,
-                options: normalizedOptions,
+                options: options,
                 // let's map items to plain objects for serialization, so we don't accidently send more data than needed
                 items: items.map(i => ({
                     header: i.header,
