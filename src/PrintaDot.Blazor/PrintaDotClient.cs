@@ -63,7 +63,14 @@ namespace PrintaDot.Blazor
                 throw new ArgumentException("Items cannot be null or empty", nameof(items));
 
             await EnsureInitializedAsync();
-            await _module!.InvokeVoidAsync("sendPrintRequest", _client, items, printType, options);
+            try
+            {
+                await _module!.InvokeVoidAsync("sendPrintRequest", _client, items, printType, options);
+            }
+            catch (JSException ex) 
+            {
+                throw Utils.MapJsError(ex);
+            }
         }
 
         public async ValueTask DisposeAsync()
