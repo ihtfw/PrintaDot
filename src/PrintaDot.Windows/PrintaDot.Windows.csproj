@@ -3,7 +3,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
 	  <AssemblyName>PrintaDot</AssemblyName>
-	  <AssemblyVersion>1.0.2</AssemblyVersion>
+	  <AssemblyVersion>1.0.3</AssemblyVersion>
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
