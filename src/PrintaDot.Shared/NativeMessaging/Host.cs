@@ -116,7 +116,7 @@ public class Host
             return;
         }
 
-        StreamHandler.Write(PrintResponseMessageV1.CreateFailedResponse(printRequestMessageV1.Id));
+        StreamHandler.Write(ExceptionResponseV1.Create("Failed to print", printRequestMessageV1.Id));
     }
 
     /// <summary>

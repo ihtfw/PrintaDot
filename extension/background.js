@@ -10,7 +10,6 @@ const DEFAULT_TIMEOUT = 30000;
 connect();
 
 chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
-    console.log(request);
     return await handleRuntimeMessage(request, sendResponse);
 });
 
@@ -150,27 +149,27 @@ async function addProfile(message) {
     return message;
 }
 
-async function handleMessage(message, isFromExtension = false) {
-    if (!isFromExtension) {
-        const result = await chrome.storage.local.get(PRINT_TYPE_KEY);
-        let mapping = result[PRINT_TYPE_KEY] || {};
-        let printType = message.printType;
-        
+async function handleMessage(message) {
+    if (message.isFromExtension) {
         return {
             type: message.type,
             options: message.options || null,
             version: message.version,
-            profile: mapping[printType],
+            profile: message.profile,
             items: message.items,
             id: message.id
         };
     }
 
+    const result = await chrome.storage.local.get(PRINT_TYPE_KEY);
+    let mapping = result[PRINT_TYPE_KEY] || {};
+    let printType = message.printType;
+
     return {
         type: message.type,
         options: message.options || null,
         version: message.version,
-        profile: message.profile,
+        profile: mapping[printType],
         items: message.items,
         id: message.id
     };

@@ -15,7 +15,7 @@ public static class Log
     /// </summary>
     public static bool Active { get; set; } = false;
 
-    internal static void LogMessage(string msg, string? nameof = null)
+    public static void LogMessage(string msg, string? nameof = null)
     {
         if (!Active)
         {

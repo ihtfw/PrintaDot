@@ -87,8 +87,9 @@ public class WindowsPrintingService : IPlatformPrintingService
         }
         catch (Exception ex)
         {
+            Log.LogMessage(ex.Message, nameof(WindowsPrintingService));
+
             return false;
-            //Handle exception
         }
 
         return true;
