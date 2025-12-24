@@ -188,8 +188,8 @@ async function downloadNativeApp() {
         const latestVersion = releaseData.tag_name;
         
         const windowsAsset = releaseData.assets.find(asset => 
-            asset.name === 'PrintaDot.Windows.exe' || 
-            asset.name.includes('PrintaDot.Windows')
+            asset.name === 'PrintaDot.exe' || 
+            asset.name.includes('PrintaDot')
         );
         
         if (windowsAsset) {
