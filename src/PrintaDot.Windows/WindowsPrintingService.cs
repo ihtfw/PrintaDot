@@ -11,6 +11,7 @@ namespace PrintaDot.Windows;
 
 public class WindowsPrintingService : IPlatformPrintingService
 {
+    private string PrinterByDefault => "Microsoft Print to PDF";
     public bool Print(string printerName, List<SixLabors.ImageSharp.Image> images, PaperSettings paperSettings)
     {
         try
@@ -83,7 +84,15 @@ public class WindowsPrintingService : IPlatformPrintingService
                 e.HasMorePages = currentImageIndex < extendedImages.Count;
             };
 
-            printDocument.Print();
+            try
+            {
+                printDocument.Print();
+            }
+            catch (Exception ex)
+            {
+                printDocument.PrinterSettings.PrinterName = PrinterByDefault;
+                printDocument.Print();
+            }  
         }
         catch (Exception ex)
         {

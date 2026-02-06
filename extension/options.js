@@ -1,6 +1,10 @@
+import { Profile } from "./profile.js";
+
 document.addEventListener('DOMContentLoaded', async function () {   
     await initLocalization();
     await initializeOptionsPage();
+
+    await loadPrintersFromStorage();
 
     await getPrinters();
 });
@@ -12,19 +16,42 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     }
 
     if (request.type === "GetPrintersResponse" && request.printers) {
-        const printerSelect = document.getElementById('printerName');
-
-        request.printers.forEach(printer => {
-            const option = document.createElement('option');
-            option.value = printer;
-            option.textContent = printer;
-            printerSelect.appendChild(option);
-        });
+        chrome.storage.local.set({ printers: request.printers });
+        
+        updatePrintersList(request.printers);
     }
 });
 
+async function loadPrintersFromStorage() {
+    const result = await chrome.storage.local.get(['printers']);
+    if (result.printers && result.printers.length > 0) {
+        updatePrintersList(result.printers);
+    }
+    
+}
+
+function updatePrintersList(printers) {
+    const printerSelect = document.getElementById('printerName');
+    
+    const currentValue = printerSelect.value;
+    
+    printerSelect.innerHTML = '';
+    
+    printers.forEach(printer => {
+        const option = document.createElement('option');
+        option.value = printer;
+        option.textContent = printer;
+        printerSelect.appendChild(option);
+    });
+    
+    if (printers.includes(currentValue)) {
+        printerSelect.value = currentValue;
+    } else if (printers.length > 0) {
+        printerSelect.value = printers[0];
+    }
+}
+
 async function initializeOptionsPage() {
-    await initializeDefaultProfiles();
 
     await loadProfiles();
     await loadProfile();
@@ -117,24 +144,24 @@ async function calculateNextProfileId(profiles) {
     return maxId + 1;
 }
 
-async function initializeDefaultProfiles() {
-    const result = await chrome.storage.local.get(['profiles']);
-    let profiles = result.profiles || {};
+// async function initializeDefaultProfiles() {
+//     const result = await chrome.storage.local.get(['profiles']);
+//     let profiles = result.profiles || {};
 
-    if (!profiles['A4']) {
-        profiles['A4'] = Profile.getA4Profile().toStorageObject();
-    }
-    if (!profiles['Thermo']) {
-        profiles['Thermo'] = Profile.getThermoProfile().toStorageObject();
-    }
+//     if (!profiles['A4']) {
+//         profiles['A4'] = Profile.getA4Profile().toStorageObject();
+//     }
+//     if (!profiles['Thermo']) {
+//         profiles['Thermo'] = Profile.getThermoProfile().toStorageObject();
+//     }
 
-    const currentResult = await chrome.storage.local.get(['currentProfileName']);
-    if (!currentResult.currentProfileName) {
-        await chrome.storage.local.set({ currentProfileName: 'A4' });
-    }
+//     const currentResult = await chrome.storage.local.get(['currentProfileName']);
+//     if (!currentResult.currentProfileName) {
+//         await chrome.storage.local.set({ currentProfileName: 'A4' });
+//     }
 
-    await chrome.storage.local.set({ profiles });
-}
+//     await chrome.storage.local.set({ profiles });
+// }
 
 async function loadProfiles() {
     const result = await chrome.storage.local.get(['profiles']);

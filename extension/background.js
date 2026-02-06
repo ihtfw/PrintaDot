@@ -1,3 +1,5 @@
+import { Profile } from "./profile.js";
+
 var port = null;
 var isConnected = false;
 
@@ -12,6 +14,25 @@ connect();
 chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
     return await handleRuntimeMessage(request, sendResponse);
 });
+
+async function initializeDefaultProfiles() {
+    const result = await chrome.storage.local.get(['profiles']);
+    let profiles = result.profiles || {};
+
+    if (!profiles['A4']) {
+        profiles['A4'] = Profile.getA4Profile().toStorageObject();
+    }
+    if (!profiles['Thermo']) {
+        profiles['Thermo'] = Profile.getThermoProfile().toStorageObject();
+    }
+
+    const currentResult = await chrome.storage.local.get(['currentProfileName']);
+    if (!currentResult.currentProfileName) {
+        await chrome.storage.local.set({ currentProfileName: 'A4' });
+    }
+
+    await chrome.storage.local.set({ profiles });
+}
 
 async function handleRuntimeMessage(request, sendResponse) {
     switch (request.type) {
@@ -42,7 +63,9 @@ async function handleRuntimeMessage(request, sendResponse) {
         case "PrintRequest":
             const processedRequest = await handleMessage(request);
             const requestWithProfile = await addProfile(processedRequest);
-            
+            console.log(request);
+            console.log(processedRequest);
+             console.log(requestWithProfile);
             const printResponse = await sendMessageWithResponse(requestWithProfile);
             if (printResponse?.type === "Exception") {
                 chrome.runtime.sendMessage({
@@ -165,6 +188,11 @@ async function handleMessage(message) {
     let mapping = result[PRINT_TYPE_KEY] || {};
     let printType = message.printType;
 
+    if (!mapping[printType]) {
+        mapping[printType] = "Thermo";
+        await chrome.storage.local.set({ [PRINT_TYPE_KEY]: mapping });
+    }
+
     return {
         type: message.type,
         options: message.options || null,
@@ -237,6 +265,7 @@ async function connect() {
         port.onMessage.addListener(onNativeMessage);
         port.onDisconnect.addListener(onDisconnected);
         isConnected = true;
+        await initializeDefaultProfiles();
         console.log("Connected to native app");
 
         chrome.runtime.sendMessage({

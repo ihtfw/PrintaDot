@@ -1,4 +1,4 @@
-class Profile {
+export class Profile {
     constructor(id = 1, profileName = "default", settings = {}) {
         this.id = id;
         this.profileName = profileName;
