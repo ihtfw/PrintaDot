@@ -1,6 +1,14 @@
 import { Profile } from "./profile.js";
 
 document.addEventListener('DOMContentLoaded', async function () {   
+    const manifest = chrome.runtime.getManifest();
+    const version = manifest.version;
+    
+    const versionElement = document.getElementById('appTitle');
+    if (versionElement) {
+        versionElement.textContent = `PrintaDot (v${version})`;
+    }
+
     await initLocalization();
     await initializeOptionsPage();
 

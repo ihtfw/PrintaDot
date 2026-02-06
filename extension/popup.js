@@ -254,6 +254,14 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 });
 
 document.addEventListener('DOMContentLoaded', async function() {
+    const manifest = chrome.runtime.getManifest();
+    const version = manifest.version;
+    
+    const versionElement = document.getElementById('appVersion');
+    if (versionElement) {
+        versionElement.textContent = `v${version}`;
+    }
+
     await initLocalization();
     
     document.getElementById('errorCloseBtn').addEventListener('click', hideError);
