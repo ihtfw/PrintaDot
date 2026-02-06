@@ -49,7 +49,7 @@ public static class Manifest
             ["allowed_origins"] = AllowedOrigins
         };
 
-        File.WriteAllText(ManifestFileName, manifest.ToJson());
+        File.WriteAllText(ManifestPath, manifest.ToJson());
 
         Log.LogMessage("Manifest Generated");
     }
