@@ -101,12 +101,18 @@ public static class Utils
 #else
             var isFilesMoved = CopyReleaseFiles(currentDirectory, TargetApplicationDirectory);
 #endif
-            if (isFilesMoved)
-            {
-                Console.WriteLine($"All files are copied. Application ready to work. Close this window.");
+            var culture = System.Globalization.CultureInfo.CurrentCulture;
+            bool isRussian = culture.TwoLetterISOLanguageName == "ru" ||
+                             culture.ThreeLetterISOLanguageName == "rus";
 
-                Console.ReadKey();
-            }   
+            if (isRussian)
+            {
+                Console.WriteLine("Все файлы скопированы. Приложение готово к работе. Закройте это окно.");
+            }
+            else
+            {
+                Console.WriteLine("All files are copied. Application ready to work. Close this window.");
+            }
         }
         catch
         {
