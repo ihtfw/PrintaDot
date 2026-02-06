@@ -1,4 +1,5 @@
 ﻿using PrintaDot.Shared.NativeMessaging;
+using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
@@ -138,24 +139,18 @@ public static class Utils
 
         try
         {
-            var publishFiles = new[]
-            {
-                "PrintaDot.exe"
-            };
+            string exeName = Process.GetCurrentProcess().MainModule.FileName;
 
-            foreach (var fileName in publishFiles)
-            {
-                var sourceFile = Path.Combine(sourceDir, fileName);
-                var destFile = Path.Combine(targetDir, fileName);
+            var sourceFile = Path.Combine(sourceDir, exeName);
+            var destFile = Path.Combine(targetDir, GetExecutableFileName());
 
-                if (File.Exists(sourceFile))
-                {
-                    File.Copy(sourceFile, destFile, true);
-                }
-                else
-                {
-                    throw new FileNotFoundException(fileName);
-                }
+            if (File.Exists(sourceFile))
+            {
+                File.Copy(sourceFile, destFile, true);
+            }
+            else
+            {
+                throw new FileNotFoundException(GetExecutableFileName());
             }
         }
         catch (Exception ex)
